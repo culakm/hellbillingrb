@@ -6,7 +6,7 @@ export default {
 	namespaced: true,
 	state() {
 		return {
-			users: [],
+			trips: [],
 		};
 	},
 	mutations, // mutations: mutations ak su mena rovnake, tak staci len jedno meno

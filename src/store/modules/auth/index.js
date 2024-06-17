@@ -8,7 +8,6 @@ export default {
 		return {
 			userId: null,
 			token: null,
-			displayName: null,
 			email: null,
 			didAutoLogout: false,
 		};

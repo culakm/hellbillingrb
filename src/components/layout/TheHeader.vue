@@ -2,15 +2,15 @@
 	<header>
 		<nav>
 			<h1>
-				<router-link to="/">Hellbilling1</router-link>
+				<router-link to="/">HellbillingRB</router-link>
 			</h1>
 			<ul>
 				<li v-if="isLoggedIn">
 					<router-link to="/items">items</router-link>
-					<router-link v-if="email === 'karol.velky@hellbilling.com'" to="/users">users</router-link>
+					<router-link to="/trips">trips</router-link>
 				</li>
 				<li v-if="isLoggedIn">
-					<base-button @click="logout">Logout {{ displayName }}</base-button>
+					<base-button @click="logout">Logout {{ email }}</base-button>
 				</li>
 				<li v-else>
 					<router-link to="/auth">Login</router-link>
@@ -26,9 +26,6 @@ export default {
 	computed: {
 		isLoggedIn() {
 			return this.$store.getters.isAuthenticated;
-		},
-		displayName() {
-			return this.$store.getters.displayName;
 		},
 		email() {
 			return this.$store.getters.email;

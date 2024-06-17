@@ -5,9 +5,6 @@ export default {
 	token(state) {
 		return state.token;
 	},
-	displayName(state) {
-		return state.displayName;
-	},
 	email(state) {
 		return state.email;
 	},
