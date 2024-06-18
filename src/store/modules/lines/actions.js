@@ -1,5 +1,5 @@
 import { db } from '../../../firebase.js';
-import { collection, doc, getDoc, addDoc, setDoc, deleteDoc, getDocs } from "firebase/firestore";
+import { collection, doc, addDoc, setDoc, deleteDoc, getDocs } from "firebase/firestore";
 
 export default {
 	async addTrip(context, payload) {
@@ -26,7 +26,9 @@ export default {
 		context.commit('deleteTrip', { tripId: tripId });
 	},
 	async loadTrips(context) {
+
 		const trips = [];
+
 		const querySnapshot = await getDocs(collection(db, "trips"));
 		querySnapshot.forEach((doc) => {
 			const tripData = doc.data();
@@ -38,21 +40,5 @@ export default {
 			trips.push(trip);
 		});
 		context.commit('setTrips', trips);
-	},
-	async tripById(context, tripId) {
-		const docRef = doc(db, "trips", tripId);
-		const docSnap = await getDoc(docRef);
-
-		if (docSnap.exists()) {
-			const tripData = docSnap.data();
-			const trip = {
-				id: docSnap.id,
-				name: tripData.name,
-				description: tripData.description,
-			};
-			context.commit('setTrip', trip);
-		} else {
-			console.log("No such document!");
-		}
 	}
 };

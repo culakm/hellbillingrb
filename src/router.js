@@ -9,6 +9,7 @@ import itemEdit from './pages/items/ItemEdit.vue';
 import TripList from './pages/trips/TripList.vue';
 import TripAdd from './pages/trips/TripAdd.vue';
 import TripEdit from './pages/trips/TripEdit.vue';
+import TripView from './pages/trips/TripView.vue';
 
 
 import indexPage from './pages/IndexPage.vue';
@@ -27,6 +28,7 @@ const router = createRouter({
 		{ name: 'trips', path: '/trips', component: TripList, meta: { requiresAuth: true } },
 		{ name: 'trip-add', path: '/trips/add', component: TripAdd, meta: { requiresAuth: true } },
 		{ name: 'trip-edit', path: '/trips/:tripId', component: TripEdit, props: true, meta: { requiresAuth: true } },
+		{ name: 'trip-view', path: '/trips/view/:tripId', component: TripView, props: true, meta: { requiresAuth: true } },
 
 		{ name: 'auth', path: '/auth', component: UserAuth, meta: { requiresUnauth: true } },
 		{ path: '/:notFound(.*)', component: NotFound }

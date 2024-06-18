@@ -14,7 +14,4 @@ export default {
 	setTrips(state, payload) {
 		state.trips = payload;
 	},
-	setTrip(state, payload) {
-		state.trip = payload;
-	}
 };

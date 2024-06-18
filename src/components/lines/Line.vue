@@ -1,7 +1,8 @@
 <template>
 	<li>
-		<h3>{{ fullName }}</h3>
 		<h3>id: {{ tripId }}</h3>
+		<h3>{{ name }}</h3>
+		<p>{{ description }}</p>
 		<div class="actions">
 			<base-button link :to="tripDetailsLink">View Details</base-button>
 			<base-button @click="deleteTrip">Delete</base-button>
@@ -11,12 +12,9 @@
 
 <script>
 export default {
-	name: 'TripTrip',
-	props: ['tripId', 'name'],
+	name: 'Trip',
+	props: ['tripId', 'name', 'description'],
 	computed: {
-		fullName() {
-			return `${this.name} `;
-		},
 		tripDetailsLink() {
 			return this.$route.path + `/${this.tripId}`;
 		},
