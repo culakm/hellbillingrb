@@ -5,12 +5,15 @@ export default {
 	async addLine(context, payload) {
 		const tripId = payload.tripId;
 		const lineData = {
+			order: payload.order,
 			name: payload.name,
 			note: payload.note,
 		};
 
-		const lineRef = doc(collection(db, `trips/${tripId}/lines`));
-		await setDoc(lineRef, lineData);
+		const lineRef = collection(db, `trips/${tripId}/lines`);
+		const docRef = await addDoc(lineRef, lineData);
+		lineData.id = docRef.id;
+
 		context.commit('addLine', lineData);
 	},
 	async addTrip(context, payload) {
@@ -53,7 +56,6 @@ export default {
 	async tripById(context, tripId) {
 		const docRef = doc(db, "trips", tripId);
 		const docSnap = await getDoc(docRef);
-
 		if (docSnap.exists()) {
 			const tripData = docSnap.data();
 			const trip = {

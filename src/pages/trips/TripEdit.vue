@@ -9,7 +9,7 @@
 				<div v-if="isLoading">
 					<base-spinner></base-spinner>
 				</div>
-				<trip-form @save-data="saveData" :trip="trip"></trip-form>
+				<trip-form v-if="trip" @save-data="saveData" :trip="trip"></trip-form>
 			</base-card>
 		</section>
 		<section>
@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 import TripForm from '../../components/trips/TripForm.vue';
 import LineForm from '../../components/lines/LineForm.vue';
 import LineView from '../../components/lines/LineView.vue';
@@ -52,7 +52,22 @@ export default {
 	computed: {
 		...mapGetters('trips', ['trip', 'hasLines'])
 	},
+
+	async created() {
+		const tripId = this.$route.params.tripId;
+		this.tripByIdLocal(tripId);
+	},
 	methods: {
+		...mapActions('trips', ['tripById']),
+		async tripByIdLocal() {
+			this.isLoading = true;
+			try {
+				await this.tripById(this.tripId);
+			} catch (error) {
+				this.error = `Component ${this.$options.name}, error: ${error.message}` || 'Something went wrong!';
+			}
+			this.isLoading = false;
+		},
 		async saveData(tripData) {
 			this.isLoading = true;
 			try {

@@ -1,5 +1,10 @@
 <template>
 	<form @submit.prevent="submitForm">
+		<div class="form-control" :class="{ invalid: !order.isValid }">
+			<label for="order">Order</label>
+			<input type="text" id="order" v-model.trim="order.val" @blur="clearValidity('order')" />
+			<p v-if="!order.isValid">order must not be empty!</p>
+		</div>
 		<div class="form-control" :class="{ invalid: !name.isValid }">
 			<label for="name">Name</label>
 			<input type="text" id="name" v-model.trim="name.val" @blur="clearValidity('name')" />
@@ -28,6 +33,10 @@ export default {
 	},
 	data() {
 		return {
+			order: {
+				val: '',
+				isValid: true
+			},
 			name: {
 				val: '',
 				isValid: true
@@ -50,6 +59,10 @@ export default {
 		},
 		validateForm() {
 			this.formIsValid = true;
+			if (this.order.val === '') {
+				this.order.isValid = false;
+				this.formIsValid = false;
+			}
 			if (this.name.val === '') {
 				this.name.isValid = false;
 				this.formIsValid = false;
@@ -66,9 +79,14 @@ export default {
 			}
 			const formData = {
 				lineId: this.lineId,
+				order: this.order.val,
 				name: this.name.val,
 				note: this.note.val,
 			};
+			this.order.val = '';
+			this.name.val = '';
+			this.note.val = '';
+
 			this.$emit('save-line', formData);
 		},
 	},

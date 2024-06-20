@@ -1,5 +1,4 @@
 <template>
-	<h3>id: {{ trip.id }} Full</h3>
 	<h3>{{ trip.name }}</h3>
 	<p>{{ trip.description }}desc </p>
 </template>

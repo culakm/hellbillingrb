@@ -1,7 +1,6 @@
 <template>
 	<li>
-		<h3>id: {{ lineId }}</h3>
-		<h3>name: {{ name }}</h3>
+		<h3>{{ order }}. {{ name }}</h3>
 		<p>note: {{ note }}</p>
 	</li>
 </template>
@@ -9,7 +8,7 @@
 <script>
 export default {
 	name: 'LineView',
-	props: ['lineId', 'name', 'note'],
+	props: ['lineId', 'order', 'name', 'note'],
 };
 </script>
 
