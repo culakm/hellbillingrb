@@ -26,9 +26,9 @@ const router = createRouter({
 		{ name: 'item-edit', path: '/items/:itemId', component: itemEdit, props: true, meta: { requiresAuth: true } },
 
 		{ name: 'trips', path: '/trips', component: TripList, meta: { requiresAuth: true } },
-		{ name: 'trip-add', path: '/trips/add', component: TripAdd, meta: { requiresAuth: true } },
-		{ name: 'trip-edit', path: '/trips/:tripId', component: TripEdit, props: true, meta: { requiresAuth: true } },
-		{ name: 'trip-view', path: '/trips/view/:tripId', component: TripView, props: true, meta: { requiresAuth: true } },
+		{ name: 'trip-add', path: '/trip/add', component: TripAdd, meta: { requiresAuth: true } },
+		{ name: 'trip-edit', path: '/trip/edit/:tripId', component: TripEdit, props: true, meta: { requiresAuth: true } },
+		{ name: 'trip-view', path: '/trip/view/:tripId', component: TripView, props: true, meta: { requiresAuth: true } },
 
 		{ name: 'auth', path: '/auth', component: UserAuth, meta: { requiresUnauth: true } },
 		{ path: '/:notFound(.*)', component: NotFound }

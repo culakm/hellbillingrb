@@ -5,23 +5,22 @@
 			<input type="text" id="name" v-model.trim="name.val" @blur="clearValidity('name')" />
 			<p v-if="!name.isValid">name must not be empty!</p>
 		</div>
-		<div class="form-control" :class="{ invalid: !description.isValid }">
-			<label for="description">Description</label>
-			<textarea id="description" rows="5" v-model.trim="description.val"
-				@blur="clearValidity('description')"></textarea>
-			<p v-if="!description.isValid">Description must not be empty!</p>
+		<div class="form-control" :class="{ invalid: !note.isValid }">
+			<label for="note">Note</label>
+			<textarea id="note" rows="2" v-model.trim="note.val" @blur="clearValidity('note')"></textarea>
+			<p v-if="!note.isValid">Note must not be empty!</p>
 		</div>
 		<p v-if="!formIsValid">Please fix errors</p>
-		<base-button v-if="Object.keys(trip).length === 0">Add Trip</base-button>
-		<base-button v-else>Edit Trip</base-button>
+		<base-button v-if="Object.keys(line).length === 0">Add Line</base-button>
+		<base-button v-else>Edit Line</base-button>
 	</form>
 </template>
 
 <script>
 export default {
-	emits: ['save-data'],
+	emits: ['save-line'],
 	props: {
-		trip: {
+		line: {
 			type: Object,
 			required: false,
 			default: () => ({}),
@@ -33,7 +32,7 @@ export default {
 				val: '',
 				isValid: true
 			},
-			description: {
+			note: {
 				val: '',
 				isValid: true
 			},
@@ -41,9 +40,9 @@ export default {
 		};
 	},
 	created() {
-		this.tripId = this.trip.id || null;
-		this.name.val = this.trip.name || '';
-		this.description.val = this.trip.description || '';
+		this.lineId = this.line.id || null;
+		this.name.val = this.line.name || '';
+		this.note.val = this.line.note || '';
 	},
 	methods: {
 		clearValidity(input) {
@@ -55,8 +54,8 @@ export default {
 				this.name.isValid = false;
 				this.formIsValid = false;
 			}
-			if (this.description.val === '') {
-				this.description.isValid = false;
+			if (this.note.val === '') {
+				this.note.isValid = false;
 				this.formIsValid = false;
 			}
 		},
@@ -66,11 +65,11 @@ export default {
 				return;
 			}
 			const formData = {
-				tripId: this.tripId,
+				lineId: this.lineId,
 				name: this.name.val,
-				description: this.description.val,
+				note: this.note.val,
 			};
-			this.$emit('save-data', formData);
+			this.$emit('save-line', formData);
 		},
 	},
 };

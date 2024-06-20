@@ -1,4 +1,7 @@
 export default {
+	addLine(state, payload) {
+		state.trip.lines.push(payload);
+	},
 	addTrip(state, payload) {
 		state.trips.push(payload);
 	},

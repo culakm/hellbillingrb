@@ -9,31 +9,48 @@
 				<div v-if="isLoading">
 					<base-spinner></base-spinner>
 				</div>
-				<trip-form @save-data="saveData" :trip="localTrip"></trip-form>
+				<trip-form @save-data="saveData" :trip="trip"></trip-form>
 			</base-card>
+		</section>
+		<section>
+			<base-card>
+				<div v-if="isLoading">
+					<base-spinner></base-spinner>
+				</div>
+				<line-form @save-line="saveLine" :trip="trip"></line-form>
+			</base-card>
+		</section>
+		<section>
+			<ul v-if="hasLines">
+				<line-view v-for="line in trip.lines" :key="line.id" :line-id="line.id" :name="line.name"
+					:note="line.note"></line-view>
+			</ul>
 		</section>
 	</div>
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 import TripForm from '../../components/trips/TripForm.vue';
+import LineForm from '../../components/lines/LineForm.vue';
+import LineView from '../../components/lines/LineView.vue';
+
 export default {
 	name: 'TripAdd',
 	props: ['tripId'],
 	components: {
 		TripForm,
+		LineForm,
+		LineView,
 	},
 	data() {
 		return {
 			isLoading: false,
 			error: null,
-			localTrip: null,
 		};
 	},
-	created() {
-		this.localTrip = this.$store.getters['trips/trips'].find(
-			trip => trip.id === this.tripId
-		);
+	computed: {
+		...mapGetters('trips', ['trip', 'hasLines'])
 	},
 	methods: {
 		async saveData(tripData) {
@@ -47,6 +64,19 @@ export default {
 
 			this.isLoading = false;
 			this.$router.replace('/trips');
+		},
+		async saveLine(lineData) {
+			this.isLoading = true;
+			lineData.tripId = this.tripId;
+
+			try {
+				await this.$store.dispatch('trips/addLine', lineData);
+			} catch (error) {
+				this.error = `Component ${this.$options.name}, Padlo fetch : ${error.message}` || 'Something went wrong!';
+				return;
+			}
+
+			this.isLoading = false;
 		},
 		handleError() {
 			this.error = null;

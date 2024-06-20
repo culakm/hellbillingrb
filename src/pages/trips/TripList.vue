@@ -9,7 +9,7 @@
 		<section>
 			<base-card>
 				<div v-if="isAuthenticated" class="controls">
-					<base-button link to="/trips/add">Add New Trip</base-button>
+					<base-button link to="/trip/add">Add New Trip</base-button>
 				</div>
 				<div v-if="isLoading">
 					<base-spinner></base-spinner>
@@ -41,16 +41,7 @@ export default {
 	},
 	computed: {
 		...mapGetters(['isAuthenticated']),
-		...mapGetters('trips', ['trips', 'trip', 'hasTrips']),
-		// trips() {
-		// 	return this.$store.getters['trips/trips'];
-		// },
-		// hasTrips() {
-		// 	return !this.isLoading && this.$store.getters['trips/hasTrips'];
-		// },
-		// isLoggedIn() {
-		// 	return this.$store.getters.isAuthenticated;
-		// },
+		...mapGetters('trips', ['trips', 'hasTrips']),
 	},
 	created() {
 		this.loadTripsLocal();

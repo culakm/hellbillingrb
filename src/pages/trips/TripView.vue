@@ -10,6 +10,10 @@
 					<base-spinner></base-spinner>
 				</div>
 				<trip-full :trip="trip"></trip-full>
+				<ul v-if="hasLines">
+					<line-view v-for="line in trip.lines" :key="line.id" :line-id="line.id" :name="line.name"
+						:note="line.note"></line-view>
+				</ul>
 			</base-card>
 		</section>
 	</div>
@@ -18,11 +22,14 @@
 <script>
 import { mapGetters, mapActions } from 'vuex';
 import TripFull from '../../components/trips/TripFull.vue';
+import LineView from '../../components/lines/LineView.vue';
+
 export default {
 	name: 'TripView',
 	props: ['tripId'],
 	components: {
 		TripFull,
+		LineView,
 	},
 	data() {
 		return {
@@ -32,7 +39,7 @@ export default {
 		};
 	},
 	computed: {
-		...mapGetters('trips', ['trips', 'trip'])
+		...mapGetters('trips', ['trip', 'hasLines'])
 	},
 	async created() {
 		const tripId = this.$route.params.tripId;
@@ -55,3 +62,9 @@ export default {
 	},
 };
 </script>
+
+<style scoped>
+ul {
+	list-style-type: none;
+}
+</style>

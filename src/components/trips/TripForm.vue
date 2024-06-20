@@ -13,7 +13,7 @@
 		</div>
 		<p v-if="!formIsValid">Please fix errors</p>
 		<base-button v-if="Object.keys(trip).length === 0">Add Trip</base-button>
-		<base-button v-else>Edit Trip</base-button>
+		<base-button v-else>Save Trip</base-button>
 	</form>
 </template>
 
