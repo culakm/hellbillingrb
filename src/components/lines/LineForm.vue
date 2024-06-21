@@ -2,13 +2,23 @@
 	<form @submit.prevent="submitForm">
 		<div class="form-control" :class="{ invalid: !order.isValid }">
 			<label for="order">Order</label>
-			<input type="text" id="order" v-model.trim="order.val" @blur="clearValidity('order')" />
-			<p v-if="!order.isValid">order must not be empty!</p>
+			<input type="number" id="order" v-model.trim.number="order.val" @blur="clearValidity('order')" />
+			<p v-if="!order.isValid">Order must not be empty!</p>
 		</div>
 		<div class="form-control" :class="{ invalid: !name.isValid }">
 			<label for="name">Name</label>
 			<input type="text" id="name" v-model.trim="name.val" @blur="clearValidity('name')" />
 			<p v-if="!name.isValid">name must not be empty!</p>
+		</div>
+		<div class="form-control" :class="{ invalid: !tulip.isValid }">
+			<label for="tulip">Tulip</label>
+			<textarea id="tulip" rows="2" v-model.trim="tulip.val" @blur="clearValidity('tulip')"></textarea>
+			<p v-if="!tulip.isValid">Tulip must not be empty!</p>
+		</div>
+		<div class="form-control" :class="{ invalid: !roadNo.isValid }">
+			<label for="roadNo">RoadNo</label>
+			<input type="text" id="roadNo" v-model.trim="roadNo.val" @blur="clearValidity('roadNo')" />
+			<p v-if="!roadNo.isValid">RoadNo must not be empty!</p>
 		</div>
 		<div class="form-control" :class="{ invalid: !note.isValid }">
 			<label for="note">Note</label>
@@ -41,6 +51,14 @@ export default {
 				val: '',
 				isValid: true
 			},
+			tulip: {
+				val: '',
+				isValid: true
+			},
+			roadNo: {
+				val: '',
+				isValid: true
+			},
 			note: {
 				val: '',
 				isValid: true
@@ -50,7 +68,10 @@ export default {
 	},
 	created() {
 		this.lineId = this.line.id || null;
+		this.order.val = this.line.order || 0;
 		this.name.val = this.line.name || '';
+		this.tulip.val = this.line.tulip || '';
+		this.roadNo.val = this.line.roadNo || null;
 		this.note.val = this.line.note || '';
 	},
 	methods: {
@@ -67,6 +88,14 @@ export default {
 				this.name.isValid = false;
 				this.formIsValid = false;
 			}
+			if (this.tulip.val === '') {
+				this.tulip.isValid = false;
+				this.formIsValid = false;
+			}
+			if (this.roadNo.val === '') {
+				this.roadNo.isValid = false;
+				this.formIsValid = false;
+			}
 			if (this.note.val === '') {
 				this.note.isValid = false;
 				this.formIsValid = false;
@@ -81,10 +110,14 @@ export default {
 				lineId: this.lineId,
 				order: this.order.val,
 				name: this.name.val,
+				tulip: this.tulip.val,
+				roadNo: this.roadNo.val,
 				note: this.note.val,
 			};
 			this.order.val = '';
 			this.name.val = '';
+			this.tulip.val = '';
+			this.roadNo.val = '';
 			this.note.val = '';
 
 			this.$emit('save-line', formData);

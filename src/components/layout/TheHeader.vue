@@ -2,15 +2,14 @@
 	<header>
 		<nav>
 			<h1>
-				<router-link to="/">HellbillingRB</router-link>
+				<router-link to="/">HBRB</router-link>
 			</h1>
 			<ul>
 				<li v-if="isLoggedIn">
-					<router-link to="/items">items</router-link>
 					<router-link to="/trips">trips</router-link>
 				</li>
 				<li v-if="isLoggedIn">
-					<base-button @click="logout">Logout {{ email }}</base-button>
+					<base-button @click="logout">Logout</base-button>
 				</li>
 				<li v-else>
 					<router-link to="/auth">Login</router-link>

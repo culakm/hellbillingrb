@@ -7,6 +7,8 @@ export default {
 		const lineData = {
 			order: payload.order,
 			name: payload.name,
+			tulip: payload.tulip,
+			roadNo: payload.roadNo,
 			note: payload.note,
 		};
 

@@ -4,16 +4,15 @@
 	</div>
 	<div v-else>
 		<section>
-			<base-card>
-				<div v-if="isLoading">
-					<base-spinner></base-spinner>
-				</div>
-				<trip-full v-if="trip" :trip="trip"></trip-full>
-				<ul v-if="hasLines">
-					<line-view v-for="line in trip.lines" :key="line.id" :line-id="line.id" :order="line.order"
-						:name="line.name" :note="line.note"></line-view>
-				</ul>
-			</base-card>
+
+			<div v-if="isLoading">
+				<base-spinner></base-spinner>
+			</div>
+			<trip-full v-if="trip" :trip="trip"></trip-full>
+			<ul v-if="hasLines">
+				<line-view v-for="line in trip.lines" :key="line.id" :line="line"></line-view>
+			</ul>
+
 		</section>
 	</div>
 </template>
@@ -64,6 +63,8 @@ export default {
 
 <style scoped>
 ul {
+	width: 100%;
+	padding: 0;
 	list-style-type: none;
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
 	<h3>{{ trip.name }}</h3>
-	<p>{{ trip.description }}desc </p>
+	<p>{{ trip.description }}</p>
 </template>
 
 <script>

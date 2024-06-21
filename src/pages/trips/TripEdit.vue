@@ -22,8 +22,7 @@
 		</section>
 		<section>
 			<ul v-if="hasLines">
-				<line-view v-for="line in trip.lines" :key="line.id" :line-id="line.id" :name="line.name"
-					:note="line.note"></line-view>
+				<line-view v-for="line in trip.lines" :key="line.id" :line="line"></line-view>
 			</ul>
 		</section>
 	</div>
