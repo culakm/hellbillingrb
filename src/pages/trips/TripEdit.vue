@@ -9,7 +9,7 @@
 				<div v-if="isLoading">
 					<base-spinner></base-spinner>
 				</div>
-				<trip-form v-if="trip" @save-data="saveData" :trip="trip"></trip-form>
+				<trip-form v-if="trip" @save-data="updateTripLocal" :trip="trip"></trip-form>
 			</base-card>
 		</section>
 		<section>
@@ -17,35 +17,54 @@
 				<div v-if="isLoading">
 					<base-spinner></base-spinner>
 				</div>
-				<line-form @save-line="saveLine" :trip="trip"></line-form>
+				<line-form @save-line="addLineLocal" :trip="trip"></line-form>
 			</base-card>
 		</section>
 		<section>
+			<!-- <ul v-if="hasLines">
+				<line-actions v-for="line in trip.lines" :key="line.id" :line="line" :trip-id="tripId"></line-actions>
+			</ul> -->
 			<ul v-if="hasLines">
-				<line-view v-for="line in trip.lines" :key="line.id" :line="line"></line-view>
+				<!-- <draggable :list="trip.lines" :disabled="!enabled" item-key="order" class="list-group"
+					ghost-class="ghost" :move="checkMove" @start="dragging = true" @end="dragging = false"> -->
+				<draggable :list="trip.lines" :disabled="!enabled" item-key="order" class="list-group"
+					ghost-class="ghost" @start="dragging = true" @end="onEnd">
+					<template #item="{ element }">
+						<div class="list-group-item" :class="{ 'not-draggable': !enabled }">
+							<line-actions class="line-item" :key="element.id" :line="element"
+								:trip-id="tripId"></line-actions>
+						</div>
+					</template>
+				</draggable>
 			</ul>
 		</section>
 	</div>
+	<!-- <raw-displayer v-if="hasLines" :value="trip.lines" title="List" /> -->
 </template>
 
 <script>
 import { mapGetters, mapActions } from 'vuex';
+import draggable from "vuedraggable";
 import TripForm from '../../components/trips/TripForm.vue';
 import LineForm from '../../components/lines/LineForm.vue';
-import LineView from '../../components/lines/LineView.vue';
+import LineActions from '../../components/lines/LineActions.vue';
 
 export default {
 	name: 'TripAdd',
 	props: ['tripId'],
 	components: {
+		draggable,
 		TripForm,
 		LineForm,
-		LineView,
+		LineActions,
 	},
 	data() {
 		return {
 			isLoading: false,
 			error: null,
+			enabled: true,
+			dragging: false,
+
 		};
 	},
 	computed: {
@@ -57,7 +76,7 @@ export default {
 		this.tripByIdLocal(tripId);
 	},
 	methods: {
-		...mapActions('trips', ['tripById']),
+		...mapActions('trips', ['tripById', 'addLine', 'updateLines']),
 		async tripByIdLocal() {
 			this.isLoading = true;
 			try {
@@ -67,7 +86,7 @@ export default {
 			}
 			this.isLoading = false;
 		},
-		async saveData(tripData) {
+		async updateTripLocal(tripData) {
 			this.isLoading = true;
 			try {
 				await this.$store.dispatch('trips/updateTrip', tripData);
@@ -77,24 +96,48 @@ export default {
 			}
 
 			this.isLoading = false;
-			this.$router.replace('/trips');
+
 		},
-		async saveLine(lineData) {
+		async addLineLocal(lineData) {
 			this.isLoading = true;
+			const lastOrder = this.trip.lines.length;
+			lineData.order = lastOrder + 1;
 			lineData.tripId = this.tripId;
 
 			try {
-				await this.$store.dispatch('trips/addLine', lineData);
+				await this.addLine(lineData);
 			} catch (error) {
 				this.error = `Component ${this.$options.name}, Padlo fetch : ${error.message}` || 'Something went wrong!';
 				return;
 			}
-
 			this.isLoading = false;
 		},
 		handleError() {
 			this.error = null;
 		},
+		onEnd(evt) {
+			this.dragging = false;
+			this.trip.lines.forEach((line, index) => {
+				line.order = index + 1;
+			});
+			this.updateLines({ lines: this.trip.lines, tripId: this.tripId });
+		},
+
 	},
 };
 </script>
+
+<style scoped>
+.buttons {
+	margin-top: 35px;
+}
+
+.ghost {
+	opacity: 0.5;
+	background: #c8ebfb;
+}
+
+.not-draggable {
+	cursor: no-drop;
+}
+</style>

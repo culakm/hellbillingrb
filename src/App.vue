@@ -1,11 +1,13 @@
 <template>
 	<the-header></the-header>
-	<!-- <router-view></router-view> -->
-	<router-view v-slot="slotProps">
+	<router-view></router-view>
+	<!--
+		s tymto to nejako nejde volat z TripEdit.vue
+		<router-view v-slot="slotProps">
 		<transition name="route" mode="out-in">
 			<component :is="slotProps.Component"></component>
 		</transition>
-	</router-view>
+	</router-view> -->
 </template>
 
 <script>

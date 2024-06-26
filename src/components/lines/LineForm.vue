@@ -80,26 +80,26 @@ export default {
 		},
 		validateForm() {
 			this.formIsValid = true;
-			if (this.order.val === '') {
-				this.order.isValid = false;
-				this.formIsValid = false;
-			}
-			if (this.name.val === '') {
-				this.name.isValid = false;
-				this.formIsValid = false;
-			}
-			if (this.tulip.val === '') {
-				this.tulip.isValid = false;
-				this.formIsValid = false;
-			}
-			if (this.roadNo.val === '') {
-				this.roadNo.isValid = false;
-				this.formIsValid = false;
-			}
-			if (this.note.val === '') {
-				this.note.isValid = false;
-				this.formIsValid = false;
-			}
+			// if (this.order.val === '') {
+			// 	this.order.isValid = false;
+			// 	this.formIsValid = false;
+			// }
+			// if (this.name.val === '') {
+			// 	this.name.isValid = false;
+			// 	this.formIsValid = false;
+			// }
+			// if (this.tulip.val === '') {
+			// 	this.tulip.isValid = false;
+			// 	this.formIsValid = false;
+			// }
+			// if (this.roadNo.val === '') {
+			// 	this.roadNo.isValid = false;
+			// 	this.formIsValid = false;
+			// }
+			// if (this.note.val === '') {
+			// 	this.note.isValid = false;
+			// 	this.formIsValid = false;
+			// }
 		},
 		submitForm() {
 			this.validateForm();

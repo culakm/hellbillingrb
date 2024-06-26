@@ -2,6 +2,23 @@ import { db } from '../../../firebase.js';
 import { collection, doc, getDoc, addDoc, setDoc, updateDoc, deleteDoc, getDocs } from "firebase/firestore";
 
 export default {
+	async updateLines(context, payload) {
+		const tripId = payload.tripId;
+		const lines = payload.lines;
+		const linesCollectionRef = collection(db, `trips/${tripId}/lines`);
+		lines.forEach(async line => {
+			const lineRef = doc(linesCollectionRef, line.id);
+			await updateDoc(lineRef, line);
+		});
+		// console.log('lines updated', lines);
+		context.commit('updateLines', lines);
+	},
+	async deleteLine(context, payload) {
+		const tripId = payload.tripId;
+		const lineId = payload.lineId;
+		await deleteDoc(doc(db, "trips", tripId, "lines", lineId));
+		context.commit('deleteLine', { lineId: lineId });
+	},
 	async addLine(context, payload) {
 		const tripId = payload.tripId;
 		const lineData = {
@@ -29,12 +46,12 @@ export default {
 	async updateTrip(context, payload) {
 		const tripId = payload.tripId;
 		const tripData = {
+			tripId: tripId,
 			name: payload.name,
 			description: payload.description,
 		};
-
 		await setDoc(doc(db, "trips", tripId), tripData);
-		context.commit('editTrip', tripData);
+		context.commit('updateTrip', tripData);
 	},
 	async deleteTrip(context, payload) {
 		const tripId = payload.tripId;
