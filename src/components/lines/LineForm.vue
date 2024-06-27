@@ -1,10 +1,5 @@
 <template>
 	<form @submit.prevent="submitForm">
-		<div class="form-control" :class="{ invalid: !order.isValid }">
-			<label for="order">Order</label>
-			<input type="number" id="order" v-model.trim.number="order.val" @blur="clearValidity('order')" />
-			<p v-if="!order.isValid">Order must not be empty!</p>
-		</div>
 		<div class="form-control" :class="{ invalid: !name.isValid }">
 			<label for="name">Name</label>
 			<input type="text" id="name" v-model.trim="name.val" @blur="clearValidity('name')" />
@@ -80,10 +75,6 @@ export default {
 		},
 		validateForm() {
 			this.formIsValid = true;
-			// if (this.order.val === '') {
-			// 	this.order.isValid = false;
-			// 	this.formIsValid = false;
-			// }
 			// if (this.name.val === '') {
 			// 	this.name.isValid = false;
 			// 	this.formIsValid = false;
@@ -114,7 +105,7 @@ export default {
 				roadNo: this.roadNo.val,
 				note: this.note.val,
 			};
-			this.order.val = '';
+			this.order.val = null;
 			this.name.val = '';
 			this.tulip.val = '';
 			this.roadNo.val = '';

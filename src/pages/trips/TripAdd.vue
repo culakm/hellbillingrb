@@ -9,7 +9,7 @@
 				<div v-if="isLoading">
 					<base-spinner></base-spinner>
 				</div>
-				<trip-form @save-data="saveData"></trip-form>
+				<trip-form @save-data="addTripLocal"></trip-form>
 			</base-card>
 		</section>
 	</div>
@@ -29,7 +29,7 @@ export default {
 		};
 	},
 	methods: {
-		async saveData(tripData) {
+		async addTripLocal(tripData) {
 			this.isLoading = true;
 			try {
 				await this.$store.dispatch('trips/addTrip', tripData);

@@ -21,12 +21,7 @@
 			</base-card>
 		</section>
 		<section>
-			<!-- <ul v-if="hasLines">
-				<line-actions v-for="line in trip.lines" :key="line.id" :line="line" :trip-id="tripId"></line-actions>
-			</ul> -->
 			<ul v-if="hasLines">
-				<!-- <draggable :list="trip.lines" :disabled="!enabled" item-key="order" class="list-group"
-					ghost-class="ghost" :move="checkMove" @start="dragging = true" @end="dragging = false"> -->
 				<draggable :list="trip.lines" :disabled="!enabled" item-key="order" class="list-group"
 					ghost-class="ghost" @start="dragging = true" @end="onEnd">
 					<template #item="{ element }">
@@ -50,7 +45,7 @@ import LineForm from '../../components/lines/LineForm.vue';
 import LineActions from '../../components/lines/LineActions.vue';
 
 export default {
-	name: 'TripAdd',
+	name: 'TripEdit',
 	props: ['tripId'],
 	components: {
 		draggable,
@@ -87,6 +82,9 @@ export default {
 			this.isLoading = false;
 		},
 		async updateTripLocal(tripData) {
+			console.log('tripData');
+			console.log(tripData);
+			console.log('tu je nejaky problem');
 			this.isLoading = true;
 			try {
 				await this.$store.dispatch('trips/updateTrip', tripData);

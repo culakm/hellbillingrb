@@ -56,10 +56,6 @@ export default {
 				this.name.isValid = false;
 				this.formIsValid = false;
 			}
-			if (this.description.val === '') {
-				this.description.isValid = false;
-				this.formIsValid = false;
-			}
 		},
 		submitForm() {
 			this.validateForm();
@@ -117,11 +113,6 @@ input[type='checkbox'] {
 
 input[type='checkbox']:focus {
 	outline: #3d008d solid 1px;
-}
-
-h3 {
-	margin: 0.5rem 0;
-	font-size: 1rem;
 }
 
 .invalid label {

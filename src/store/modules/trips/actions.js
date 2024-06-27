@@ -45,6 +45,7 @@ export default {
 	},
 	async updateTrip(context, payload) {
 		const tripId = payload.tripId;
+		console.log('action updateTrip payload', payload);
 		const tripData = {
 			tripId: tripId,
 			name: payload.name,
@@ -70,7 +71,7 @@ export default {
 			};
 			trips.push(trip);
 		});
-		context.commit('setTrips', trips);
+		context.commit('loadTrips', trips);
 	},
 	async tripById(context, tripId) {
 		const docRef = doc(db, "trips", tripId);

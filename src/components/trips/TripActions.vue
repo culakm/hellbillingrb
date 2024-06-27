@@ -1,7 +1,5 @@
 <template>
-	<!-- <router-link :to="tripViewLink"> -->
 	<li>
-		<h3>id: {{ tripId }} Actions</h3>
 		<h3>{{ name }}</h3>
 		<p>{{ description }}</p>
 		<div class="actions">
@@ -10,7 +8,6 @@
 			<base-button @click="deleteTrip">Delete</base-button>
 		</div>
 	</li>
-	<!-- </router-link> -->
 </template>
 
 <script>
@@ -19,11 +16,10 @@ export default {
 	props: ['tripId', 'name', 'description'],
 	computed: {
 		tripViewLink() {
-			// return this.$route.path + `/view/${this.tripId}`;
+
 			return `/trip/view/${this.tripId}`;
 		},
 		tripEditLink() {
-			// return this.$route.path + `/${this.tripId}`;
 			return `/trip/edit/${this.tripId}`;
 		},
 	},

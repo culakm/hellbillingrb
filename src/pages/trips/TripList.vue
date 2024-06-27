@@ -48,18 +48,17 @@ export default {
 	},
 	methods: {
 		...mapActions('trips', ['loadTrips']),
-		handleError() {
-			this.error = null;
-		},
 		async loadTripsLocal(refresh = false) {
 			this.isLoading = true;
 			try {
 				await this.loadTrips({ forcedRefresh: refresh });
 			} catch (error) {
-				// this.$options.name musi byt definovene name v komponente
 				this.error = `Component ${this.$options.name}, error: ${error.message}` || 'Something went wrong!';
 			}
 			this.isLoading = false;
+		},
+		handleError() {
+			this.error = null;
 		},
 	},
 

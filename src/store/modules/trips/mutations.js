@@ -2,6 +2,11 @@ function sortLines(lines) {
 	lines.sort((a, b) => a.order - b.order);
 }
 
+function sortTrips(trips) {
+
+	trips.sort((a, b) => a.name.localeCompare(b.name));
+}
+
 export default {
 	updateLines(state, payload) {
 		state.trip.lines = payload;
@@ -21,6 +26,7 @@ export default {
 	},
 	addTrip(state, payload) {
 		state.trips.push(payload);
+		sortLines(state.trips);
 	},
 	updateTrip(state, payload) {
 		var trip = state.trips.find(trip => trip.id === payload.tripId);
@@ -32,8 +38,9 @@ export default {
 		const tripIndex = state.trips.findIndex(trip => trip.id === tripId);
 		state.trips.splice(tripIndex, 1);
 	},
-	setTrips(state, payload) {
+	loadTrips(state, payload) {
 		state.trips = payload;
+		sortTrips(state.trips);
 	},
 	setTrip(state, payload) {
 		state.trip = payload;
