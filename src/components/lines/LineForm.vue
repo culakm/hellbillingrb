@@ -78,7 +78,7 @@ export default {
 	},
 	computed: {
 		tulipSrc() {
-			return `/src/static/img/${this.tulip.val}.svg`;
+			return `/img/${this.tulip.val}.svg`;
 		},
 	},
 	methods: {

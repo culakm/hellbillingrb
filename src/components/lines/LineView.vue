@@ -47,7 +47,7 @@ export default {
 			this.isLoading = false;
     },
     tulipSrc(tulip) {
-			return `/src/static/img/${tulip}.svg`;
+			return `/img/${tulip}.svg`;
 		},
     handleError() {
 			this.error = null;
