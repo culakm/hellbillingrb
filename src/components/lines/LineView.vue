@@ -5,7 +5,7 @@
 	<div class="roadbook-item" :class="{ passed: line.passed }" @click="passedLineLocal()">
       <div class="order">{{ line.order }}</div>
       <div class="name">{{ line.name }}</div>
-      <div class="tulip">{{ line.tulip }}</div>
+      <div class="tulip"><img class="tulip-img" v-if="line.tulip" :src="tulipSrc(line.tulip)"/></div>
       <div class="roadNo">{{ line.roadNo }}</div>
       <div class="note">{{ line.note }}</div>
     </div>
@@ -46,6 +46,9 @@ export default {
 			}
 			this.isLoading = false;
     },
+    tulipSrc(tulip) {
+			return `/src/static/img/${tulip}.svg`;
+		},
     handleError() {
 			this.error = null;
 		},
@@ -85,5 +88,20 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.tulip {
+  width: 100%; /* Ensures the div takes the full width of its parent */
+  height: auto; /* Adjusts the height automatically */
+  display: flex; /* Uses Flexbox for centering */
+  justify-content: center; /* Centers the image horizontally */
+  align-items: center; /* Centers the image vertically */
+}
+
+.tulip-img {
+  max-width: 100%; /* Image can grow up to the div's width, but no more */
+  max-height: 100%; /* Image can grow up to the div's height, but no more */
+  height: 80px; /* Maintains the aspect ratio */
+  width: auto; /* Adjusts the width automatically */
 }
 </style>

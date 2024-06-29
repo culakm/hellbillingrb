@@ -7,10 +7,17 @@
 		</div>
 		<div class="form-control" :class="{ invalid: !tulip.isValid }">
 			<label for="tulip">Tulip</label>
-			<textarea id="tulip" rows="2" v-model.trim="tulip.val" @blur="clearValidity('tulip')"></textarea>
-			<p v-if="!tulip.isValid">Tulip must not be empty!</p>
+			<select id="tulip" v-model="tulip.val" @change="clearValidity('tulip')">
+				<option value="">Select a Tulip</option>
+				<option value="tulipR">Tulip Right</option>
+				<option value="tulipL">Tulip Left</option>
+				<option value="tulipF">Tulip Front</option>
+			</select>
+			<!-- Image preview -->
+			<img class="tulip-img" v-if="tulip.val" :src="tulipSrc" alt="Selected Tulip" />
+			<p v-if="!tulip.isValid">Tulip must be selected!</p>
 		</div>
-		<div class="form-control" :class="{ invalid: !roadNo.isValid }">
+		<div class="form-control form-control-tulip" :class="{ invalid: !roadNo.isValid }">
 			<label for="roadNo">RoadNo</label>
 			<input type="text" id="roadNo" v-model.trim="roadNo.val" @blur="clearValidity('roadNo')" />
 			<p v-if="!roadNo.isValid">RoadNo must not be empty!</p>
@@ -68,6 +75,11 @@ export default {
 		this.tulip.val = this.line.tulip || '';
 		this.roadNo.val = this.line.roadNo || null;
 		this.note.val = this.line.note || '';
+	},
+	computed: {
+		tulipSrc() {
+			return `/src/static/img/${this.tulip.val}.svg`;
+		},
 	},
 	methods: {
 		clearValidity(input) {
@@ -172,5 +184,21 @@ h3 {
 .invalid input,
 .invalid textarea {
 	border: 1px solid red;
+}
+
+/* .tulip-img {
+	width: 40px;
+	height: 40px;
+} */
+
+.form-control-tulip {
+  display: flex;
+  align-items: center; /* Aligns items vertically in the center */
+  gap: 20px; /* Adds some space between the select and the image */
+}
+
+.tulip-img {
+  max-width: 100px; /* Adjusts the image width */
+  height: auto; /* Keeps the image aspect ratio */
 }
 </style>
