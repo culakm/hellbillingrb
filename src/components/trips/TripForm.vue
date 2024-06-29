@@ -14,6 +14,7 @@
 		<p v-if="!formIsValid">Please fix errors</p>
 		<base-button v-if="Object.keys(trip).length === 0">Add Trip</base-button>
 		<base-button v-else>Save Trip</base-button>
+		<base-button link :to="tripViewLink">View</base-button>
 	</form>
 </template>
 
@@ -40,6 +41,11 @@ export default {
 			},
 			formIsValid: true,
 		};
+	},
+	computed: {
+		tripViewLink() {
+			return `/trip/view/${this.tripId}`;
+		},
 	},
 	created() {
 		this.tripId = this.trip.id || null;

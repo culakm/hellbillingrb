@@ -104,6 +104,7 @@ export default {
 				tulip: this.tulip.val,
 				roadNo: this.roadNo.val,
 				note: this.note.val,
+				passed: false,
 			};
 			this.order.val = null;
 			this.name.val = '';

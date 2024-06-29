@@ -82,9 +82,6 @@ export default {
 			this.isLoading = false;
 		},
 		async updateTripLocal(tripData) {
-			console.log('tripData');
-			console.log(tripData);
-			console.log('tu je nejaky problem');
 			this.isLoading = true;
 			try {
 				await this.$store.dispatch('trips/updateTrip', tripData);

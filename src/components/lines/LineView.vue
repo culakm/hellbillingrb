@@ -1,14 +1,19 @@
 <template>
-	<li class="line-container">
-		<div class="line-item line-item-order">{{ line.order }}</div>
-		<div class="line-item line-item-name">{{ line.name }}</div>
-		<div class="line-item line-item-tulip">{{ line.tulip }}</div>
-		<div class="line-item line-item-roadNo">{{ line.roadNo }}</div>
-		<div class="line-item line-item-note">{{ line.note }}</div>
-	</li>
+  <base-dialog @close="handleError" :show="!!error" title="An error is ocurred!">
+			<p>{{ error }}</p>
+	</base-dialog>
+	<div class="roadbook-item" :class="{ passed: line.passed }" @click="passedLineLocal()">
+      <div class="order">{{ line.order }}</div>
+      <div class="name">{{ line.name }}</div>
+      <div class="tulip">{{ line.tulip }}</div>
+      <div class="roadNo">{{ line.roadNo }}</div>
+      <div class="note">{{ line.note }}</div>
+    </div>
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex';
+
 export default {
 	name: 'LineView',
 	props: {
@@ -17,52 +22,68 @@ export default {
 			required: true,
 			default: () => ({}),
 		},
+    tripId: {
+      type: String,
+      required: true,
+    },
 	},
+  data() {
+		return {
+			isLoading: false,
+			error: null,
+		};
+	},
+  methods: {
+    ...mapActions('trips', ['passedLine']),
+    async passedLineLocal() {
+      this.isLoading = true;
+      const passed = !this.line.passed;
+      try {
+				await this.passedLine({ tripId: this.tripId, lineId: this.line.id, passed: passed});
+			} catch (error) {
+				this.error = `Component ${this.$options.name}, Padlo fetch : ${error.message}` || 'Something went wrong!';
+				return;
+			}
+			this.isLoading = false;
+    },
+    handleError() {
+			this.error = null;
+		},
+  },
 };
 </script>
 
 <style scoped>
-.line-container {
-	width: 100%;
-	display: flex;
-	justify-content: space-between;
-	margin: 0;
-	border: 1px solid #424242;
-	padding: 0;
+.roadbook-item {
+  display: grid;
+  grid-template-columns: 0.5fr 1fr 0.5fr 1fr 2fr; /* Adjusted column widths */
+  width: 100%;
+  min-height: 100px; /* Adjust based on content */
+  padding: 10px;
+  box-sizing: border-box; /* Include padding in height calculation */
+  border-top: 1px solid #ccc;
 }
 
-.line-item {
-	margin: 0;
-	padding: 0.5rem;
-	border: 1px solid #424242;
-	text-align: center;
-	font-size: 20px;
-	/* Set the font size to 20px */
-	line-height: 1.2;
-	/* This is typically a good line-height for readability */
-	height: calc(1.5em * 3);
-	/* Set the height to accommodate 3 lines of text */
-	overflow: auto;
-	/* Add a scrollbar if the content exceeds the height */
+.roadbook-item.passed {
+  background-color: #f0f0f0;
 }
 
-.line-item.line-item-order {
-	flex: 0 0 5%;
+.order, .name, .tulip, .roadNo, .note {
+  text-align: center;
+  border-left: 1px solid #ccc;
+  padding: 10px;
 }
 
-.line-item.line-item-name {
-	flex: 0 0 35%;
+.order {
+  border-left: none;
 }
 
-.line-item.line-item-tulip {
-	flex: 0 0 25%;
-}
-
-.line-item.line-item-roadNo {
-	flex: 0 0 10%;
-}
-
-.line-item.line-item-note {
-	flex: 0 0 25%;
+/* Centering order, tulip, and roadNo */
+.roadbook-item > :nth-child(1),
+.roadbook-item > :nth-child(3),
+.roadbook-item > :nth-child(4) {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>

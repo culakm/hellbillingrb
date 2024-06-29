@@ -16,7 +16,6 @@ export default {
 	props: ['tripId', 'name', 'description'],
 	computed: {
 		tripViewLink() {
-
 			return `/trip/view/${this.tripId}`;
 		},
 		tripEditLink() {

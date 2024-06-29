@@ -1,4 +1,5 @@
 <template>
+	<div class="scroll-to-top" @click="goHome()">←</div>
 	<base-dialog @close="handleError" :show="!!error" title="An error is ocurred!">
 		<p>{{ error }}</p>
 	</base-dialog>
@@ -8,9 +9,9 @@
 	<div v-else>
 		<section>
 			<trip-full v-if="trip" :trip="trip"></trip-full>
-			<ul v-if="hasLines">
-				<line-view v-for="line in trip.lines" :key="line.id" :line="line"></line-view>
-			</ul>
+			<div v-if="hasLines" class="roadbook">
+				<line-view v-for="line in trip.lines" :key="line.id" :line="line" :trip-id="tripId"></line-view>
+			</div>
 		</section>
 	</div>
 </template>
@@ -52,6 +53,9 @@ export default {
 			}
 			this.isLoading = false;
 		},
+		goHome() {
+			this.$router.push('/');
+		},
 		handleError() {
 			this.error = null;
 		},
@@ -60,9 +64,31 @@ export default {
 </script>
 
 <style scoped>
-ul {
-	width: 100%;
-	padding: 0;
-	list-style-type: none;
+.roadbook {
+  width: calc(100% - 20px); /* Adjust for body padding */
+  margin: 0 auto; /* Center the roadbook */
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 1px solid #ccc;
+}
+
+.scroll-to-top {
+	position: fixed;
+	top: 20px;
+	right: 20px;
+	background-color: #007bff;
+	color: #fff;
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	text-align: center;
+	line-height: 40px;
+	font-size: 24px;
+	text-decoration: none;
+	z-index: 999; /* Ensure it's above other content */
+}
+
+.scroll-to-top:hover {
+	background-color: #0056b3;
 }
 </style>

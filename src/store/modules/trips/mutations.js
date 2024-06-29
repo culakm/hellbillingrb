@@ -8,6 +8,12 @@ function sortTrips(trips) {
 }
 
 export default {
+	passedLine(state, payload) {
+		const lineId = payload.lineId;
+		const passed = payload.passed;
+		const line = state.trip.lines.find(line => line.id === lineId);
+		line.passed = passed;
+	},
 	updateLines(state, payload) {
 		state.trip.lines = payload;
 	},
@@ -21,7 +27,6 @@ export default {
 	},
 	addLine(state, payload) {
 		state.trip.lines.push(payload);
-		// state.trip.lines.sort((a, b) => a.order - b.order);
 		sortLines(state.trip.lines);
 	},
 	addTrip(state, payload) {

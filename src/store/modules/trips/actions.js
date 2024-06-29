@@ -2,6 +2,14 @@ import { db } from '../../../firebase.js';
 import { collection, doc, getDoc, addDoc, setDoc, updateDoc, deleteDoc, getDocs } from "firebase/firestore";
 
 export default {
+	async passedLine(context, payload) {
+		const tripId = payload.tripId;
+		const lineId = payload.lineId;
+		const passed = payload.passed;
+		const lineRef = doc(db, "trips", tripId, "lines", lineId);
+		await updateDoc(lineRef, { passed: passed });
+		context.commit('passedLine', { lineId: lineId, passed: passed});
+	},
 	async updateLines(context, payload) {
 		const tripId = payload.tripId;
 		const lines = payload.lines;
@@ -10,7 +18,6 @@ export default {
 			const lineRef = doc(linesCollectionRef, line.id);
 			await updateDoc(lineRef, line);
 		});
-		// console.log('lines updated', lines);
 		context.commit('updateLines', lines);
 	},
 	async deleteLine(context, payload) {
@@ -27,6 +34,7 @@ export default {
 			tulip: payload.tulip,
 			roadNo: payload.roadNo,
 			note: payload.note,
+			passed: payload.passed,
 		};
 
 		const lineRef = collection(db, `trips/${tripId}/lines`);
