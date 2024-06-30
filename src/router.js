@@ -5,7 +5,7 @@ import TripList from './pages/trips/TripList.vue';
 import TripAdd from './pages/trips/TripAdd.vue';
 import TripEdit from './pages/trips/TripEdit.vue';
 import TripView from './pages/trips/TripView.vue';
-
+import TripViewPrint from './pages/trips/TripViewPrint.vue';
 
 import indexPage from './pages/IndexPage.vue';
 
@@ -21,6 +21,7 @@ const router = createRouter({
 		{ name: 'trip-add', path: '/trip/add', component: TripAdd, meta: { requiresAuth: true } },
 		{ name: 'trip-edit', path: '/trip/edit/:tripId', component: TripEdit, props: true, meta: { requiresAuth: true } },
 		{ name: 'trip-view', path: '/trip/view/:tripId', component: TripView, props: true, meta: { requiresAuth: true } },
+		{ name: 'trip-view-print', path: '/trip/view/print/:tripId', component: TripViewPrint, props: true, meta: { requiresAuth: true } },
 
 		{ name: 'auth', path: '/auth', component: UserAuth, meta: { requiresUnauth: true } },
 		{ path: '/:notFound(.*)', component: NotFound }

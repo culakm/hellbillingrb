@@ -1,5 +1,4 @@
 <template>
-	<div class="go-home" @click="goHome()"></div>
 	<base-dialog @close="handleError" :show="!!error" title="An error is ocurred!">
 		<p>{{ error }}</p>
 	</base-dialog>
@@ -8,7 +7,6 @@
 	</div>
 	<div v-else>
 		<section>
-			<trip-full v-if="trip" :trip="trip"></trip-full>
 			<div v-if="hasLines" class="roadbook">
 				<line-view v-for="line in trip.lines" :key="line.id" :line="line" :trip-id="tripId"></line-view>
 			</div>
@@ -38,9 +36,9 @@ export default {
 		...mapGetters('trips', ['trip', 'hasLines'])
 	},
 	async created() {
-
 		const tripId = this.$route.params.tripId;
-		this.tripByIdLocal(tripId);
+		await this.tripByIdLocal(tripId); // tu je await aby sa setLinesPassedFalse() urobila az potom
+		this.setLinesPassedFalse();
 	},
 	methods: {
 		...mapActions('trips', ['tripById']),
@@ -53,8 +51,11 @@ export default {
 			}
 			this.isLoading = false;
 		},
-		goHome() {
-			this.$router.push('/trips');
+		setLinesPassedFalse() {
+			this.trip.lines.forEach(line => {
+				console.log(line);
+				line.passed = false;
+			});
 		},
 		handleError() {
 			this.error = null;
@@ -70,37 +71,5 @@ export default {
   background-color: #fff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   border: 1px solid #ccc;
-}
-
-.go-home {
-	position: fixed;
-	top: 20px;
-	right: 20px;
-	background-color: #007bff;
-	color: #fff;
-	width: 40px;
-	height: 40px;
-	border-radius: 50%;
-	text-align: center;
-	line-height: 40px;
-	font-size: 24px;
-	text-decoration: none;
-	z-index: 999; /* Ensure it's above other content */
-}
-
-.go-home::after {
-    content: "Trips"; /* Text you want to add */
-    position: absolute;
-    top: 50%; /* Center vertically */
-    left: 50%; /* Center horizontally */
-    transform: translate(-50%, -50%); /* Adjust both horizontally and vertically */
-    color: #fff; /* Text color */
-    font-size: 14px; /* Text size */
-    line-height: 1; /* Ensure the text aligns properly */
-}
-
-.go-home:hover {
-    background-color: #0056b3;
-    cursor: pointer; /* Indicates a clickable element, commonly used for links */
 }
 </style>

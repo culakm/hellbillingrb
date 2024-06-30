@@ -33,9 +33,15 @@ export default {
 			error: null,
 		};
 	},
+  computed: {
+    isTripViewPrint() {
+			return this.$route.path.includes("trip/view/print") ? true : false;
+		}
+  },
   methods: {
     ...mapActions('trips', ['passedLine']),
     async passedLineLocal() {
+      if (this.isTripViewPrint) { return; }
       this.isLoading = true;
       const passed = !this.line.passed;
       try {

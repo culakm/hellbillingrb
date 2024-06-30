@@ -1,12 +1,15 @@
 
 import { RouterLink } from 'vue-router';
 <template>
-	<button v-if="!link" :class="mode">
-		<slot></slot>
-	</button>
-	<RouterLink v-else :to="to" :class="mode">
-		<slot></slot>
-	</RouterLink>
+    <button v-if="!link" :class="mode">
+        <slot></slot>
+    </button>
+    <RouterLink v-else-if="link && !newTab" :to="to" :class="mode">
+        <slot></slot>
+    </RouterLink>
+    <a v-else :href="to" :class="mode" target="_blank" rel="noopener noreferrer">
+        <slot></slot>
+    </a>
 </template>
 
 <script>
@@ -30,6 +33,11 @@ export default {
 			required: false,
 			default: '/'
 		},
+		newTab: {
+			type: Boolean,
+			required: false,
+			default: false,
+		}
 	}
 };
 </script>

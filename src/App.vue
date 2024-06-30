@@ -1,5 +1,5 @@
 <template>
-	<the-header v-if="!isTripViewRoute"></the-header>
+	<the-header v-if="!isTripViewPrint"></the-header>
 	<router-view></router-view>
 </template>
 
@@ -14,8 +14,8 @@ export default {
 		didAutoLogout() {
 			return this.$store.getters.didAutoLogout;
 		},
-		isTripViewRoute() {
-			return this.$route.path.includes("trip/view") ? true : false;
+		isTripViewPrint() {
+			return this.$route.path.includes("trip/view/print") ? true : false;
 		}
 	},
 	created() {

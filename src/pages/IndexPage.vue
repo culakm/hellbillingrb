@@ -1,9 +1,18 @@
 <template>
-	<section>
-		<base-card>
-			<h2>Welcome!</h2>
-			<p>Uvodna stranka</p>
-			<img src="/img/tulipR.svg" alt="Logo" />
-		</base-card>
-	</section>
+    <section>
+        <base-card>
+            <div class="content-container">
+                <h2>Welcome!</h2>
+                <img src="/img/tulipR.svg" alt="Logo" />
+            </div>
+        </base-card>
+    </section>
 </template>
+
+<style>
+.content-container {
+    display: flex;
+    align-items: center; /* Aligns items vertically in the center */
+    justify-content: center; /* Adjust this as needed */
+}
+</style>
