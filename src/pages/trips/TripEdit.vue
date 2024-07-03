@@ -123,16 +123,16 @@ export default {
 </script>
 
 <style scoped>
-.buttons {
-	margin-top: 35px;
-}
+	.buttons {
+		margin-top: 35px;
+	}
 
-.ghost {
-	opacity: 0.5;
-	background: #c8ebfb;
-}
+	.ghost {
+		opacity: 0.5;
+		background: #c8ebfb;
+	}
 
-.not-draggable {
-	cursor: no-drop;
-}
+	.not-draggable {
+		cursor: no-drop;
+	}
 </style>

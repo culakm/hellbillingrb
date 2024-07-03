@@ -4,10 +4,10 @@
 	</base-dialog>
 	<div class="roadbook-item" :class="{ passed: line.passed }" @click="passedLineLocal()">
       <div class="order">{{ line.order }}</div>
-      <div class="name">{{ line.name }}</div>
+      <div class="name" v-html="line.name"></div>
       <div class="tulip"><img class="tulip-img" v-if="line.tulip" :src="tulipSrc(line.tulip)"/></div>
       <div class="roadNo">{{ line.roadNo }}</div>
-      <div class="note">{{ line.note }}</div>
+      <div class="note" v-html="line.note"></div>
     </div>
 </template>
 
@@ -65,7 +65,7 @@ export default {
 <style scoped>
 .roadbook-item {
   display: grid;
-  grid-template-columns: 0.5fr 1fr 0.5fr 1fr 2fr; /* Adjusted column widths */
+  grid-template-columns: 0.1fr 1.3fr 1.1fr 0.5fr 2fr; /* Adjusted column widths */
   width: 100%;
   min-height: 100px; /* Adjust based on content */
   padding: 10px;

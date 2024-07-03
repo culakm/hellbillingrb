@@ -1,5 +1,6 @@
 <template>
 	<div class="go-home" @click="goHome()"></div>
+	<div class="go-fullscreen" @click="toggle()"></div>
 	<base-dialog @close="handleError" :show="!!error" title="An error is ocurred!">
 		<p>{{ error }}</p>
 	</base-dialog>
@@ -7,12 +8,16 @@
 		<base-spinner></base-spinner>
 	</div>
 	<div v-else>
-		<section>
-			<trip-full v-if="trip" :trip="trip"></trip-full>
-			<div v-if="hasLines" class="roadbook">
-				<line-view v-for="line in trip.lines" :key="line.id" :line="line" :trip-id="tripId"></line-view>
+		<fullscreen v-model="fullscreen">
+			<div class="scrollable-content">
+				<section>
+					<trip-full v-if="trip" :trip="trip"></trip-full>
+					<div v-if="hasLines" class="roadbook">
+						<line-view v-for="line in trip.lines" :key="line.id" :line="line" :trip-id="tripId"></line-view>
+					</div>
+				</section>
 			</div>
-		</section>
+		</fullscreen>
 	</div>
 </template>
 
@@ -30,6 +35,7 @@ export default {
 	},
 	data() {
 		return {
+			fullscreen: false,
 			isLoading: false,
 			error: null,
 		};
@@ -55,6 +61,9 @@ export default {
 		},
 		goHome() {
 			this.$router.push('/trips');
+		},
+		toggle() {
+			this.fullscreen = !this.fullscreen;
 		},
 		handleError() {
 			this.error = null;
@@ -102,5 +111,65 @@ export default {
 .go-home:hover {
     background-color: #0056b3;
     cursor: pointer; /* Indicates a clickable element, commonly used for links */
+}
+
+.go-fullscreen {
+	position: fixed;
+	top: 80px;
+	right: 20px;
+	background-color: #ff3c00;
+	color: #fff;
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	text-align: center;
+	line-height: 40px;
+	font-size: 24px;
+	text-decoration: none;
+	z-index: 999; /* Ensure it's above other content */
+}
+
+.go-fullscreen::after {
+    content: "Full"; /* Text you want to add */
+    position: absolute;
+    top: 50%; /* Center vertically */
+    left: 50%; /* Center horizontally */
+    transform: translate(-50%, -50%); /* Adjust both horizontally and vertically */
+    color: #fff; /* Text color */
+    font-size: 14px; /* Text size */
+    line-height: 1; /* Ensure the text aligns properly */
+}
+
+.go-fullscreen:hover {
+    background-color: #a32600;
+    cursor: pointer; /* Indicates a clickable element, commonly used for links */
+}
+
+.scrollable-content {
+  height: 100vh; /* Full viewport height */
+  overflow-y: auto; /* Enable vertical scrolling */
+  padding: 20px; /* Add some padding */
+}
+
+/* Ensure the fullscreen element takes up the full screen */
+:fullscreen {
+  width: 100%;
+  height: 100%;
+}
+
+/* Styles for browsers that don't support :fullscreen */
+:-webkit-full-screen {
+  width: 100%;
+  height: 100%;
+}
+
+:-moz-full-screen {
+  width: 100%;
+  height: 100%;
+}
+
+:-ms-fullscreen {
+  width: 100%;
+  height: 100%;
 }
 </style>
