@@ -66,14 +66,14 @@ export default {
 </script>
 
 <style scoped>
-ul {
-	list-style: none;
-	margin: 0;
-	padding: 0;
-}
+	ul {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
 
-.controls {
-	display: flex;
-	justify-content: space-between;
-}
+	.controls {
+		display: flex;
+		justify-content: space-between;
+	}
 </style>../../components/trips/TripActions.vue

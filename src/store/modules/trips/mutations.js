@@ -25,6 +25,13 @@ export default {
 			line.order = index + 1;
 		});
 	},
+	updateLine(state, payload) {
+		const line = state.trip.lines.find(line => line.id === payload.lineId);
+		line.name = payload.name;
+		line.tulip = payload.tulip;
+		line.roadNo = payload.roadNo;
+		line.note = payload.note;
+	},
 	addLine(state, payload) {
 		state.trip.lines.push(payload);
 		sortLines(state.trip.lines);
@@ -34,7 +41,7 @@ export default {
 		sortLines(state.trips);
 	},
 	updateTrip(state, payload) {
-		var trip = state.trips.find(trip => trip.id === payload.tripId);
+		const trip = state.trip;
 		trip.name = payload.name;
 		trip.description = payload.description;
 	},

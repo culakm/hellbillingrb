@@ -8,7 +8,7 @@ export default {
 		const passed = payload.passed;
 		const lineRef = doc(db, "trips", tripId, "lines", lineId);
 		await updateDoc(lineRef, { passed: passed });
-		context.commit('passedLine', { lineId: lineId, passed: passed});
+		context.commit('passedLine', { lineId: lineId, passed: passed });
 	},
 	async updateLines(context, payload) {
 		const tripId = payload.tripId;
@@ -43,6 +43,21 @@ export default {
 
 		context.commit('addLine', lineData);
 	},
+	async editLine(context, payload) {
+		const tripId = payload.tripId;
+		const lineId = payload.lineId;
+		const lineData = {
+			lineId: lineId,
+			order: payload.order,
+			name: payload.name,
+			tulip: payload.tulip,
+			roadNo: payload.roadNo,
+			note: payload.note,
+			passed: payload.passed,
+		};
+		await setDoc(doc(db, `trips/${tripId}/lines/`, lineId), lineData);
+		context.commit('updateLine', lineData);
+	},
 	async addTrip(context, payload) {
 		const tripData = {
 			name: payload.name,
@@ -53,7 +68,6 @@ export default {
 	},
 	async updateTrip(context, payload) {
 		const tripId = payload.tripId;
-		console.log('action updateTrip payload', payload);
 		const tripData = {
 			tripId: tripId,
 			name: payload.name,

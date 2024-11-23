@@ -22,12 +22,14 @@
 		</section>
 		<section>
 			<ul v-if="hasLines">
-				<draggable :list="trip.lines" :disabled="!enabled" item-key="order" class="list-group"
+				<!-- <draggable :list="trip.lines" :disabled="!draggableEnabled" item-key="order" class="list-group"
+					ghost-class="ghost" @start="dragging = true" @end="onEnd"> -->
+				<draggable :list="trip.lines" :disabled="!draggableEnabled" item-key="order" class="list-group"
 					ghost-class="ghost" @start="dragging = true" @end="onEnd">
 					<template #item="{ element }">
-						<div class="list-group-item" :class="{ 'not-draggable': !enabled }">
-							<line-actions class="line-item" :key="element.id" :line="element"
-								:trip-id="tripId"></line-actions>
+						<div class="list-group-item" :class="{ 'not-draggable': !draggableEnabled }">
+							<line-actions class="line-item" :key="element.id" :line="element" :trip-id="tripId"
+								@line-is-edited="lineIsEdited"></line-actions>
 						</div>
 					</template>
 				</draggable>
@@ -57,7 +59,7 @@ export default {
 		return {
 			isLoading: false,
 			error: null,
-			enabled: true,
+			draggableEnabled: true,
 			dragging: false,
 
 		};
@@ -86,7 +88,7 @@ export default {
 			try {
 				await this.$store.dispatch('trips/updateTrip', tripData);
 			} catch (error) {
-				this.error = `Component ${this.$options.name}, Padlo fetch : ${error.message}` || 'Something went wrong!';
+				this.error = `Component huhuh ${this.$options.name}, Padlo fetch : ${error.message}` || 'Something went wrong!';
 				return;
 			}
 
@@ -106,6 +108,9 @@ export default {
 				return;
 			}
 			this.isLoading = false;
+		},
+		lineIsEdited() {
+			this.draggableEnabled = !this.draggableEnabled;
 		},
 		handleError() {
 			this.error = null;

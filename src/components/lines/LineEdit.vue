@@ -2,59 +2,56 @@
   <base-dialog @close="handleError" :show="!!error" title="An error is ocurred!">
     <p>{{ error }}</p>
   </base-dialog>
-  <div class="roadbook-item" :class="{ passed: line.passed }" @click="passedLineLocal()">
+  <div class="roadbook-item">
     <div class="order">{{ line.order }}</div>
-    <div class="name" v-html="line.name"></div>
-    <div class="tulip"><img class="tulip-img" v-if="line.tulip" :src="tulipSrc(line.tulip)" /></div>
-    <div class="roadNo">{{ line.roadNo }}</div>
-    <div class="note" v-html="line.note"></div>
+    <input class="name" type="text" id="name" v-model.trim="line.name" />
+    <select id="tulip" v-model="line.tulip">
+      <option value="">Select a Tulip</option>
+      <option value="tulipR">Tulip Right</option>
+      <option value="tulipL">Tulip Left</option>
+      <option value="tulipF">Tulip Front</option>
+    </select>
+    <input type="text" id="roadNo" v-model.trim="line.roadNo" />
+    <textarea id="note" rows="2" v-model.trim="line.note"></textarea>
   </div>
+  <base-button @click="editLineLocal">Save</base-button>
+  <base-button @click="cancelLineLocal">Cancel</base-button>
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex';
 
 export default {
-  name: 'LineView',
+  name: 'LineEdit',
+  emits: ['save-line', 'cancel-edit'],
   props: {
     line: {
       type: Object,
       required: true,
       default: () => ({}),
     },
-    tripId: {
-      type: String,
-      required: true,
-    },
   },
   data() {
     return {
       isLoading: false,
       error: null,
+      origLine: { ...this.line },
     };
   },
-  computed: {
-    isTripViewPrint() {
-      if (this.$route.path.includes("trip/view/print") || this.$route.path.includes("trip/edit")) {
-        return true;
-      } else {
-        return false;
-      }
-    }
-  },
   methods: {
-    ...mapActions('trips', ['passedLine']),
-    async passedLineLocal() {
-      if (this.isTripViewPrint) { return; }
-      this.isLoading = true;
-      const passed = !this.line.passed;
-      try {
-        await this.passedLine({ tripId: this.tripId, lineId: this.line.id, passed: passed });
-      } catch (error) {
-        this.error = `Component ${this.$options.name}, Padlo fetch : ${error.message}` || 'Something went wrong!';
-        return;
-      }
-      this.isLoading = false;
+    editLineLocal() {
+      const lineData = {
+        lineId: this.line.id,
+        order: this.line.order,
+        name: this.line.name,
+        tulip: this.line.tulip,
+        roadNo: this.line.roadNo,
+        note: this.line.note,
+        passed: this.line.passed,
+      };
+      this.$emit('save-line', lineData);
+    },
+    cancelLineLocal() {
+      this.$emit('cancel-edit', this.origLine);
     },
     tulipSrc(tulip) {
       return `/img/${tulip}.svg`;
@@ -62,13 +59,34 @@ export default {
     handleError() {
       this.error = null;
     },
+    submitForm() {
+      this.validateForm();
+      if (!this.formIsValid) {
+        return;
+      }
+      const formData = {
+        lineId: this.lineId,
+        order: this.order.val,
+        name: this.name.val,
+        tulip: this.tulip.val,
+        roadNo: this.roadNo.val,
+        note: this.note.val,
+        passed: false,
+      };
+      this.order.val = null;
+      this.name.val = '';
+      this.tulip.val = '';
+      this.roadNo.val = '';
+      this.note.val = '';
+
+      this.$emit('save-line', formData);
+    },
   },
 };
 </script>
 
 <style scoped>
   .roadbook-item {
-    user-select: none;
     display: grid;
     grid-template-columns: 0.1fr 1.3fr 1.1fr 0.5fr 2fr;
     /* Adjusted column widths */
@@ -79,10 +97,6 @@ export default {
     box-sizing: border-box;
     /* Include padding in height calculation */
     border-top: 1px solid #ccc;
-  }
-
-  .roadbook-item.passed {
-    background-color: #f0f0f0;
   }
 
   .order,
