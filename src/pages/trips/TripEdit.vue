@@ -34,7 +34,6 @@
 			</ul>
 		</section>
 	</div>
-	<!-- <raw-displayer v-if="hasLines" :value="trip.lines" title="List" /> -->
 </template>
 
 <script>
