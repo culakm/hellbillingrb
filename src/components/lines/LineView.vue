@@ -22,10 +22,6 @@ export default {
       required: true,
       default: () => ({}),
     },
-    tripId: {
-      type: String,
-      required: true,
-    },
   },
   data() {
     return {
@@ -49,7 +45,7 @@ export default {
       this.isLoading = true;
       const passed = !this.line.passed;
       try {
-        await this.passedLine({ tripId: this.tripId, lineId: this.line.id, passed: passed });
+        await this.passedLine({ lineId: this.line.id, passed: passed });
       } catch (error) {
         this.error = `Component ${this.$options.name}, Padlo fetch : ${error.message}` || 'Something went wrong!';
         return;

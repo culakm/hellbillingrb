@@ -5,7 +5,7 @@
 		</base-dialog>
 		<section>
 			<base-card>
-				<h2>Trip:{{ tripId }}</h2>
+				<h2>{{ trip.name }}</h2>
 				<div v-if="isLoading">
 					<base-spinner></base-spinner>
 				</div>
@@ -22,8 +22,6 @@
 		</section>
 		<section>
 			<ul v-if="hasLines">
-				<!-- <draggable :list="trip.lines" :disabled="!draggableEnabled" item-key="order" class="list-group"
-					ghost-class="ghost" @start="dragging = true" @end="onEnd"> -->
 				<draggable :list="trip.lines" :disabled="!draggableEnabled" item-key="order" class="list-group"
 					ghost-class="ghost" @start="dragging = true" @end="onEnd">
 					<template #item="{ element }">

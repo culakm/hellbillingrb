@@ -8,7 +8,7 @@
 	<div v-else>
 		<section>
 			<div v-if="hasLines" class="roadbook">
-				<line-view v-for="line in trip.lines" :key="line.id" :line="line" :trip-id="tripId"></line-view>
+				<line-view v-for="line in trip.lines" :key="line.id" :line="line"></line-view>
 			</div>
 		</section>
 	</div>
@@ -53,7 +53,6 @@ export default {
 		},
 		setLinesPassedFalse() {
 			this.trip.lines.forEach(line => {
-				console.log(line);
 				line.passed = false;
 			});
 		},
@@ -65,11 +64,13 @@ export default {
 </script>
 
 <style scoped>
-.roadbook {
-  width: calc(100% - 20px); /* Adjust for body padding */
-  margin: 0 auto; /* Center the roadbook */
-  background-color: #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  border: 1px solid #ccc;
-}
+	.roadbook {
+		width: calc(100% - 20px);
+		/* Adjust for body padding */
+		margin: 0 auto;
+		/* Center the roadbook */
+		background-color: #fff;
+		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+		border: 1px solid #ccc;
+	}
 </style>

@@ -7,7 +7,7 @@ export default {
 	state() {
 		return {
 			// tieto veci sa nastavuju v mutation (napr. setTrip)
-			trips: [], // myslim ze toto sa nikde nenastavuje a tym padom sa to nemoze pouzit
+			trips: [],
 			trip: null,
 		};
 	},

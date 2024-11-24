@@ -3,7 +3,7 @@ import { collection, doc, getDoc, addDoc, setDoc, updateDoc, deleteDoc, getDocs 
 
 export default {
 	async passedLine(context, payload) {
-		const tripId = payload.tripId;
+		const tripId = context.state.trip.id;
 		const lineId = payload.lineId;
 		const passed = payload.passed;
 		const lineRef = doc(db, "trips", tripId, "lines", lineId);

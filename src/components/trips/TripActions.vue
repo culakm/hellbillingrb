@@ -38,20 +38,26 @@ export default {
 </script>
 
 <style scoped>
-li {
-	margin: 1rem 0;
-	border: 1px solid #424242;
-	border-radius: 12px;
-	padding: 1rem;
-}
-.header {
-    display: flex;
-    align-items: center;
-}
-.header h3, .header p {
-    margin-right: 10px; /* Adjust spacing between h3 and p */
-}
-.actions {
-    margin-top: 10px; /* Adjust spacing between the header and actions */
-}
+    li {
+        margin: 1rem 0;
+        border: 1px solid #424242;
+        border-radius: 12px;
+        padding: 1rem;
+    }
+
+    .header {
+        display: flex;
+        align-items: center;
+    }
+
+    .header h3,
+    .header p {
+        margin-right: 10px;
+        /* Adjust spacing between h3 and p */
+    }
+
+    .actions {
+        margin-top: 10px;
+        /* Adjust spacing between the header and actions */
+    }
 </style>

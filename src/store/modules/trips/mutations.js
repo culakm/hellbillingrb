@@ -3,19 +3,13 @@ function sortLines(lines) {
 }
 
 function sortTrips(trips) {
-
 	trips.sort((a, b) => a.name.localeCompare(b.name));
 }
 
 export default {
-	passedLine(state, payload) {
-		const lineId = payload.lineId;
-		const passed = payload.passed;
-		const line = state.trip.lines.find(line => line.id === lineId);
-		line.passed = passed;
-	},
-	updateLines(state, payload) {
-		state.trip.lines = payload;
+	addLine(state, payload) {
+		state.trip.lines.push(payload);
+		sortLines(state.trip.lines);
 	},
 	deleteLine(state, payload) {
 		const lineId = payload.lineId;
@@ -32,23 +26,28 @@ export default {
 		line.roadNo = payload.roadNo;
 		line.note = payload.note;
 	},
-	addLine(state, payload) {
-		state.trip.lines.push(payload);
-		sortLines(state.trip.lines);
+	passedLine(state, payload) {
+		const lineId = payload.lineId;
+		const passed = payload.passed;
+		const line = state.trip.lines.find(line => line.id === lineId);
+		line.passed = passed;
+	},
+	updateLines(state, payload) {
+		state.trip.lines = payload;
 	},
 	addTrip(state, payload) {
 		state.trips.push(payload);
 		sortLines(state.trips);
 	},
-	updateTrip(state, payload) {
-		const trip = state.trip;
-		trip.name = payload.name;
-		trip.description = payload.description;
-	},
 	deleteTrip(state, payload) {
 		const tripId = payload.tripId;
 		const tripIndex = state.trips.findIndex(trip => trip.id === tripId);
 		state.trips.splice(tripIndex, 1);
+	},
+	updateTrip(state, payload) {
+		const trip = state.trip;
+		trip.name = payload.name;
+		trip.description = payload.description;
 	},
 	loadTrips(state, payload) {
 		state.trips = payload;

@@ -1,8 +1,12 @@
 <template>
 	<!-- <router-link :to="tripViewLink"> -->
 	<li class="line-item">
+		<!-- toto rozhodovanie sa da urobit aj
+		<component :is="selectedComponent" @update-content="updateContent"></component>
+		ale co s tlacitkami, eventami a tak? je to zlozitejsie ako treba
+		-->
 		<template v-if="!isEdited">
-			<line-view :line="localLine" :trip-id="tripId"></line-view>
+			<line-view :line="localLine"></line-view>
 			<div class="actions">
 				<base-button @click="setEditedLine()">Edit</base-button>
 				<base-button @click="deleteLineLocal">Delete</base-button>

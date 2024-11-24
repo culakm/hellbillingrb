@@ -13,7 +13,7 @@
 				<section>
 					<trip-full v-if="trip" :trip="trip"></trip-full>
 					<div v-if="hasLines" class="roadbook">
-						<line-view v-for="line in trip.lines" :key="line.id" :line="line" :trip-id="tripId"></line-view>
+						<line-view v-for="line in trip.lines" :key="line.id" :line="line"></line-view>
 					</div>
 				</section>
 			</div>
@@ -44,7 +44,6 @@ export default {
 		...mapGetters('trips', ['trip', 'hasLines'])
 	},
 	async created() {
-
 		const tripId = this.$route.params.tripId;
 		this.tripByIdLocal(tripId);
 	},
