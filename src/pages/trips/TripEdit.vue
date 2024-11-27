@@ -26,7 +26,7 @@
 					ghost-class="ghost" @start="dragging = true" @end="onEnd">
 					<template #item="{ element }">
 						<div class="list-group-item" :class="{ 'not-draggable': !draggableEnabled }">
-							<line-actions class="line-item" :key="element.id" :line="element" :trip-id="tripId"
+							<line-actions class="line-item" :key="element.id" :line="element" :trip-id="trip.id"
 								@line-is-edited="lineIsEdited"></line-actions>
 						</div>
 					</template>
@@ -45,7 +45,6 @@ import LineActions from '../../components/lines/LineActions.vue';
 
 export default {
 	name: 'TripEdit',
-	props: ['tripId'],
 	components: {
 		draggable,
 		TripForm,
@@ -58,16 +57,16 @@ export default {
 			error: null,
 			draggableEnabled: true,
 			dragging: false,
+			tripId: null,
 
 		};
 	},
 	computed: {
 		...mapGetters('trips', ['trip', 'hasLines'])
 	},
-
-	async created() {
-		const tripId = this.$route.params.tripId;
-		this.tripByIdLocal(tripId);
+	created() {
+		this.tripId = this.$route.params.tripId;
+		this.tripByIdLocal();
 	},
 	methods: {
 		...mapActions('trips', ['tripById', 'addLine', 'updateLines']),
@@ -96,7 +95,7 @@ export default {
 			this.isLoading = true;
 			const lastOrder = this.trip.lines.length;
 			lineData.order = lastOrder + 1;
-			lineData.tripId = this.tripId;
+			lineData.tripId = this.trip.id;
 
 			try {
 				await this.addLine(lineData);
@@ -117,7 +116,7 @@ export default {
 			this.trip.lines.forEach((line, index) => {
 				line.order = index + 1;
 			});
-			this.updateLines({ lines: this.trip.lines, tripId: this.tripId });
+			this.updateLines({ lines: this.trip.lines, tripId: this.trip.id });
 		},
 
 	},

@@ -21,7 +21,7 @@ import LineView from '../../components/lines/LineView.vue';
 
 export default {
 	name: 'TripView',
-	props: ['tripId'],
+	// props: ['tripId'],
 	components: {
 		TripFull,
 		LineView,
@@ -30,14 +30,15 @@ export default {
 		return {
 			isLoading: false,
 			error: null,
+			tripId: null,
 		};
 	},
 	computed: {
 		...mapGetters('trips', ['trip', 'hasLines'])
 	},
 	async created() {
-		const tripId = this.$route.params.tripId;
-		await this.tripByIdLocal(tripId); // tu je await aby sa setLinesPassedFalse() urobila az potom
+		this.tripId = this.$route.params.tripId;
+		await this.tripByIdLocal(); // tu je await aby sa setLinesPassedFalse() urobila az potom
 		this.setLinesPassedFalse();
 	},
 	methods: {

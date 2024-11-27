@@ -6,8 +6,8 @@
         </div>
         <div class="actions">
             <base-button link :to="tripViewLink">View</base-button>
-            <base-button link :to="tripPrintLink" :newTab="true">Print</base-button>
             <base-button link :to="tripEditLink">Edit</base-button>
+            <base-button link :to="tripPrintLink" :newTab="true">Print</base-button>
             <base-button @click="deleteTrip">Delete</base-button>
         </div>
     </li>

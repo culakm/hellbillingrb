@@ -59,4 +59,7 @@ export default {
 			state.trip.lines.sort((a, b) => a.order - b.order);
 		}
 	},
+	resetTrip(state, payload) {
+		state.trip = undefined;
+	},
 };

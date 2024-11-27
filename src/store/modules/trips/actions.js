@@ -117,5 +117,8 @@ export default {
 		} else {
 			console.log("No such document!");
 		}
+	},
+	async tripByIdReset(context) {
+		context.commit('resetTrip');
 	}
 };
