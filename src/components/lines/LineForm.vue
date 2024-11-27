@@ -5,6 +5,11 @@
 			<input type="text" id="name" v-model.trim="name.val" @blur="clearValidity('name')" />
 			<p v-if="!name.isValid">name must not be empty!</p>
 		</div>
+		<div class="form-control form-control-tulip" :class="{ invalid: !kmTotal.isValid }">
+			<label for="kmTotal">kmTotal</label>
+			<input type="number" id="kmTotal" v-model.trim="kmTotal.val" @blur="clearValidity('kmTotal')" />
+			<p v-if="!kmTotal.isValid">kmTotal must not be empty!</p>
+		</div>
 		<div class="form-control" :class="{ invalid: !tulip.isValid }">
 			<label for="tulip">Tulip</label>
 			<select id="tulip" v-model="tulip.val" @change="clearValidity('tulip')">
@@ -53,6 +58,10 @@ export default {
 				val: '',
 				isValid: true
 			},
+			kmTotal: {
+				val: null,
+				isValid: true
+			},
 			tulip: {
 				val: '',
 				isValid: true
@@ -72,6 +81,7 @@ export default {
 		this.lineId = this.line.id || null;
 		this.order.val = this.line.order || 0;
 		this.name.val = this.line.name || '';
+		this.kmTotal.val = this.line.kmTotal || null;
 		this.tulip.val = this.line.tulip || '';
 		this.roadNo.val = this.line.roadNo || null;
 		this.note.val = this.line.note || '';
@@ -91,6 +101,9 @@ export default {
 			// 	this.name.isValid = false;
 			// 	this.formIsValid = false;
 			// }
+			// if (this.kmTotal.val === null) {
+			// 	this.kmTotal.isValid = false;
+			// 	this.formIsValid = false;
 			// if (this.tulip.val === '') {
 			// 	this.tulip.isValid = false;
 			// 	this.formIsValid = false;
@@ -113,6 +126,7 @@ export default {
 				lineId: this.lineId,
 				order: this.order.val,
 				name: this.name.val,
+				kmTotal: this.kmTotal.val,
 				tulip: this.tulip.val,
 				roadNo: this.roadNo.val,
 				note: this.note.val,
@@ -120,6 +134,7 @@ export default {
 			};
 			this.order.val = null;
 			this.name.val = '';
+			this.kmTotal.val = null;
 			this.tulip.val = '';
 			this.roadNo.val = '';
 			this.note.val = '';
@@ -131,74 +146,78 @@ export default {
 </script>
 
 <style scoped>
-.form-control {
-	margin: 0.5rem 0;
-}
+	.form-control {
+		margin: 0.5rem 0;
+	}
 
-label {
-	font-weight: bold;
-	display: block;
-	margin-bottom: 0.5rem;
-}
+	label {
+		font-weight: bold;
+		display: block;
+		margin-bottom: 0.5rem;
+	}
 
-input[type='checkbox']+label {
-	font-weight: normal;
-	display: inline;
-	margin: 0 0 0 0.5rem;
-}
+	input[type='checkbox']+label {
+		font-weight: normal;
+		display: inline;
+		margin: 0 0 0 0.5rem;
+	}
 
-input,
-textarea {
-	display: block;
-	width: 100%;
-	border: 1px solid #ccc;
-	font: inherit;
-}
+	input,
+	textarea {
+		display: block;
+		width: 100%;
+		border: 1px solid #ccc;
+		font: inherit;
+	}
 
-input:focus,
-textarea:focus {
-	background-color: #f0e6fd;
-	outline: none;
-	border-color: #3d008d;
-}
+	input:focus,
+	textarea:focus {
+		background-color: #f0e6fd;
+		outline: none;
+		border-color: #3d008d;
+	}
 
-input[type='checkbox'] {
-	display: inline;
-	width: auto;
-	border: none;
-}
+	input[type='checkbox'] {
+		display: inline;
+		width: auto;
+		border: none;
+	}
 
-input[type='checkbox']:focus {
-	outline: #3d008d solid 1px;
-}
+	input[type='checkbox']:focus {
+		outline: #3d008d solid 1px;
+	}
 
-h3 {
-	margin: 0.5rem 0;
-	font-size: 1rem;
-}
+	h3 {
+		margin: 0.5rem 0;
+		font-size: 1rem;
+	}
 
-.invalid label {
-	color: red;
-}
+	.invalid label {
+		color: red;
+	}
 
-.invalid input,
-.invalid textarea {
-	border: 1px solid red;
-}
+	.invalid input,
+	.invalid textarea {
+		border: 1px solid red;
+	}
 
-/* .tulip-img {
+	/* .tulip-img {
 	width: 40px;
 	height: 40px;
 } */
 
-.form-control-tulip {
-  display: flex;
-  align-items: center; /* Aligns items vertically in the center */
-  gap: 20px; /* Adds some space between the select and the image */
-}
+	.form-control-tulip {
+		display: flex;
+		align-items: center;
+		/* Aligns items vertically in the center */
+		gap: 20px;
+		/* Adds some space between the select and the image */
+	}
 
-.tulip-img {
-  max-width: 100px; /* Adjusts the image width */
-  height: auto; /* Keeps the image aspect ratio */
-}
+	.tulip-img {
+		max-width: 100px;
+		/* Adjusts the image width */
+		height: auto;
+		/* Keeps the image aspect ratio */
+	}
 </style>

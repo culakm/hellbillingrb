@@ -5,6 +5,7 @@
   <div class="roadbook-item">
     <div class="order">{{ line.order }}</div>
     <input class="name" type="text" id="name" v-model.trim="line.name" />
+    <input type="text" id="kmTotal" v-model.trim="line.kmTotal" />
     <select id="tulip" v-model="line.tulip">
       <option value="">Select a Tulip</option>
       <option value="tulipR">Tulip Right</option>
@@ -43,6 +44,7 @@ export default {
         lineId: this.line.id,
         order: this.line.order,
         name: this.line.name,
+        kmTotal: this.line.kmTotal,
         tulip: this.line.tulip,
         roadNo: this.line.roadNo,
         note: this.line.note,
@@ -68,6 +70,7 @@ export default {
         lineId: this.lineId,
         order: this.order.val,
         name: this.name.val,
+        kmTotal: this.kmTotal.val,
         tulip: this.tulip.val,
         roadNo: this.roadNo.val,
         note: this.note.val,
@@ -75,7 +78,8 @@ export default {
       };
       this.order.val = null;
       this.name.val = '';
-      this.tulip.val = '';
+      this.kmTotal.val = null,
+        this.tulip.val = '';
       this.roadNo.val = '';
       this.note.val = '';
 
@@ -101,6 +105,7 @@ export default {
 
   .order,
   .name,
+  .kmTotal,
   .tulip,
   .roadNo,
   .note {
@@ -116,7 +121,8 @@ export default {
   /* Centering order, tulip, and roadNo */
   .roadbook-item> :nth-child(1),
   .roadbook-item> :nth-child(3),
-  .roadbook-item> :nth-child(4) {
+  .roadbook-item> :nth-child(4),
+  .roadbook-item> :nth-child(5) {
     display: flex;
     justify-content: center;
     align-items: center;

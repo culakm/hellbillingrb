@@ -5,8 +5,9 @@
   <div class="roadbook-item" :class="{ passed: line.passed }" @click="passedLineLocal()">
     <div class="order">{{ line.order }}</div>
     <div class="name" v-html="line.name"></div>
+    <div class="km-total">{{ line.kmTotal }}</div>
     <div class="tulip"><img class="tulip-img" v-if="line.tulip" :src="tulipSrc(line.tulip)" /></div>
-    <div class="roadNo">{{ line.roadNo }}</div>
+    <div class="road-no">{{ line.roadNo }}</div>
     <div class="note" v-html="line.note"></div>
   </div>
 </template>
@@ -66,7 +67,7 @@ export default {
   .roadbook-item {
     user-select: none;
     display: grid;
-    grid-template-columns: 0.1fr 1.3fr 1.1fr 0.5fr 2fr;
+    grid-template-columns: 0.1fr 1.3fr 1.1fr 0.5fr 1fr 1fr;
     /* Adjusted column widths */
     width: 100%;
     min-height: 100px;
@@ -83,8 +84,9 @@ export default {
 
   .order,
   .name,
+  .km-total,
   .tulip,
-  .roadNo,
+  .road-no,
   .note {
     text-align: center;
     border-left: 1px solid #ccc;
@@ -95,10 +97,11 @@ export default {
     border-left: none;
   }
 
-  /* Centering order, tulip, and roadNo */
+  /* Centering order, kmTotal, tulip, and roadNo */
   .roadbook-item> :nth-child(1),
   .roadbook-item> :nth-child(3),
-  .roadbook-item> :nth-child(4) {
+  .roadbook-item> :nth-child(4),
+  .roadbook-item> :nth-child(5) {
     display: flex;
     justify-content: center;
     align-items: center;

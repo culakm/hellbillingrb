@@ -31,6 +31,7 @@ export default {
 		const lineData = {
 			order: payload.order,
 			name: payload.name,
+			kmTotal: payload.kmTotal,
 			tulip: payload.tulip,
 			roadNo: payload.roadNo,
 			note: payload.note,
@@ -50,6 +51,7 @@ export default {
 			lineId: lineId,
 			order: payload.order,
 			name: payload.name,
+			kmTotal: payload.kmTotal,
 			tulip: payload.tulip,
 			roadNo: payload.roadNo,
 			note: payload.note,

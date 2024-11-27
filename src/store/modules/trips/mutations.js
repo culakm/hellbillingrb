@@ -22,6 +22,7 @@ export default {
 	updateLine(state, payload) {
 		const line = state.trip.lines.find(line => line.id === payload.lineId);
 		line.name = payload.name;
+		line.kmTotal = payload.kmTotal;
 		line.tulip = payload.tulip;
 		line.roadNo = payload.roadNo;
 		line.note = payload.note;
