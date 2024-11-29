@@ -5,11 +5,13 @@
 		</base-dialog>
 		<section>
 			<base-card>
-				<h2>{{ trip.name }}</h2>
 				<div v-if="isLoading">
 					<base-spinner></base-spinner>
 				</div>
-				<trip-form v-if="trip" @save-data="updateTripLocal" :trip="trip"></trip-form>
+				<div v-else-if="trip">
+					<h2>{{ trip.name }}</h2>
+					<trip-form @save-data="updateTripLocal" :trip="trip"></trip-form>
+				</div>
 			</base-card>
 		</section>
 		<section>
