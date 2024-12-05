@@ -47,11 +47,11 @@ export default {
 		this.loadTripsLocal();
 	},
 	methods: {
-		...mapActions('trips', ['loadTrips']),
+		...mapActions('trips', ['loadTripsOrdered']),
 		async loadTripsLocal(refresh = false) {
 			this.isLoading = true;
 			try {
-				await this.loadTrips({ forcedRefresh: refresh });
+				await this.loadTripsOrdered({ forcedRefresh: refresh });
 			} catch (error) {
 				this.error = `Component ${this.$options.name}, error: ${error.message}` || 'Something went wrong!';
 			}

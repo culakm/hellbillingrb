@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
-import { initializeFirestore, getFirestore, memoryLocalCache  } from 'firebase/firestore';
+import { initializeFirestore, getFirestore, connectFirestoreEmulator, memoryLocalCache } from 'firebase/firestore';
 
 const firebaseConfig = {
 	apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -14,7 +14,12 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 
+
 /* Firebase services */
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 // export const db = initializeFirestore(app, {localCache: memoryLocalCache()});
+
+if (process.env.NODE_ENV === 'development') {
+	connectFirestoreEmulator(db, 'localhost', 8080);
+}

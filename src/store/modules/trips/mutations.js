@@ -2,9 +2,9 @@ function sortLines(lines) {
 	lines.sort((a, b) => a.order - b.order);
 }
 
-function sortTrips(trips) {
-	trips.sort((a, b) => a.name.localeCompare(b.name));
-}
+// function sortTrips(trips) {
+// 	trips.sort((a, b) => a.name.localeCompare(b.name));
+// }
 
 export default {
 	addLine(state, payload) {
@@ -52,7 +52,7 @@ export default {
 	},
 	loadTrips(state, payload) {
 		state.trips = payload;
-		sortTrips(state.trips);
+		//sortTrips(state.trips); //toto je nahradene orderBy v actions.js
 	},
 	setTrip(state, payload) {
 		state.trip = payload;
