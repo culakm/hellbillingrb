@@ -82,25 +82,15 @@ export default {
 		const tripId = payload.tripId;
 		const tripDocRef = doc(db, "trips", tripId);
 		const linesCollectionRef = collection(db, "trips", tripId, "lines");
-
-		// Fetch all documents in the "lines" sub-collection
 		const linesSnapshot = await getDocs(linesCollectionRef);
 
-		// Create a batch
 		const batch = writeBatch(db);
-
-		// Add delete operations for each document in the "lines" sub-collection to the batch
 		linesSnapshot.docs.forEach((lineDoc) => {
 			batch.delete(lineDoc.ref);
 		});
-
-		// Add delete operation for the trip document to the batch
 		batch.delete(tripDocRef);
-
-		// Commit the batch
 		await batch.commit();
 
-		// Commit the mutation to update the state
 		context.commit('deleteTrip', { tripId: tripId });
 	},
 	async loadTrips(context) {
@@ -120,9 +110,7 @@ export default {
 	async loadTripsOrdered(context) {
 		const trips = [];
 		const tripsCollectionRef = collection(db, "trips");
-		const direction = "asc"; // or "desc"
-		// s limitom, offset chce nieco viac
-		// const tripsQuery = query(tripsCollectionRef, orderBy("name", direction), limit(2));
+		const direction = "asc";
 		const tripsQuery = query(tripsCollectionRef, orderBy("name", direction));
 		const querySnapshot = await getDocs(tripsQuery);
 
