@@ -56,6 +56,7 @@ export default {
 	},
 	setTrip(state, payload) {
 		state.trip = payload;
+		console.log('setTrip mutation: ', state.trip);
 		if (state.trip.lines) {
 			state.trip.lines.sort((a, b) => a.order - b.order);
 		}
