@@ -81,6 +81,7 @@ export default {
 			tripId: tripId,
 			name: payload.name,
 			description: payload.description,
+			imageName: payload.imageName,
 		};
 		await setDoc(doc(db, "trips", tripId), tripData);
 		context.commit('updateTrip', tripData);
@@ -153,7 +154,6 @@ export default {
 
 			// Add lines to trip
 			trip.lines = lines;
-			console.log('tripById', trip);
 			context.commit('setTrip', trip);
 		} else {
 			console.log("No such document!");

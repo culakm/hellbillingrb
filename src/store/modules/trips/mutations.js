@@ -49,6 +49,7 @@ export default {
 		const trip = state.trip;
 		trip.name = payload.name;
 		trip.description = payload.description;
+		trip.imageName = payload.imageName;
 	},
 	loadTrips(state, payload) {
 		state.trips = payload;
@@ -56,7 +57,6 @@ export default {
 	},
 	setTrip(state, payload) {
 		state.trip = payload;
-		console.log('setTrip mutation: ', state.trip);
 		if (state.trip.lines) {
 			state.trip.lines.sort((a, b) => a.order - b.order);
 		}
