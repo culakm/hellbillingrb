@@ -11,6 +11,30 @@
 				@blur="clearValidity('description')"></textarea>
 			<p v-if="!description.isValid">Description must not be empty!</p>
 		</div>
+
+		<div>
+			<div class="form-control">
+				<input type="file" @change="previewImage" accept="image/*">
+
+				<div v-if="uploadProgress > 0" class="progress">
+					<p>Upload Progress: {{ uploadProgress }}%</p>
+					<progress :value="uploadProgress" max="100"></progress>
+				</div>
+
+				<div v-if="imageData">
+					<img :src="imagePreview" class="preview" alt="Preview">
+					<button @click.prevent="uploadImage">Upload Image</button>
+				</div>
+
+			</div>
+
+			<div v-if="imageUrl" class="display-section">
+				<h3>Uploaded Image:</h3>
+				<img :src="imageUrl" alt="Uploaded">
+			</div>
+		</div>
+
+
 		<p v-if="!formIsValid">Please fix errors</p>
 		<base-button v-if="Object.keys(trip).length === 0">Add Trip</base-button>
 		<base-button v-else>Save Trip</base-button>
@@ -20,7 +44,11 @@
 
 <script>
 import { mapGetters } from 'vuex';
+import { storage } from '../../firebase.js';
+import { ref as storageRef, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+
 export default {
+	name: 'TripForm',
 	emits: ['save-data'],
 	props: {
 		trip: {
@@ -39,7 +67,21 @@ export default {
 				val: '',
 				isValid: true
 			},
+			imageName: {
+				val: '',
+				isValid: true
+			},
+
+			tripId: '',
+			imageUrl: '',
 			formIsValid: true,
+			imageData: null,
+			imagePreview: null,
+			uploadProgress: 0,
+
+			imageTestUrl: ''
+
+
 		};
 	},
 	computed: {
@@ -47,12 +89,70 @@ export default {
 			return `/trip/view/${this.tripId}`;
 		},
 	},
-	created() {
-		this.tripId = this.trip.id || null;
+	async created() {
+		if (this.trip.id) {
+			this.tripId = this.trip.id
+		}
+		else {
+			await this.setTripId();
+		}
+
 		this.name.val = this.trip.name || '';
 		this.description.val = this.trip.description || '';
+		this.imageName.val = this.trip.imageName || '';
+		this.fetchImageUrl();
+		console.log('this.trip: TripForm: ', this.trip);
 	},
 	methods: {
+		async fetchImageUrl() {
+			const fileName = `trips/${this.trip.id}/${this.trip.imageName}`;
+			const fileRef = storageRef(storage, fileName);
+			try {
+				this.imageUrl = await getDownloadURL(fileRef);
+			} catch (error) {
+				console.error('Error fetching file URL:', error);
+			}
+		},
+		async setTripId() {
+			try {
+				this.tripId = await this.$store.dispatch('trips/getTripNewId');
+			} catch (error) {
+				this.error = `Component ${this.$options.name}, Padlo fetch : ${error.message}` || 'Something went wrong!';
+				return;
+			}
+		},
+		async uploadImage() {
+			if (!this.imageData) return
+			this.imageName.val = this.imageData.name;
+			console.log('imageData:', this.imageData);
+			console.log('imageName.val:', this.imageName.val);
+			const fileName = `trips/${this.tripId}/${this.imageData.name}`;
+			const fileRef = storageRef(storage, fileName);
+			const uploadTask = uploadBytesResumable(fileRef, this.imageData);
+
+			uploadTask.on('state_changed',
+				(snapshot) => {
+					this.uploadProgress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+				},
+				(error) => {
+					console.error('Upload failed:', error)
+				},
+				async () => {
+					// this.imageUrl = await getDownloadURL(fileRef);
+					this.imageUrl = await getDownloadURL(fileRef);
+					console.log('File available at:', this.imageUrl);
+					this.imageData = null;
+					this.imagePreview = null;
+				}
+			)
+		},
+		previewImage(event) {
+			const file = event.target.files[0];
+			if (!file) return;
+			this.imageData = file;
+			this.imagePreview = URL.createObjectURL(file)
+			this.uploadProgress = 0
+		},
 		clearValidity(input) {
 			this[input].isValid = true;
 		},
@@ -68,11 +168,14 @@ export default {
 			if (!this.formIsValid) {
 				return;
 			}
+
 			const formData = {
 				tripId: this.tripId,
 				name: this.name.val,
 				description: this.description.val,
+				imageName: this.imageName.val,
 			};
+			console.log('formData:', formData);
 			this.$emit('save-data', formData);
 		},
 	},

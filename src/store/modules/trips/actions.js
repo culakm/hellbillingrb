@@ -60,12 +60,19 @@ export default {
 		await setDoc(doc(db, `trips/${tripId}/lines/`, lineId), lineData);
 		context.commit('updateLine', lineData);
 	},
+	async getTripNewId() {
+		const newDocRef = doc(collection(db, 'trips'));
+		return newDocRef.id;
+	},
 	async addTrip(context, payload) {
+		const tripId = payload.tripId;
 		const tripData = {
+			tripId: tripId,
 			name: payload.name,
 			description: payload.description,
+			imageName: payload.imageName,
 		};
-		await addDoc(collection(db, 'trips'), tripData);
+		await setDoc(doc(db, "trips", tripId), tripData);
 		context.commit('addTrip', tripData);
 	},
 	async updateTrip(context, payload) {
@@ -120,6 +127,7 @@ export default {
 				id: doc.id,
 				name: tripData.name,
 				description: tripData.description,
+				imageName: tripData.imageName,
 			};
 			trips.push(trip);
 		});
@@ -135,6 +143,7 @@ export default {
 				id: docSnap.id,
 				name: tripData.name,
 				description: tripData.description,
+				imageName: tripData.imageName,
 			};
 
 			// Fetch lines subcollection
@@ -144,6 +153,7 @@ export default {
 
 			// Add lines to trip
 			trip.lines = lines;
+			console.log('tripById', trip);
 			context.commit('setTrip', trip);
 		} else {
 			console.log("No such document!");

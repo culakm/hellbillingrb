@@ -10,6 +10,7 @@
 				</div>
 				<div v-else-if="trip">
 					<h2>{{ trip.name }}</h2>
+					<p>trip image name: {{ trip.imageName }}</p>
 					<trip-form @save-data="updateTripLocal" :trip="trip"></trip-form>
 				</div>
 			</base-card>
@@ -60,7 +61,6 @@ export default {
 			draggableEnabled: true,
 			dragging: false,
 			tripId: null,
-
 		};
 	},
 	computed: {
@@ -69,6 +69,7 @@ export default {
 	created() {
 		this.tripId = this.$route.params.tripId;
 		this.tripByIdLocal();
+		console.log('tripByIdLocal:', this.trip);
 	},
 	methods: {
 		...mapActions('trips', ['tripById', 'addLine', 'updateLines']),

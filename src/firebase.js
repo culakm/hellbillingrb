@@ -17,6 +17,7 @@ const app = initializeApp(firebaseConfig);
 /* Firebase services */
 export const db = getFirestore(app);
 export const auth = getAuth(app);
+// export const db = initializeFirestore(app, {localCache: memoryLocalCache()});
 export const storage = getStorage(app);
 
 if (process.env.NODE_ENV === 'development') {
