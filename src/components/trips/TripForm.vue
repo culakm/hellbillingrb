@@ -100,8 +100,7 @@ export default {
 		this.name.val = this.trip.name || '';
 		this.description.val = this.trip.description || '';
 		this.imageName.val = this.trip.imageName || '';
-		this.fetchImageUrl();
-		console.log('this.trip: TripForm: ', this.trip);
+		if (this.imageName.val) this.fetchImageUrl();
 	},
 	methods: {
 		async fetchImageUrl() {
@@ -124,8 +123,6 @@ export default {
 		async uploadImage() {
 			if (!this.imageData) return
 			this.imageName.val = this.imageData.name;
-			console.log('imageData:', this.imageData);
-			console.log('imageName.val:', this.imageName.val);
 			const fileName = `trips/${this.tripId}/${this.imageData.name}`;
 			const fileRef = storageRef(storage, fileName);
 			const uploadTask = uploadBytesResumable(fileRef, this.imageData);

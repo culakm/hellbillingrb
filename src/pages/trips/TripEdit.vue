@@ -69,7 +69,6 @@ export default {
 	created() {
 		this.tripId = this.$route.params.tripId;
 		this.tripByIdLocal();
-		console.log('tripByIdLocal:', this.trip);
 	},
 	methods: {
 		...mapActions('trips', ['tripById', 'addLine', 'updateLines']),
