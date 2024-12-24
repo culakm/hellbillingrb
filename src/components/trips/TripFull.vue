@@ -7,8 +7,6 @@
 </template>
 
 <script>
-import { storage } from '../../firebase.js';
-import { ref as storageRef, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 
 export default {
 	props: {
@@ -23,17 +21,20 @@ export default {
 			imageUrl: '',
 		};
 	},
-	created() {
-		this.fetchImageUrl();
+	async created() {
+		if (this.trip.imageName) await this.fetchImageUrlLocal();
 	},
 	methods: {
-		async fetchImageUrl() {
-			const fileName = `trips/${this.trip.id}/${this.trip.imageName}`;
-			const fileRef = storageRef(storage, fileName);
+		async fetchImageUrlLocal() {
+			const tripData = {
+				tripId: this.trip.id,
+				imageName: this.trip.imageName,
+			};
 			try {
-				this.imageUrl = await getDownloadURL(fileRef);
+				this.imageUrl = await this.$store.dispatch('tripsStorage/fetchImageUrl', tripData);
 			} catch (error) {
-				console.error('Error fetching file URL:', error);
+				this.error = `Component ${this.$options.name}, Padlo fetch : ${error.message}` || 'Something went wrong!';
+				return;
 			}
 		},
 	},
