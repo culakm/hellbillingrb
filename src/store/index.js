@@ -7,6 +7,7 @@ import authModule from './modules/auth/index.js';
 const store = createStore({
 	modules: {
 		trips: tripsModule,
+		tripsStorage: tripsStorageModule,
 		auth: authModule
 	}
 });

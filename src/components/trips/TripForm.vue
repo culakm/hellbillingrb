@@ -100,16 +100,19 @@ export default {
 		this.name.val = this.trip.name || '';
 		this.description.val = this.trip.description || '';
 		this.imageName.val = this.trip.imageName || '';
-		if (this.imageName.val) this.fetchImageUrl();
+		if (this.imageName.val) await this.fetchImageUrlLocal();
 	},
 	methods: {
-		async fetchImageUrl() {
-			const fileName = `trips/${this.trip.id}/${this.trip.imageName}`;
-			const fileRef = storageRef(storage, fileName);
+		async fetchImageUrlLocal() {
+			const tripData = {
+				tripId: this.trip.id,
+				imageName: this.trip.imageName,
+			};
 			try {
-				this.imageUrl = await getDownloadURL(fileRef);
+				this.imageUrl = await this.$store.dispatch('tripsStorage/fetchImageUrl', tripData);
 			} catch (error) {
-				console.error('Error fetching file URL:', error);
+				this.error = `Component ${this.$options.name}, Padlo fetch : ${error.message}` || 'Something went wrong!';
+				return;
 			}
 		},
 		async setTripId() {
@@ -135,7 +138,6 @@ export default {
 					console.error('Upload failed:', error)
 				},
 				async () => {
-					// this.imageUrl = await getDownloadURL(fileRef);
 					this.imageUrl = await getDownloadURL(fileRef);
 					console.log('File available at:', this.imageUrl);
 					this.imageData = null;
@@ -162,9 +164,7 @@ export default {
 		},
 		submitForm() {
 			this.validateForm();
-			if (!this.formIsValid) {
-				return;
-			}
+			if (!this.formIsValid) return;
 
 			const formData = {
 				tripId: this.tripId,
@@ -172,7 +172,6 @@ export default {
 				description: this.description.val,
 				imageName: this.imageName.val,
 			};
-			console.log('formData:', formData);
 			this.$emit('save-data', formData);
 		},
 	},
