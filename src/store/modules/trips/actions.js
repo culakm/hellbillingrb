@@ -67,7 +67,6 @@ export default {
 	async addTrip(context, payload) {
 		const tripId = payload.tripId;
 		const tripData = {
-			tripId: tripId,
 			name: payload.name,
 			description: payload.description,
 			imageName: payload.imageName,
