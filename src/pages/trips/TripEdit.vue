@@ -29,7 +29,7 @@
 					ghost-class="ghost" @start="dragging = true" @end="onEnd">
 					<template #item="{ element }">
 						<div class="list-group-item" :class="{ 'not-draggable': !draggableEnabled }">
-							<line-actions class="line-item" :key="element.id" :line="element" :trip-id="trip.id"
+							<line-actions class="line-item" :key="element.lineId" :line="element" :trip-id="trip.tripId"
 								@line-is-edited="lineIsEdited"></line-actions>
 						</div>
 					</template>
@@ -97,7 +97,7 @@ export default {
 			this.isLoading = true;
 			const lastOrder = this.trip.lines.length;
 			lineData.order = lastOrder + 1;
-			lineData.tripId = this.trip.id;
+			lineData.tripId = this.trip.tripId;
 
 			try {
 				await this.addLine(lineData);
@@ -118,7 +118,7 @@ export default {
 			this.trip.lines.forEach((line, index) => {
 				line.order = index + 1;
 			});
-			this.updateLines({ lines: this.trip.lines, tripId: this.trip.id });
+			this.updateLines({ lines: this.trip.lines, tripId: this.trip.tripId });
 		},
 
 	},

@@ -68,7 +68,7 @@ export default {
 			this.isLoading = true;
 
 			try {
-				await this.deleteLine({ tripId: this.tripId, lineId: this.line.id });
+				await this.deleteLine({ tripId: this.tripId, lineId: this.line.lineId });
 			} catch (error) {
 				this.error = `Component ${this.$options.name}, Padlo fetch : ${error.message}` || 'Something went wrong!';
 				return;
