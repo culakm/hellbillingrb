@@ -90,8 +90,8 @@ export default {
 		},
 	},
 	async created() {
-		if (this.trip.id) {
-			this.tripId = this.trip.id
+		if (this.trip.tripId) {
+			this.tripId = this.trip.tripId
 		}
 		else {
 			await this.setTripId();
@@ -105,7 +105,7 @@ export default {
 	methods: {
 		async fetchImageUrlLocal() {
 			const tripData = {
-				tripId: this.trip.id,
+				tripId: this.trip.tripId,
 				imageName: this.trip.imageName,
 			};
 			try {

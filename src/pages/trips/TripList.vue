@@ -15,7 +15,7 @@
 					<base-spinner></base-spinner>
 				</div>
 				<ul v-else-if="hasTrips">
-					<trip-actions v-for="trip in trips" :key="trip.id" :trip-id="trip.id" :name="trip.name"
+					<trip-actions v-for="trip in trips" :key="trip.tripId" :trip-id="trip.tripId" :name="trip.name"
 						:description="trip.description"></trip-actions>
 				</ul>
 				<h3 v-else>No trips found</h3>

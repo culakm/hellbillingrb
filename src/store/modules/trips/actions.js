@@ -3,7 +3,7 @@ import { collection, doc, getDoc, addDoc, setDoc, updateDoc, deleteDoc, getDocs,
 
 export default {
 	async passedLine(context, payload) {
-		const tripId = context.state.trip.id;
+		const tripId = context.state.trip.tripId;
 		const lineId = payload.lineId;
 		const passed = payload.passed;
 		const lineRef = doc(db, "trips", tripId, "lines", lineId);
@@ -15,7 +15,7 @@ export default {
 		const lines = payload.lines;
 		const linesCollectionRef = collection(db, `trips/${tripId}/lines`);
 		lines.forEach(async line => {
-			const lineRef = doc(linesCollectionRef, line.id);
+			const lineRef = doc(linesCollectionRef, line.lineId);
 			await updateDoc(lineRef, line);
 		});
 		context.commit('updateLines', lines);
@@ -116,7 +116,7 @@ export default {
 		querySnapshot.forEach((doc) => {
 			const tripData = doc.data();
 			const trip = {
-				id: doc.id,
+				tripId: doc.id,
 				name: tripData.name,
 				description: tripData.description,
 			};
@@ -136,7 +136,7 @@ export default {
 		querySnapshot.forEach((doc) => {
 			const tripData = doc.data();
 			const trip = {
-				id: doc.id,
+				tripId: doc.id,
 				name: tripData.name,
 				description: tripData.description,
 				imageName: tripData.imageName,
@@ -152,7 +152,7 @@ export default {
 		if (docSnap.exists()) {
 			const tripData = docSnap.data();
 			const trip = {
-				id: docSnap.id,
+				tripId: docSnap.id,
 				name: tripData.name,
 				description: tripData.description,
 				imageName: tripData.imageName,
@@ -161,7 +161,7 @@ export default {
 			// Fetch lines subcollection
 			const linesCollectionRef = collection(docRef, 'lines');
 			const linesSnapshot = await getDocs(linesCollectionRef);
-			const lines = linesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+			const lines = linesSnapshot.docs.map(doc => ({ lineId: doc.id, ...doc.data() }));
 
 			// Add lines to trip
 			trip.lines = lines;

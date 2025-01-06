@@ -13,14 +13,14 @@ export default {
 	},
 	deleteLine(state, payload) {
 		const lineId = payload.lineId;
-		const lineIndex = state.trip.lines.findIndex(line => line.id === lineId);
+		const lineIndex = state.trip.lines.findIndex(line => line.lineId === lineId);
 		state.trip.lines.splice(lineIndex, 1);
 		state.trip.lines.forEach((line, index) => {
 			line.order = index + 1;
 		});
 	},
 	updateLine(state, payload) {
-		const line = state.trip.lines.find(line => line.id === payload.lineId);
+		const line = state.trip.lines.find(line => line.lineId === payload.lineId);
 		line.name = payload.name;
 		line.kmTotal = payload.kmTotal;
 		line.tulip = payload.tulip;
@@ -30,7 +30,7 @@ export default {
 	passedLine(state, payload) {
 		const lineId = payload.lineId;
 		const passed = payload.passed;
-		const line = state.trip.lines.find(line => line.id === lineId);
+		const line = state.trip.lines.find(line => line.lineId === lineId);
 		line.passed = passed;
 	},
 	updateLines(state, payload) {
@@ -42,7 +42,7 @@ export default {
 	},
 	deleteTrip(state, payload) {
 		const tripId = payload.tripId;
-		const tripIndex = state.trips.findIndex(trip => trip.id === tripId);
+		const tripIndex = state.trips.findIndex(trip => trip.tripId === tripId);
 		state.trips.splice(tripIndex, 1);
 	},
 	updateTrip(state, payload) {

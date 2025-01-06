@@ -41,7 +41,7 @@ export default {
   methods: {
     editLineLocal() {
       const lineData = {
-        lineId: this.line.id,
+        lineId: this.line.lineId,
         order: this.line.order,
         name: this.line.name,
         kmTotal: this.line.kmTotal,

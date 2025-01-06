@@ -78,7 +78,7 @@ export default {
 		};
 	},
 	created() {
-		this.lineId = this.line.id || null;
+		this.lineId = this.line.lineId || null;
 		this.order.val = this.line.order || 0;
 		this.name.val = this.line.name || '';
 		this.kmTotal.val = this.line.kmTotal || null;

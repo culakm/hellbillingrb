@@ -2,7 +2,7 @@
 	<div class="trip-full">
 		<h3>{{ trip.name }}</h3>
 		<p>{{ trip.description }}</p>
-		<img v-if="trip.imageName" :src="imageUrl" alt="Uploaded">
+		<img v-if="trip.imageName" :src="imageUrl" alt="Downloaded">
 	</div>
 </template>
 
@@ -27,7 +27,7 @@ export default {
 	methods: {
 		async fetchImageUrlLocal() {
 			const tripData = {
-				tripId: this.trip.id,
+				tripId: this.trip.tripId,
 				imageName: this.trip.imageName,
 			};
 			try {
