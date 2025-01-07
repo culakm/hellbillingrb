@@ -51,6 +51,10 @@ export default {
 		trip.description = payload.description;
 		trip.imageName = payload.imageName;
 	},
+	deleteTripImage(state) {
+		const trip = state.trip;
+		trip.imageName = null;
+	},
 	loadTrips(state, payload) {
 		state.trips = payload;
 		//sortTrips(state.trips); //toto je nahradene orderBy v actions.js

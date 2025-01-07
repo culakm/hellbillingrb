@@ -85,6 +85,17 @@ export default {
 		await setDoc(doc(db, "trips", tripId), tripData);
 		context.commit('updateTrip', tripData);
 	},
+	async deleteTripImage(context, payload) {
+		const tripId = payload.tripId;
+		const tripRef = doc(db, "trips", tripId);
+		try {
+			await updateDoc(tripRef, { imageName: null });
+		} catch (error) {
+			console.error('Error deleting file:', error);
+			throw new Error('Failed to delete trip image from firebase database!');
+		}
+		context.commit('deleteTripImage', { tripId });
+	},
 	async deleteTrip(context, payload) {
 		const tripId = payload.tripId;
 		const tripDocRef = doc(db, "trips", tripId);
