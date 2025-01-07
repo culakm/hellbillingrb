@@ -31,6 +31,7 @@
 			<div v-if="imageUrl" class="display-section">
 				<h3>Uploaded Image:</h3>
 				<img :src="imageUrl" alt="Uploaded">
+				<button @click.prevent="deleteImageLocal">Delete Image</button>
 			</div>
 		</div>
 
@@ -78,7 +79,6 @@ export default {
 			imageData: null,
 			imagePreview: null,
 			uploadProgress: 0,
-
 			imageTestUrl: ''
 
 
@@ -114,6 +114,32 @@ export default {
 				this.error = `Component ${this.$options.name}, Padlo fetch : ${error.message}` || 'Something went wrong!';
 				return;
 			}
+		},
+		async deleteImageLocal() {
+			const tripData = {
+				tripId: this.trip.tripId,
+				imageName: this.trip.imageName,
+			};
+			// try {
+			// 	await this.$store.dispatch('tripsStorage/deleteStorageObject', tripData);
+			// 	await this.$store.dispatch('trips/deleteTripImage', tripData);
+			// } catch (error) {
+			// 	this.error = `Component ${this.$options.name}, Padlo fetch : ${error.message}` || 'Something went wrong!';
+			// 	return;
+			// }
+
+			try {
+				await Promise.all([
+					this.$store.dispatch('tripsStorage/deleteStorageObject', tripData),
+					this.$store.dispatch('trips/deleteTripImage', tripData)
+				]);
+			} catch (error) {
+				console.error(`Component ${this.$options.name}, Padlo fetch : ${error.message}` || 'Something went wrong!')
+				this.error = `Component ${this.$options.name}, Padlo fetch : ${error.message}` || 'Something went wrong!';
+				return;
+			}
+			this.imageName.val = null;
+			this.imageUrl = '';
 		},
 		async setTripId() {
 			try {
