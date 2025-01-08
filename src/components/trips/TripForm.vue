@@ -14,17 +14,20 @@
 
 		<div>
 			<div class="form-control">
+				<div v-if="imageData">
+					<button @click.prevent="uploadImage">Upload Image</button>
+					<img :src="imagePreview" class="preview" alt="Preview">
+				</div>
 				<input type="file" @change="previewImage" accept="image/*">
+
+
 
 				<div v-if="uploadProgress > 0" class="progress">
 					<p>Upload Progress: {{ uploadProgress }}%</p>
 					<progress :value="uploadProgress" max="100"></progress>
 				</div>
 
-				<div v-if="imageData">
-					<img :src="imagePreview" class="preview" alt="Preview">
-					<button @click.prevent="uploadImage">Upload Image</button>
-				</div>
+
 
 			</div>
 
@@ -120,14 +123,6 @@ export default {
 				tripId: this.trip.tripId,
 				imageName: this.trip.imageName,
 			};
-			// try {
-			// 	await this.$store.dispatch('tripsStorage/deleteStorageObject', tripData);
-			// 	await this.$store.dispatch('trips/deleteTripImage', tripData);
-			// } catch (error) {
-			// 	this.error = `Component ${this.$options.name}, Padlo fetch : ${error.message}` || 'Something went wrong!';
-			// 	return;
-			// }
-
 			try {
 				await Promise.all([
 					this.$store.dispatch('tripsStorage/deleteStorageObject', tripData),
@@ -150,7 +145,11 @@ export default {
 			}
 		},
 		async uploadImage() {
-			if (!this.imageData) return
+
+			if (!this.imageData) return;
+
+			if (this.imageName.val) await this.deleteImageLocal();
+
 			this.imageName.val = this.imageData.name;
 			const fileName = `trips/${this.tripId}/${this.imageData.name}`;
 			const fileRef = storageRef(storage, fileName);
