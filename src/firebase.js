@@ -1,7 +1,8 @@
 import { initializeApp } from 'firebase/app';
 import { connectAuthEmulator, getAuth } from 'firebase/auth';
-import { initializeFirestore, getFirestore, connectFirestoreEmulator, memoryLocalCache } from 'firebase/firestore';
+import { connectFirestoreEmulator, initializeFirestore, getFirestore, memoryLocalCache } from 'firebase/firestore';
 import { getStorage, connectStorageEmulator } from 'firebase/storage';
+import { connectFunctionsEmulator, getFunctions } from 'firebase/functions';
 
 const firebaseConfig = {
 	apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -19,9 +20,12 @@ export const db = getFirestore(app);
 export const auth = getAuth(app);
 // export const db = initializeFirestore(app, {localCache: memoryLocalCache()});
 export const storage = getStorage(app);
+export const cloudFunctions = getFunctions(app);
 
-// if (process.env.NODE_ENV === 'development') {
-// 	connectFirestoreEmulator(db, 'localhost', 8080);
-// 	connectAuthEmulator(auth, 'http://localhost:9099');
-// 	connectStorageEmulator(storage, 'localhost', 9199);
-// }
+// if (process.env.NODE_ENV) {
+if (import.meta.env.VITE_FIREBASE_RUN_EMULATOR === 'true') {
+	connectFirestoreEmulator(db, 'localhost', 8080);
+	connectAuthEmulator(auth, 'http://localhost:9099');
+	connectStorageEmulator(storage, 'localhost', 9199);
+	connectFunctionsEmulator(cloudFunctions, 'localhost', 5001);
+}
