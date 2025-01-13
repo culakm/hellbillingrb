@@ -70,6 +70,7 @@ export default {
 			name: payload.name,
 			description: payload.description,
 			imageName: payload.imageName,
+			linesCount: 0,
 		};
 		await setDoc(doc(db, "trips", tripId), tripData);
 		context.commit('addTrip', tripData);

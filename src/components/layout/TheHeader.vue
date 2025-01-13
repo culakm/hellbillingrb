@@ -5,6 +5,9 @@
 				<router-link to="/">HBRB</router-link>
 			</h1>
 			<ul>
+				<li>
+					<base-button @click="getAdminRole">Function test</base-button>
+				</li>
 				<li v-if="isLoggedIn">
 					<router-link to="/trips">trips</router-link>
 				</li>
@@ -20,6 +23,10 @@
 </template>
 
 <script>
+
+import { cloudFunctions } from '../../firebase.js';
+import { httpsCallable } from 'firebase/functions';
+
 export default {
 	name: 'TheHeader',
 	computed: {
@@ -37,6 +44,39 @@ export default {
 		logout() {
 			this.$store.dispatch('logout');
 			this.$router.replace('/');
+		},
+		async functionTest() {
+			alert('Function test');
+			let output = 'pako';
+			const helloWorld = httpsCallable(cloudFunctions, 'helloWorld');
+			try {
+				const result = await helloWorld({ someParameter: 'poslane do funkcie' });
+				output = result.data.message;
+				console.log('vystup z funkcie: ' + result.data.message);
+			} catch (error) {
+				console.error('Error calling cloud function:', error);
+			}
+			alert(output);
+		},
+		async addAdminRole() {
+			const email = 'karol.emul@hellbilling.com';
+			const addAdminRole = httpsCallable(cloudFunctions, 'addAdminRole');
+			try {
+				const result = await addAdminRole({ email: email });
+				console.log('vystup z funkcie: ', result.data);
+			} catch (error) {
+				console.error('Error calling cloud function:', error);
+			}
+		},
+		async getAdminRole() {
+			const email = 'karol.emul@hellbilling.com';
+			const getAdminRole = httpsCallable(cloudFunctions, 'getAdminRole');
+			try {
+				const result = await getAdminRole({ email: email });
+				console.log('vystup z funkcie: ', result.data);
+			} catch (error) {
+				console.error('Error calling cloud function:', error);
+			}
 		},
 	},
 };

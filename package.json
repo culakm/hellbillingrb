@@ -8,10 +8,11 @@
     "build": "vite build",
     "preview": "vite preview",
     "local-fb-emul-empty": "firebase emulators:start --only firestore",
-    "local-fb-emul": "firebase emulators:start --only firestore,auth,storage --import=./my_hbrb_data/hbrb_export_2025_01_04"
+    "local-fb-emul": "firebase emulators:start --only firestore,auth,storage,functions --import=./my_hbrb_data/hbrb_export_2025_01_13"
   },
   "dependencies": {
     "firebase": "^10.12.2",
+    "firebase-tools": "^13.29.1",
     "vue": "^3.4.21",
     "vue-fullscreen": "^3.1.2",
     "vue-router": "^4.3.0",
