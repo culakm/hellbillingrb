@@ -48,7 +48,7 @@ export default {
 		async functionTest() {
 			alert('Function test');
 			let output = 'pako';
-			const helloWorld = httpsCallable(cloudFunctions, 'helloWorld');
+			const helloWorld = httpsCallable(cloudFunctions, 'helloWorld2');
 			try {
 				const result = await helloWorld({ someParameter: 'poslane do funkcie' });
 				output = result.data.message;

@@ -10,25 +10,27 @@
 // Create and deploy your first functions
 // https://firebase.google.com/docs/functions/get-started
 
+// ############################################################################################
 const { onRequest, onCall } = require("firebase-functions/v2/https");
-const logger = require("firebase-functions/logger");
 
-// ###################
-exports.helloWorld2 = onRequest((request, response) => {
-	logger.info("Hello logs message!", { structuredData: true });
-	// response.send("Hello from Firebase! lala");
-	response.json({ message: "Hello from Firebase! lala" });
+exports.helloWorld = onCall(async (request) => {
+	const helloWorldHandler = require('./scripts/tests/hello-world.js');
+	return await helloWorldHandler(request);
 });
 
-// ###################
-exports.helloWorld = onCall((request) => {
-	console.log('moje data', request.data);
-	const someParameter = request.data.someParameter;
-	return {
-		message: `${someParameter}, pridane vo funkcii!`
-	};
-});
+// ################### toto je helloWorld funkcia definovana priamo tu, nie z ./tests/hello-world.js
+// exports.helloWorld = onCall((request) => {
+// 	console.log('moje data', request.data);
+// 	const someParameter = request.data.someParameter;
+// 	return {
+// 		message: `${someParameter}, pridane vo funkcii!`
+// 	};
+// });
 
+exports.helloWorld2 = onRequest(async (request, response) => {
+	const helloWorldHandler2 = require('./scripts/tests/hello-world2.js');
+	return await helloWorldHandler2(request, response);
+});
 // takto vyzera volanie tejto funkcie z componnentu:
 
 // import { cloudFunctions } from '../../firebase.js';
@@ -47,23 +49,64 @@ exports.helloWorld = onCall((request) => {
 // 	alert(output);
 // },
 
-// ###################
-const admin = require("firebase-admin");
-admin.initializeApp();
-exports.addAdminRole = onCall(async (request) => {
-	try {
-		const email = request.data.email;
-		const user = await admin.auth().getUserByEmail(email);
-		await admin.auth().setCustomUserClaims(user.uid, { admin: true });
-		return {
-			message: `Success! ${email} has been made an admin.`
-		};
-	} catch (err) {
-		return {
-			error: `Error making ${email} an admin: ${err.message}`
-		};
-	}
+// // ###################
+const { onDocumentCreated, onDocumentDeleted } = require("firebase-functions/v2/firestore");
+
+
+exports.incrementLineCounter = onDocumentCreated("trips/{tripId}/lines/{lineId}", async (event) => {
+	const incrementLineCounterHandler = require('./scripts/trips/on-add-line.js');
+	return await incrementLineCounterHandler(event);
 });
+
+exports.decrementLineCounter = onDocumentDeleted("trips/{tripId}/lines/{lineId}", async (event) => {
+	const decrementLineCounterHandler = require('./scripts/trips/on-delete-line.js');
+	return await decrementLineCounterHandler(event);
+});
+
+// exports.incrementLineCounter = onDocumentCreated("trips/{tripId}/lines/{lineId}", async (event) => {
+// 	const tripId = event.params.tripId;
+// 	const tripRef = admin.firestore().collection('trips').doc(tripId);
+
+// 	try {
+// 		// zitenie hodnoty z dokumentu
+// 		// const tripDoc = await tripRef.get();
+// 		// if (tripDoc.exists) {
+// 		// 	const linesCount = tripDoc.data().linesCount;
+// 		// 	console.log('linesCount', linesCount);
+
+// 		// } else {
+// 		// 	console.log('No such document!');
+// 		// }
+// 		await tripRef.update({ linesCount: FieldValue.increment(1) });
+// 	} catch (error) {
+// 		console.error('Error getting document:', error);
+// 	}
+// });
+
+// #################
+exports.getAdminRole = onCall(async (request) => {
+	const getAdminRoleHandler = require('./scripts/auth/get-admin-role.js');
+	return await getAdminRoleHandler(request);
+});
+
+exports.addAdminRole = onCall(async (request) => {
+	const addAdminRoleHandler = require('./scripts/auth/add-admin-role.js');
+	return await addAdminRoleHandler(request);
+});
+// exports.addAdminRole = onCall(async (request) => {
+// 	try {
+// 		const email = request.data.email;
+// 		const user = await admin.auth().getUserByEmail(email);
+// 		await admin.auth().setCustomUserClaims(user.uid, { admin: true });
+// 		return {
+// 			message: `Success! ${email} has been made an admin.`
+// 		};
+// 	} catch (err) {
+// 		return {
+// 			error: `Error making ${email} an admin: ${err.message}`
+// 		};
+// 	}
+// });
 
 // takto vyzera volanie tejto funkcie z componnentu:
 // async addAdminRole() {
@@ -76,46 +119,3 @@ exports.addAdminRole = onCall(async (request) => {
 // 		console.error('Error calling cloud function:', error);
 // 	}
 // },
-
-exports.getAdminRole = onCall(async (request) => {
-	console.log('moje data', request.data);
-	const user = await admin.auth().getUserByEmail(request.data.email);
-	const customClaims = user.customClaims || {};
-	return {
-		admin: customClaims.admin || false
-	};
-});
-
-const { onDocumentCreated, onDocumentDeleted } = require("firebase-functions/v2/firestore");
-const { FieldValue } = require("firebase-admin/firestore");
-
-exports.onLineAddIncrementLineCounter = onDocumentCreated("trips/{tripId}/lines/{lineId}", async (event) => {
-	const tripId = event.params.tripId;
-	const tripRef = admin.firestore().collection('trips').doc(tripId);
-
-	try {
-		// zitenie hodnoty z dokumentu
-		// const tripDoc = await tripRef.get();
-		// if (tripDoc.exists) {
-		// 	const linesCount = tripDoc.data().linesCount;
-		// 	console.log('linesCount', linesCount);
-
-		// } else {
-		// 	console.log('No such document!');
-		// }
-		await tripRef.update({ linesCount: FieldValue.increment(1) });
-	} catch (error) {
-		console.error('Error getting document:', error);
-	}
-});
-
-exports.onLineDeleteDecrementLineCounter = onDocumentDeleted("trips/{tripId}/lines/{lineId}", async (event) => {
-	const tripId = event.params.tripId;
-	const tripRef = admin.firestore().collection('trips').doc(tripId);
-
-	try {
-		await tripRef.update({ linesCount: FieldValue.increment(-1) });
-	} catch (error) {
-		console.error('Error getting document:', error);
-	}
-});
