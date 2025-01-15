@@ -1,8 +1,65 @@
 let timer;
 import { auth } from '../../../firebase.js';
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, updateProfile } from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "firebase/auth";
+
+import { initializeApp, deleteApp } from "firebase/app";
+// import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+const firebaseConfig = {
+	apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+	authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+	projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+	storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+	messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+	appId: import.meta.env.VITE_FIREBASE_APP_ID
+};
 
 export default {
+	handleAuthStateChange(context) {
+		console.log('auth handleAuthStateChange, volame toto');
+		onAuthStateChanged(auth, (user) => {
+			console.log('auth handleAuthStateChange, user:', user);
+			if (user) {
+				context.commit('setUser', {
+					token: user.idToken,
+					userId: user.userId,
+					email: user.email
+				})
+			}
+			console.log('auth handleAuthStateChange, zmenil sa user');
+		})
+
+	},
+	async addUser(context, payload) {
+		const email = payload.email;
+		const password = payload.password;
+		try {
+			const responseData = await createUserWithEmailAndPassword(auth, email, password);
+			return responseData.user.uid;
+		} catch (error) {
+			console.error('Error creating user:', error);
+			throw error;
+		}
+	},
+	async createUserWithoutLogin(context, payload) {
+		const email = payload.email;
+		const password = payload.password;
+
+		const secondaryApp = initializeApp(firebaseConfig, 'secondary');
+		const secondaryAuth = getAuth(secondaryApp);
+
+		try {
+			const responseData = await createUserWithEmailAndPassword(
+				secondaryAuth,
+				email,
+				password
+			);
+			await deleteApp(secondaryApp);
+			return responseData.user.uid;
+		} catch (error) {
+			await deleteApp(secondaryApp);
+			throw error;
+		}
+	},
 	async login(context, payload) {
 		const responseData = await signInWithEmailAndPassword(auth, payload.email, payload.password);
 		if (!responseData) {

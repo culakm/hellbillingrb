@@ -23,6 +23,10 @@ service cloud.firestore {
      }
     */
 
+    match /users/{userId} {
+    	allow read,write: if isAuthenticated();
+    }
+
 		match /trips/{tripId} {
     	allow read,write: if isAuthenticated();
     }
