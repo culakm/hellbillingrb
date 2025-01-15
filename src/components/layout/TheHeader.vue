@@ -9,10 +9,13 @@
 					<base-button @click="getAdminRole">Function test</base-button>
 				</li>
 				<li v-if="isLoggedIn">
+					<router-link to="/users">users</router-link>
+				</li>
+				<li v-if="isLoggedIn">
 					<router-link to="/trips">trips</router-link>
 				</li>
 				<li v-if="isLoggedIn">
-					<base-button @click="logout">Logout</base-button>
+					<base-button @click="logout">Logout {{ email }} </base-button>
 				</li>
 				<li v-else>
 					<router-link to="/auth">Login</router-link>

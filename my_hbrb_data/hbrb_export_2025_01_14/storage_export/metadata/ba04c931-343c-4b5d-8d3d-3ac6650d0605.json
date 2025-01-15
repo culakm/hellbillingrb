@@ -1,0 +1,19 @@
+{
+  "name": "trips/6aleO0HJ6JuWye3arQ7w/dakar_upload.jpg",
+  "bucket": "hellbillingrb.firebasestorage.app",
+  "metageneration": 1,
+  "generation": 1736764522365,
+  "contentType": "image/jpeg",
+  "storageClass": "STANDARD",
+  "contentDisposition": "inline",
+  "downloadTokens": [
+    "682615ed-c310-42ab-b5f2-467ca9dc1682"
+  ],
+  "etag": "BRANUgeg1udirMR2B82kdYBxx3A",
+  "customMetadata": {},
+  "timeCreated": "2025-01-13T10:35:22.365Z",
+  "updated": "2025-01-13T10:35:22.365Z",
+  "size": 35523,
+  "md5Hash": "5jwq/HV0tDNz/RAysYbVdw==",
+  "crc32c": "332181559"
+}

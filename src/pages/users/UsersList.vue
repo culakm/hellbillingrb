@@ -4,21 +4,21 @@
 			<p>{{ error }}</p>
 		</base-dialog>
 		<base-dialog :show="!!confirm" title="Really???">
-			<p>Are you shure you want to delete this trip?</p>
+			<p>Are you shure you want to delete this user?</p>
 		</base-dialog>
 		<section>
 			<base-card>
 				<div v-if="isAuthenticated" class="controls">
-					<base-button link to="/trip/add">Add New Trip</base-button>
+					<base-button link to="/user/add">Add New user</base-button>
 				</div>
 				<div v-if="isLoading">
 					<base-spinner></base-spinner>
 				</div>
-				<ul v-else-if="hasTrips">
-					<trip-actions v-for="trip in trips" :key="trip.tripId" :trip-id="trip.tripId" :name="trip.name"
-						:description="trip.description"></trip-actions>
+				<ul v-else-if="hasUsers">
+					<user-actions v-for="user in users" :key="user.userId" :user-id="user.userId" :name="user.name"
+						:description="user.description"></user-actions>
 				</ul>
-				<h3 v-else>No trips found</h3>
+				<h3 v-else>No users found</h3>
 			</base-card>
 		</section>
 	</div>
@@ -26,11 +26,11 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex';
-import TripActions from '../../components/trips/TripActions.vue';
+import UserActions from '../../components/users/UserActions.vue';
 export default {
-	name: 'TripList',
+	name: 'UsersList',
 	components: {
-		TripActions,
+		UserActions,
 	},
 	data() {
 		return {
@@ -41,17 +41,17 @@ export default {
 	},
 	computed: {
 		...mapGetters(['isAuthenticated']),
-		...mapGetters('trips', ['trips', 'hasTrips']),
+		...mapGetters('users', ['users', 'hasUsers']),
 	},
 	created() {
-		this.loadTripsLocal();
+		this.loadUsersLocal();
 	},
 	methods: {
-		...mapActions('trips', ['loadTripsOrdered']),
-		async loadTripsLocal(refresh = false) {
+		...mapActions('users', ['loadUsers']),
+		async loadUsersLocal(refresh = false) {
 			this.isLoading = true;
 			try {
-				await this.loadTripsOrdered({ forcedRefresh: refresh });
+				await this.loadUsers({ forcedRefresh: refresh });
 			} catch (error) {
 				this.error = `Component ${this.$options.name}, error: ${error.message}` || 'Something went wrong!';
 			}
