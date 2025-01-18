@@ -6,7 +6,7 @@
 			</h1>
 			<ul>
 				<li>
-					<base-button @click="getAdminRole">Function test</base-button>
+					<base-button @click="functionTestUser">Function test</base-button>
 				</li>
 				<li v-if="isLoggedIn">
 					<router-link to="/users">users</router-link>
@@ -47,6 +47,19 @@ export default {
 		logout() {
 			this.$store.dispatch('logout');
 			this.$router.replace('/');
+		},
+		async functionTestUser() {
+			alert('Function test');
+			let output = 'pako';
+			const createUser = httpsCallable(cloudFunctions, 'createUser');
+			try {
+				const result = await createUser();
+				output = result.data.message;
+				console.log('vystup z funkcie: ' + result.data.message);
+			} catch (error) {
+				console.error('Error calling cloud function:', error);
+			}
+			alert(output);
 		},
 		async functionTest() {
 			alert('Function test');
