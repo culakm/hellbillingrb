@@ -27,6 +27,16 @@
 				@blur="clearValidity('description')"></textarea>
 			<p v-if="!description.isValid">Description must not be empty!</p>
 		</div>
+		<div class="form-control" :class="{ invalid: !role.isValid }">
+			<label for="role">Role</label>
+			<select id="role" v-model="role.val" @blur="clearValidity('role')">
+				<option value="admin">Admin</option>
+				<option value="editor">Editor</option>
+				<option value="user">User</option>
+			</select>
+			<p v-if="!role.isValid">Role must be selected!</p>
+		</div>
+
 
 		<p v-if="!formIsValid">Please fix errors</p>
 		<base-button v-if="Object.keys(user).length === 0">Add User</base-button>
@@ -68,6 +78,10 @@ export default {
 				val: '',
 				isValid: true
 			},
+			role: {
+				val: 'user',
+				isValid: true
+			},
 
 			userId: '',
 			formIsValid: true,
@@ -81,6 +95,8 @@ export default {
 
 		this.name.val = this.user.name || '';
 		this.description.val = this.user.description || '';
+		this.email.val = this.user.email || '';
+		this.role.val = this.user.role || 'user';
 	},
 	methods: {
 		async setUserId() {
@@ -129,6 +145,7 @@ export default {
 				email: this.email.val,
 				password: this.password1.val,
 				description: this.description.val,
+				role: this.role.val,
 			};
 			this.$emit('save-data', formData);
 		},

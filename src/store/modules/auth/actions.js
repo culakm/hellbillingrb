@@ -26,8 +26,7 @@ export default {
 				})
 			}
 			console.log('auth handleAuthStateChange, zmenil sa user');
-		})
-
+		});
 	},
 	async addUser(context, payload) {
 		const email = payload.email;
@@ -37,26 +36,6 @@ export default {
 			return responseData.user.uid;
 		} catch (error) {
 			console.error('Error creating user:', error);
-			throw error;
-		}
-	},
-	async createUserWithoutLogin(context, payload) {
-		const email = payload.email;
-		const password = payload.password;
-
-		const secondaryApp = initializeApp(firebaseConfig, 'secondary');
-		const secondaryAuth = getAuth(secondaryApp);
-
-		try {
-			const responseData = await createUserWithEmailAndPassword(
-				secondaryAuth,
-				email,
-				password
-			);
-			await deleteApp(secondaryApp);
-			return responseData.user.uid;
-		} catch (error) {
-			await deleteApp(secondaryApp);
 			throw error;
 		}
 	},

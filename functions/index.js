@@ -119,3 +119,13 @@ exports.addAdminRole = onCall(async (request) => {
 // 		console.error('Error calling cloud function:', error);
 // 	}
 // },
+
+// #################
+const createUserApp = require('./scripts/users/create-user-express.js');
+exports.createUserExpress = onRequest(createUserApp);
+
+
+exports.createUser = onCall(async (request, response) => {
+	const createUserHandler = require('./scripts/users/create-user.js');
+	return await createUserHandler(request, response);
+});
