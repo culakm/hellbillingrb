@@ -3,31 +3,31 @@ const admin = require('firebase-admin');
 const db = admin.firestore();
 const authRoleCheck = require('../auth/auth-role-check');
 
-async function createUserHandler({ data, auth }) {
+async function updateUserHandler({ data, auth }) {
 	try {
 		await authRoleCheck(auth, 'admin');
-		const { name, email, password, description, role } = data.user;
+		const { userId, name, email, password, description, role } = data.user;
+		console.log('updateUserHandler', data);
 
-		const userRecord = await admin.auth().createUser({
+		const userRecord = await admin.auth().updateUser(userId, {
 			email: email,
 			password: password,
 		});
 
 		await admin.auth().setCustomUserClaims(userRecord.uid, { role: role });
 
-		// Add user to Firestore
-		await db.collection('users').doc(userRecord.uid).set({
+		await db.collection('users').doc(userRecord.uid).update({
 			name: name,
 			email: email,
 			description: description,
 		});
 
-		return { message: `User ${name} was created successfully` };
+		return { message: `User ${name} was updated successfully` };
 	} catch (error) {
-		const errorMessage = `Error creating user, ${error}`;
+		const errorMessage = `Error updating user, ${error}`;
 		console.error(errorMessage);
 		throw new functions.https.HttpsError('internal', errorMessage);
 	}
 }
 
-module.exports = createUserHandler;
+module.exports = updateUserHandler;

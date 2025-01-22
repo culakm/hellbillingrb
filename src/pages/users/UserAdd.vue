@@ -34,14 +34,13 @@ export default {
 	},
 	methods: {
 		...mapActions({
-			authAddUser: 'addUser',
-			usersAddUser: 'users/addUser',
+			authAddUser: 'addUser', //vyhodit
+			usersAddUser: 'users/addUser', //vyhodit
 			userByEmail: 'users/userByEmail',
 		}),
 		async addUserLocal(userData) {
 			this.isLoading = true;
 			console.log('userData na clientovi', userData);
-			const createUser = httpsCallable(cloudFunctions, 'createUser');
 			try {
 				const userExists = await this.userByEmail(userData.email);
 				if (userExists) {
@@ -49,9 +48,12 @@ export default {
 					this.isLoading = false;
 					return;
 				}
+				const createUser = httpsCallable(cloudFunctions, 'createUser');
 				const result = await createUser({ user: userData });
 			} catch (error) {
-				console.error('Error calling cloud function:', error);
+				this.error = `User was not created! ${error}`;
+				this.isLoading = false;
+				return;
 			}
 
 			this.isLoading = false;

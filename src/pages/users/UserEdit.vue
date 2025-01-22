@@ -17,8 +17,10 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex';
+import { cloudFunctions } from '../../firebase.js';
+import { httpsCallable } from 'firebase/functions';
 import UserForm from '../../components/users/UserForm.vue';
+import { mapGetters, mapActions } from 'vuex';
 
 export default {
 	name: 'UserEdit',
@@ -30,27 +32,54 @@ export default {
 			isLoading: false,
 			error: null,
 			userId: null,
+			user: null,
 		};
-	},
-	computed: {
-		...mapGetters('users', ['user', 'hasLines'])
 	},
 	created() {
 		this.userId = this.$route.params.userId;
 		this.userByIdLocal();
 	},
 	methods: {
-		...mapActions('users', ['userById', 'addLine', 'updateLines']),
+		...mapActions({
+			authUpdateUser: 'updateUser', //vyhodit
+			usersUpdateUser: 'users/updateUser', //	vyhodit
+			userById: 'users/userById',
+			userByEmail: 'users/userByEmail',
+		}),
 		async userByIdLocal() {
 			this.isLoading = true;
 			try {
-				await this.userById(this.userId);
+				const userData = await this.userById(this.userId);
+				console.log('userData', userData);
+				this.user = userData;
 			} catch (error) {
 				this.error = `Component ${this.$options.name}, error: ${error.message}` || 'Something went wrong!';
 			}
 			this.isLoading = false;
 		},
 		async updateUserLocal(userData) {
+			this.isLoading = true;
+			console.log('userData na clientovi', userData);
+
+			try {
+				// const userExists = await this.userByEmail(userData.email);
+				// if (userExists) {
+				// 	this.error = `User with email ${userExists.email} already exists!`;
+				// 	this.isLoading = false;
+				// 	return;
+				// }
+				const updateUser = httpsCallable(cloudFunctions, 'updateUser');
+				const result = await updateUser({ user: userData });
+			} catch (error) {
+				this.error = `User was not updated! ${error}`;
+				this.isLoading = false;
+				return;
+			}
+
+			this.isLoading = false;
+			this.$router.replace('/users');
+		},
+		async updateUserLocal2(userData) {
 			this.isLoading = true;
 			try {
 				await this.$store.dispatch('users/updateUser', userData);
@@ -62,34 +91,9 @@ export default {
 			this.isLoading = false;
 
 		},
-		async addLineLocal(lineData) {
-			this.isLoading = true;
-			const lastOrder = this.user.lines.length;
-			lineData.order = lastOrder + 1;
-			lineData.userId = this.user.userId;
-
-			try {
-				await this.addLine(lineData);
-			} catch (error) {
-				this.error = `Component ${this.$options.name}, Padlo fetch : ${error.message}` || 'Something went wrong!';
-				return;
-			}
-			this.isLoading = false;
-		},
-		lineIsEdited() {
-			this.draggableEnabled = !this.draggableEnabled;
-		},
 		handleError() {
 			this.error = null;
 		},
-		onEnd(evt) {
-			this.dragging = false;
-			this.user.lines.forEach((line, index) => {
-				line.order = index + 1;
-			});
-			this.updateLines({ lines: this.user.lines, userId: this.user.userId });
-		},
-
 	},
 };
 </script>

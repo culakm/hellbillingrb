@@ -31,6 +31,10 @@ const router = createRouter({
 		{ name: 'user-add', path: '/user/add', component: UserAdd, meta: { requiresAuth: true } },
 		{ name: 'user-edit', path: '/user/edit/:userId', component: UserEdit, props: false, meta: { requiresAuth: true } },
 
+		{ name: 'users', path: '/users', component: UsersList, meta: { requiresAuth: true } },
+		{ name: 'user-add', path: '/user/add', component: UserAdd, meta: { requiresAuth: true } },
+		{ name: 'user-edit', path: '/user/edit/:userId', component: UserEdit, props: false, meta: { requiresAuth: true } },
+
 		{ name: 'auth', path: '/auth', component: UserAuth, meta: { requiresUnauth: true } },
 
 		{ path: '/:notFound(.*)', component: NotFound }

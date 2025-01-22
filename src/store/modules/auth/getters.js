@@ -9,7 +9,16 @@ export default {
 		return state.email;
 	},
 	isAuthenticated(state) {
-		return !!state.token; // true boolean
+		return !!state.token;
+	},
+	isAdmin(state) {
+		return state.role === 'admin';
+	},
+	isEditor(state) {
+		return state.role === 'editor';
+	},
+	isUser(state) {
+		return state.role === 'user';
 	},
 	didAutoLogout(state) {
 		return state.didAutoLogout;
