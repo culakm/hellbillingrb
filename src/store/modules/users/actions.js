@@ -1,5 +1,7 @@
 import { db } from '../../../firebase.js';
 import { collection, doc, getDoc, setDoc, getDocs, query, orderBy, where } from "firebase/firestore";
+import { cloudFunctions } from '../../../firebase.js';
+import { httpsCallable } from 'firebase/functions';
 
 export default {
 	async loadUsers(context) {
@@ -41,8 +43,6 @@ export default {
 	},
 	async deleteUser(context, payload) {
 		const userId = payload.userId;
-		const userDocRef = doc(db, "users", userId);
-		// Commit the mutation to update the state
 		context.commit('deleteUser', { userId: userId });
 	},
 	async userById(context, userId) {
@@ -51,13 +51,15 @@ export default {
 			const docRef = doc(db, "users", userId);
 			const docSnap = await getDoc(docRef);
 			if (docSnap.exists()) {
-				const userDoc = docSnap.docs[0];
 				const userData = docSnap.data();
+				const getUserRole = httpsCallable(cloudFunctions, 'getUserRole');
+				const roleResult = await getUserRole({ email: userData.email });
 				return {
-					userId: userDoc.id,
+					userId: userId,
 					name: userData.name,
 					email: userData.email,
 					description: userData.description,
+					role: roleResult.data.role
 				};
 			}
 			return null;

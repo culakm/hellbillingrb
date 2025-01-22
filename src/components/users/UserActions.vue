@@ -1,31 +1,85 @@
 <template>
-    <li>
-        <div class="header">
-            <h3>{{ name }}</h3>
-            <p>{{ description }}</p>
-        </div>
-        <div class="actions">
-            <base-button link :to="userEditLink">Edit</base-button>
-            <base-button @click="deleteTrip">Delete</base-button>
-        </div>
-    </li>
+    <base-dialog @close="handleError" :show="!!error" title="An error is ocurred!">
+        <p>{{ error }}</p>
+    </base-dialog>
+    <section>
+        <li>
+            <div v-if="isLoading">
+                <base-spinner></base-spinner>
+            </div>
+            <div class="header">
+                <h3>{{ name }}</h3>
+                <p>{{ description }}</p>
+            </div>
+            <div class="actions">
+                <base-button link :to="userEditLink">Edit</base-button>
+                <base-button @click="deleteUserLocal">Delete</base-button>
+            </div>
+        </li>
+    </section>
 </template>
 
 <script>
+import { cloudFunctions } from '../../firebase.js';
+import { httpsCallable } from 'firebase/functions';
+import { mapGetters, mapActions } from 'vuex';
+
 export default {
     name: 'UserActions',
     props: ['userId', 'name', 'description'],
+    data() {
+        return {
+            isLoading: false,
+            error: null,
+        };
+    },
     computed: {
+        ...mapGetters({ currentUserId: 'userId' }),
         userEditLink() {
             return `/user/edit/${this.userId}`;
         },
     },
     methods: {
-        deleteTrip() {
-            this.$store.dispatch('users/deleteTrip', { userId: this.userId });
+        ...mapActions('users', ['deleteUser']),
+        // deleteTrip() {
+        //     this.$store.dispatch('users/deleteTrip', { userId: this.userId });
+        //     this.$router.replace('/users');
+        // },
+        async deleteUserLocal() {
+            this.isLoading = true;
+            const userData = {
+                userId: this.userId
+            };
+            console.log('userData na clientovi', userData);
+
+            if (this.currentUserId === this.userId) {
+                alert('You cannot delete yourself!');
+                return;
+            }
+
+            const confirmed = confirm('Are you sure you want to delete this user?');
+            if (!confirmed) {
+                this.isLoading = false;
+                return;
+            }
+
+            try {
+                const deleteUser = httpsCallable(cloudFunctions, 'deleteUser');
+                const result = await deleteUser({ userId: this.userId });
+            } catch (error) {
+                console.error('Error calling cloud function:', error);
+                this.error = `User was not deleted! ${error}`;
+                this.isLoading = false;
+                return;
+            }
+            this.deleteUser({ userId: this.userId });
+            this.isLoading = false;
             this.$router.replace('/users');
         },
-    }
+        handleError() {
+            this.error = null;
+        },
+    },
 };
 </script>
 

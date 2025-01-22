@@ -6,9 +6,9 @@
 			</h1>
 			<ul>
 				<li>
-					<base-button @click="functionTestUser">Function test</base-button>
+					<base-button @click="functionTest">Function test</base-button>
 				</li>
-				<li v-if="isLoggedIn">
+				<li>
 					<router-link to="/users">users</router-link>
 				</li>
 				<li v-if="isLoggedIn">
@@ -16,6 +16,15 @@
 				</li>
 				<li v-if="isLoggedIn">
 					<base-button @click="logout">Logout {{ email }} </base-button>
+				</li>
+				<li v-if="isAdmin">
+					ADMIN
+				</li>
+				<li v-else-if="isEditor">
+					EDITOR
+				</li>
+				<li v-else-if="isLoggedIn">
+					User
 				</li>
 				<li v-else>
 					<router-link to="/auth">Login</router-link>
@@ -35,6 +44,12 @@ export default {
 	computed: {
 		isLoggedIn() {
 			return this.$store.getters.isAuthenticated;
+		},
+		isAdmin() {
+			return this.$store.getters.isAdmin;
+		},
+		isEditor() {
+			return this.$store.getters.isEditor;
 		},
 		email() {
 			return this.$store.getters.email;
@@ -64,7 +79,7 @@ export default {
 		async functionTest() {
 			alert('Function test');
 			let output = 'pako';
-			const helloWorld = httpsCallable(cloudFunctions, 'helloWorld2');
+			const helloWorld = httpsCallable(cloudFunctions, 'helloWorld');
 			try {
 				const result = await helloWorld({ someParameter: 'poslane do funkcie' });
 				output = result.data.message;

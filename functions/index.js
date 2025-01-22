@@ -13,9 +13,35 @@
 // ############################################################################################
 const { onRequest, onCall } = require("firebase-functions/v2/https");
 
-exports.helloWorld = onCall(async (request) => {
+// v requeste je vsetko co posle front-end
+// exports.helloWorld = onCall(async (request) => {
+// 	const helloWorldHandler = require('./scripts/tests/hello-world.js');
+// 	return await helloWorldHandler(request);
+// });
+exports.createUser = onCall(async ({ data, auth }) => {
+	const createUserHandler = require('./scripts/users/create-user.js');
+	return await createUserHandler({ data, auth });
+});
+
+exports.updateUser = onCall(async ({ data, auth }) => {
+	const updateUserHandler = require('./scripts/users/update-user.js');
+	return await updateUserHandler({ data, auth });
+});
+
+exports.deleteUser = onCall(async ({ data, auth }) => {
+	console.log('deleteUser data', data);
+	const deleteUserHandler = require('./scripts/users/delete-user.js');
+	return await deleteUserHandler({ data, auth });
+});
+
+exports.getUserRole = onCall(async (request) => {
+	const getUserRoleHandler = require('./scripts/auth/get-user-role.js');
+	return await getUserRoleHandler(request);
+});
+// tu su z requestu uz vybrane veci ktora vo funkcii potrebujeme: data a auth
+exports.helloWorld = onCall(async ({ data, auth }) => {
 	const helloWorldHandler = require('./scripts/tests/hello-world.js');
-	return await helloWorldHandler(request);
+	return await helloWorldHandler({ data, auth });
 });
 
 // ################### toto je helloWorld funkcia definovana priamo tu, nie z ./tests/hello-world.js
@@ -125,7 +151,7 @@ const createUserApp = require('./scripts/users/create-user-express.js');
 exports.createUserExpress = onRequest(createUserApp);
 
 
-exports.createUser = onCall(async (request, response) => {
-	const createUserHandler = require('./scripts/users/create-user.js');
-	return await createUserHandler(request, response);
-});
+// exports.createUser = onCall(async (request) => {
+// 	const createUserHandler = require('./scripts/users/create-user.js');
+// 	return await createUserHandler(request);
+// });

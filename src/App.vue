@@ -20,7 +20,7 @@ export default {
 	},
 	created() {
 		this.$store.dispatch("tryLogin");
-		//this.$store.dispatch('handleAuthStateChange');
+		// this.$store.dispatch('handleAuthStateChange');
 	},
 	watch: {
 		didAutoLogout(newValue, oldValue) {
