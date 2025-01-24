@@ -1,5 +1,6 @@
-const functions = require('firebase-functions');
 const admin = require('firebase-admin');
+admin.initializeApp();
+const functions = require('firebase-functions');
 const db = admin.firestore();
 const authRoleCheck = require('../auth/auth-role-check');
 
@@ -7,7 +8,6 @@ async function updateUserHandler({ data, auth }) {
 	try {
 		await authRoleCheck(auth, 'admin');
 		const { userId, name, email, password, description, role } = data.user;
-		console.log('updateUserHandler', data);
 
 		const userRecord = await admin.auth().updateUser(userId, {
 			email: email,

@@ -40,7 +40,6 @@ export default {
 		}),
 		async addUserLocal(userData) {
 			this.isLoading = true;
-			console.log('userData na clientovi', userData);
 			try {
 				const userExists = await this.userByEmail(userData.email);
 				if (userExists) {
@@ -61,44 +60,7 @@ export default {
 		},
 		handleError() {
 			this.error = null;
-		},
-		async addUserLocalExpress(userData) {
-			this.isLoading = true;
-			try {
-				console.log('userData', userData);
-				const userExists = await this.userByEmail(userData.email);
-				if (userExists) {
-					this.error = `User with email ${userExists.email} already exists!`;
-					this.isLoading = false;
-					return;
-				}
-
-				const url = 'http://127.0.0.1:5001/hellbillingrb/us-central1/createUserExpress';
-				const options = {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
-					},
-					body: JSON.stringify({ user: userData }),
-				};
-				const response = await fetch(url, options);
-				if (!response.ok) {
-					throw new Error(`HTTP error! status: ${response.status}`);
-				}
-				const data = await response.json();
-				console.log(data.message);
-				// await this.usersAddUser(userData);
-			} catch (error) {
-				this.error = `Component ${this.$options.name}, Padlo fetch : ${error.message}` || 'Something went wrong!';
-				return;
-			}
-
-			this.isLoading = false;
-			this.$router.replace('/users');
-		},
-		handleError() {
-			this.error = null;
-		},
+		}
 	},
 };
 </script>

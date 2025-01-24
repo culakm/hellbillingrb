@@ -9,7 +9,7 @@ async function decrementLineCounterHandler(event) {
 	try {
 		await tripRef.update({ linesCount: FieldValue.increment(-1) });
 	} catch (error) {
-		console.error('Error getting document:', error);
+		console.error(`Error decrease lines count, ${error}`);
 	}
 }
 

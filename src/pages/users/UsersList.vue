@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div v-if="isAdmin">
 		<base-dialog :show="!!error" title="An error occured..." @close="handleError">
 			<p>{{ error }}</p>
 		</base-dialog>
@@ -40,7 +40,7 @@ export default {
 		};
 	},
 	computed: {
-		...mapGetters(['isAuthenticated']),
+		...mapGetters(['isAuthenticated', 'isAdmin']),
 		...mapGetters('users', ['users', 'hasUsers']),
 	},
 	created() {

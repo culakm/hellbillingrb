@@ -21,7 +21,7 @@ export default {
 		});
 		context.commit('loadUsers', users);
 	},
-	async addUser(context, payload) {
+	async addUser(context, payload) {// preverit, zapis do db sa mi zda zbytocny, commit je ale asi v pohode
 		const userId = payload.userId;
 		const userData = {
 			name: payload.name,
@@ -31,7 +31,7 @@ export default {
 		await setDoc(doc(db, "users", userId), userData);
 		context.commit('addUser', userData);
 	},
-	async updateUser(context, payload) {
+	async updateUser(context, payload) { // preverit, zapis do db sa mi zda zbytocny, commit je ale asi v pohode
 		const userId = payload.userId;
 		const userData = {
 			userId: userId,
@@ -41,7 +41,7 @@ export default {
 		await setDoc(doc(db, "users", userId), userData);
 		context.commit('updateUser', userData);
 	},
-	async deleteUser(context, payload) {
+	async deleteUser(context, payload) { // urcite nechat
 		const userId = payload.userId;
 		context.commit('deleteUser', { userId: userId });
 	},

@@ -10,6 +10,7 @@
 				</div>
 				<div v-else-if="trip">
 					<h2>{{ trip.name }}</h2>
+					<p>linesCount: {{ trip.linesCount }}</p>
 					<trip-form @save-data="updateTripLocal" :trip="trip"></trip-form>
 				</div>
 			</base-card>

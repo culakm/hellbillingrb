@@ -41,17 +41,7 @@ export default {
     },
     methods: {
         ...mapActions('users', ['deleteUser']),
-        // deleteTrip() {
-        //     this.$store.dispatch('users/deleteTrip', { userId: this.userId });
-        //     this.$router.replace('/users');
-        // },
         async deleteUserLocal() {
-            this.isLoading = true;
-            const userData = {
-                userId: this.userId
-            };
-            console.log('userData na clientovi', userData);
-
             if (this.currentUserId === this.userId) {
                 alert('You cannot delete yourself!');
                 return;
@@ -62,6 +52,8 @@ export default {
                 this.isLoading = false;
                 return;
             }
+
+            this.isLoading = true;
 
             try {
                 const deleteUser = httpsCallable(cloudFunctions, 'deleteUser');

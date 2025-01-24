@@ -8,6 +8,9 @@ export default {
 	email(state) {
 		return state.email;
 	},
+	role(state) {
+		return state.role;
+	},
 	isAuthenticated(state) {
 		return !!state.token;
 	},

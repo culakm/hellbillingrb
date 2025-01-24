@@ -121,6 +121,8 @@ export default {
 				tripId: doc.id,
 				name: tripData.name,
 				description: tripData.description,
+				imageName: tripData.imageName,
+				linesCount: tripData.linesCount,
 			};
 			trips.push(trip);
 		});
@@ -140,6 +142,7 @@ export default {
 				name: tripData.name,
 				description: tripData.description,
 				imageName: tripData.imageName,
+				linesCount: tripData.linesCount,
 			};
 			trips.push(trip);
 		});
@@ -156,6 +159,7 @@ export default {
 				name: tripData.name,
 				description: tripData.description,
 				imageName: tripData.imageName,
+				linesCount: tripData.linesCount,
 			};
 
 			// Fetch lines subcollection

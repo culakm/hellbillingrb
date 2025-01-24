@@ -25,6 +25,8 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex';
+
 export default {
 	name: 'UserAuth',
 	data() {
@@ -44,6 +46,7 @@ export default {
 		};
 	},
 	methods: {
+		...mapActions(['login']),
 		validateForm() {
 			this.formIsValid = true;
 			if (this.email.val === '' || !this.email.val.includes('@')) {
@@ -63,14 +66,13 @@ export default {
 
 			this.isLoading = true;
 
-			const actionPayload = {
+			const userData = {
 				email: this.email.val,
 				password: this.password.val
 			};
 
 			try {
-				await this.$store.dispatch('login', actionPayload);
-
+				await this.login(userData);
 				this.$router.replace('/');
 			} catch (error) {
 				this.error = error.message || 'Failed to login, try again';
@@ -89,48 +91,48 @@ export default {
 </script>
 
 <style scoped>
-form {
-	margin: 1rem;
-	padding: 1rem;
-}
+	form {
+		margin: 1rem;
+		padding: 1rem;
+	}
 
-.form-control {
-	margin: 0.5rem 0;
-}
+	.form-control {
+		margin: 0.5rem 0;
+	}
 
-label {
-	font-weight: bold;
-	margin-bottom: 0.5rem;
-	display: block;
-}
+	label {
+		font-weight: bold;
+		margin-bottom: 0.5rem;
+		display: block;
+	}
 
-input,
-textarea {
-	display: block;
-	width: 100%;
-	font: inherit;
-	border: 1px solid #ccc;
-	padding: 0.15rem;
-}
+	input,
+	textarea {
+		display: block;
+		width: 100%;
+		font: inherit;
+		border: 1px solid #ccc;
+		padding: 0.15rem;
+	}
 
-input:focus,
-textarea:focus {
-	border-color: #3d008d;
-	background-color: #faf6ff;
-	outline: none;
-}
+	input:focus,
+	textarea:focus {
+		border-color: #3d008d;
+		background-color: #faf6ff;
+		outline: none;
+	}
 
-.invalid label {
-	color: red;
-}
+	.invalid label {
+		color: red;
+	}
 
-.invalid input,
-.invalid textarea {
-	border: 1px solid red;
-}
+	.invalid input,
+	.invalid textarea {
+		border: 1px solid red;
+	}
 
-.invalid,
-p {
-	color: red;
-}
+	.invalid,
+	p {
+		color: red;
+	}
 </style>

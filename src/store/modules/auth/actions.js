@@ -1,6 +1,6 @@
 let timer;
 import { auth } from '../../../firebase.js';
-import { getAuth, getIdTokenResult, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "firebase/auth";
+import { onAuthStateChanged, getIdTokenResult, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "firebase/auth";
 
 const firebaseConfig = {
 	apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -73,6 +73,7 @@ export default {
 		const token = localStorage.getItem('token');
 		const userId = localStorage.getItem('userId');
 		const email = localStorage.getItem('email');
+		const role = localStorage.getItem('role');
 		//const tokenExpiration = localStorage.getItem('tokenExpiration');
 
 		// const expiresIn = +tokenExpiration - new Date().getTime();
@@ -89,7 +90,8 @@ export default {
 			context.commit('setUser', {
 				token: token,
 				userId: userId,
-				email: email
+				email: email,
+				role: role
 			});
 		}
 	},

@@ -1,5 +1,6 @@
-const functions = require('firebase-functions');
 const admin = require('firebase-admin');
+admin.initializeApp();
+const functions = require('firebase-functions');
 const db = admin.firestore();
 const authRoleCheck = require('../auth/auth-role-check');
 

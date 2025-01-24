@@ -12,13 +12,13 @@ async function incrementLineCounterHandler(event) {
 		// if (tripDoc.exists) {
 		// 	const linesCount = tripDoc.data().linesCount;
 		// 	console.log('linesCount', linesCount);
-
 		// } else {
 		// 	console.log('No such document!');
 		// }
+
 		await tripRef.update({ linesCount: FieldValue.increment(1) });
 	} catch (error) {
-		console.error('Error getting document:', error);
+		console.error(`Error increase lines count, ${error}`);
 	}
 }
 

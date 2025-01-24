@@ -5,26 +5,14 @@
 				<router-link to="/">HBRB</router-link>
 			</h1>
 			<ul>
-				<li>
-					<base-button @click="functionTest">Function test</base-button>
-				</li>
-				<li>
+				<li v-if="isAdmin">
 					<router-link to="/users">users</router-link>
 				</li>
-				<li v-if="isLoggedIn">
+				<li v-if="isAuthenticated">
 					<router-link to="/trips">trips</router-link>
 				</li>
-				<li v-if="isLoggedIn">
-					<base-button @click="logout">Logout {{ email }} </base-button>
-				</li>
-				<li v-if="isAdmin">
-					ADMIN
-				</li>
-				<li v-else-if="isEditor">
-					EDITOR
-				</li>
-				<li v-else-if="isLoggedIn">
-					User
+				<li v-if="isAuthenticated">
+					<base-button @click="logoutLocal">Logout {{ email }}, role {{ role }}</base-button>
 				</li>
 				<li v-else>
 					<router-link to="/auth">Login</router-link>
@@ -36,79 +24,28 @@
 
 <script>
 
+import { mapGetters, mapActions } from 'vuex';
 import { cloudFunctions } from '../../firebase.js';
 import { httpsCallable } from 'firebase/functions';
 
 export default {
 	name: 'TheHeader',
 	computed: {
-		isLoggedIn() {
-			return this.$store.getters.isAuthenticated;
-		},
-		isAdmin() {
-			return this.$store.getters.isAdmin;
-		},
-		isEditor() {
-			return this.$store.getters.isEditor;
-		},
-		email() {
-			return this.$store.getters.email;
-		},
-		userId() {
-			return this.$store.getters.userId;
-		},
+		...mapGetters([
+			'isAuthenticated',
+			'isAdmin',
+			'email',
+			'role'
+		])
 	},
 	methods: {
-		logout() {
-			this.$store.dispatch('logout');
+		...mapActions({
+			logout: 'logout',
+		}),
+		logoutLocal() {
+			this.logout();
 			this.$router.replace('/');
-		},
-		async functionTestUser() {
-			alert('Function test');
-			let output = 'pako';
-			const createUser = httpsCallable(cloudFunctions, 'createUser');
-			try {
-				const result = await createUser();
-				output = result.data.message;
-				console.log('vystup z funkcie: ' + result.data.message);
-			} catch (error) {
-				console.error('Error calling cloud function:', error);
-			}
-			alert(output);
-		},
-		async functionTest() {
-			alert('Function test');
-			let output = 'pako';
-			const helloWorld = httpsCallable(cloudFunctions, 'helloWorld');
-			try {
-				const result = await helloWorld({ someParameter: 'poslane do funkcie' });
-				output = result.data.message;
-				console.log('vystup z funkcie: ' + result.data.message);
-			} catch (error) {
-				console.error('Error calling cloud function:', error);
-			}
-			alert(output);
-		},
-		async addAdminRole() {
-			const email = 'karol.emul@hellbilling.com';
-			const addAdminRole = httpsCallable(cloudFunctions, 'addAdminRole');
-			try {
-				const result = await addAdminRole({ email: email });
-				console.log('vystup z funkcie: ', result.data);
-			} catch (error) {
-				console.error('Error calling cloud function:', error);
-			}
-		},
-		async getAdminRole() {
-			const email = 'karol.emul@hellbilling.com';
-			const getAdminRole = httpsCallable(cloudFunctions, 'getAdminRole');
-			try {
-				const result = await getAdminRole({ email: email });
-				console.log('vystup z funkcie: ', result.data);
-			} catch (error) {
-				console.error('Error calling cloud function:', error);
-			}
-		},
+		}
 	},
 };
 </script>

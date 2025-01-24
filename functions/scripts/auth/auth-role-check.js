@@ -8,7 +8,9 @@ const authRoleCheck = async (auth, requiredRole) => {
 	const uid = auth.uid;
 	const user = await admin.auth().getUser(uid);
 	if (!user.customClaims || user.customClaims.role !== requiredRole) {
-		throw new functions.https.HttpsError('permission-denied', `The user does not have the necessary permissions to execute this function.`);
+		const errorMessage = `The user does not have the necessary permissions to execute this function.`;
+		console.error(errorMessage);
+		throw new functions.https.HttpsError('permission-denied', errorMessage);
 	}
 	return user;
 };

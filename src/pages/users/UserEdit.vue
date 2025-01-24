@@ -50,7 +50,6 @@ export default {
 			this.isLoading = true;
 			try {
 				const userData = await this.userById(this.userId);
-				console.log('userData', userData);
 				this.user = userData;
 			} catch (error) {
 				this.error = `Component ${this.$options.name}, error: ${error.message}` || 'Something went wrong!';
@@ -59,7 +58,6 @@ export default {
 		},
 		async updateUserLocal(userData) {
 			this.isLoading = true;
-			console.log('userData na clientovi', userData);
 
 			try {
 				// const userExists = await this.userByEmail(userData.email);
@@ -78,18 +76,6 @@ export default {
 
 			this.isLoading = false;
 			this.$router.replace('/users');
-		},
-		async updateUserLocal2(userData) {
-			this.isLoading = true;
-			try {
-				await this.$store.dispatch('users/updateUser', userData);
-			} catch (error) {
-				this.error = `Component ${this.$options.name}, Padlo fetch : ${error.message}` || 'Something went wrong!';
-				return;
-			}
-
-			this.isLoading = false;
-
 		},
 		handleError() {
 			this.error = null;
