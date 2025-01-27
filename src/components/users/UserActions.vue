@@ -8,8 +8,10 @@
                 <base-spinner></base-spinner>
             </div>
             <div class="header">
-                <h3>{{ name }}</h3>
-                <p>{{ description }}</p>
+                <h3>{{ user.name }}</h3>
+                <p>email: {{ user.email }}</p>
+                <p>role: {{ user.role }}</p>
+                <p>desc: {{ user.description }}</p>
             </div>
             <div class="actions">
                 <base-button link :to="userEditLink">Edit</base-button>
@@ -26,7 +28,7 @@ import { mapGetters, mapActions } from 'vuex';
 
 export default {
     name: 'UserActions',
-    props: ['userId', 'name', 'description'],
+    props: ['user'],
     data() {
         return {
             isLoading: false,
@@ -36,18 +38,18 @@ export default {
     computed: {
         ...mapGetters({ currentUserId: 'userId' }),
         userEditLink() {
-            return `/user/edit/${this.userId}`;
+            return `/user/edit/${this.user.userId}`;
         },
     },
     methods: {
         ...mapActions('users', ['deleteUser']),
         async deleteUserLocal() {
-            if (this.currentUserId === this.userId) {
+            if (this.currentUserId === this.user.userId) {
                 alert('You cannot delete yourself!');
                 return;
             }
 
-            const confirmed = confirm('Are you sure you want to delete this user?');
+            const confirmed = confirm(`Are you sure you want to delete user: ${this.user.name}?`);
             if (!confirmed) {
                 this.isLoading = false;
                 return;
@@ -57,14 +59,14 @@ export default {
 
             try {
                 const deleteUser = httpsCallable(cloudFunctions, 'deleteUser');
-                const result = await deleteUser({ userId: this.userId });
+                const result = await deleteUser({ userId: this.user.userId });
             } catch (error) {
                 console.error('Error calling cloud function:', error);
                 this.error = `User was not deleted! ${error}`;
                 this.isLoading = false;
                 return;
             }
-            this.deleteUser({ userId: this.userId });
+            this.deleteUser({ userId: this.user.userId });
             this.isLoading = false;
             this.$router.replace('/users');
         },

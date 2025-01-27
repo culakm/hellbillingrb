@@ -5,6 +5,7 @@
 		</base-dialog>
 		<section>
 			<base-card>
+				<h2>Edit User.</h2>
 				<div v-if="isLoading">
 					<base-spinner></base-spinner>
 				</div>
@@ -35,37 +36,16 @@ export default {
 			user: null,
 		};
 	},
-	created() {
+	async created() {
 		this.userId = this.$route.params.userId;
-		this.userByIdLocal();
+		this.user = await this.userByIdStore(this.userId);
 	},
 	methods: {
-		...mapActions({
-			authUpdateUser: 'updateUser', //vyhodit
-			usersUpdateUser: 'users/updateUser', //	vyhodit
-			userById: 'users/userById',
-			userByEmail: 'users/userByEmail',
-		}),
-		async userByIdLocal() {
-			this.isLoading = true;
-			try {
-				const userData = await this.userById(this.userId);
-				this.user = userData;
-			} catch (error) {
-				this.error = `Component ${this.$options.name}, error: ${error.message}` || 'Something went wrong!';
-			}
-			this.isLoading = false;
-		},
+		...mapActions('users', ['userByIdStore', 'userByEmail']),
+
 		async updateUserLocal(userData) {
 			this.isLoading = true;
-
 			try {
-				// const userExists = await this.userByEmail(userData.email);
-				// if (userExists) {
-				// 	this.error = `User with email ${userExists.email} already exists!`;
-				// 	this.isLoading = false;
-				// 	return;
-				// }
 				const updateUser = httpsCallable(cloudFunctions, 'updateUser');
 				const result = await updateUser({ user: userData });
 			} catch (error) {

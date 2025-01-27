@@ -4,6 +4,7 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex';
 import TheHeader from "./components/layout/TheHeader.vue";
 
 export default {
@@ -11,19 +12,23 @@ export default {
 		TheHeader,
 	},
 	computed: {
-		didAutoLogout() {
-			return this.$store.getters.didAutoLogout;
+		...mapGetters(['didAutoLogout']),
+		didAutoLogoutLocal() {
+			return this.didAutoLogout;
 		},
 		isTripViewPrint() {
 			return this.$route.path.includes("trip/view/print") ? true : false;
 		}
 	},
 	created() {
-		this.$store.dispatch("tryLogin");
+		this.tryLogin();
 		// this.$store.dispatch('handleAuthStateChange');
 	},
+	methods: {
+		...mapActions(['tryLogin'])
+	},
 	watch: {
-		didAutoLogout(newValue, oldValue) {
+		didAutoLogoutLocal(newValue, oldValue) {
 			if (newValue && newValue !== oldValue) {
 				this.$router.replace("/");
 			}

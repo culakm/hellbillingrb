@@ -15,8 +15,7 @@
 					<base-spinner></base-spinner>
 				</div>
 				<ul v-else-if="hasUsers">
-					<user-actions v-for="user in users" :key="user.userId" :user-id="user.userId" :name="user.name"
-						:description="user.description"></user-actions>
+					<user-actions v-for="user in users" :key="user.userId" :user="user"></user-actions>
 				</ul>
 				<h3 v-else>No users found</h3>
 			</base-card>
@@ -40,18 +39,22 @@ export default {
 		};
 	},
 	computed: {
-		...mapGetters(['isAuthenticated', 'isAdmin']),
-		...mapGetters('users', ['users', 'hasUsers']),
+		...mapGetters({
+			isAuthenticated: 'isAuthenticated',
+			isAdmin: 'isAdmin',
+			users: 'users/users',
+			hasUsers: 'users/hasUsers'
+		})
 	},
 	created() {
 		this.loadUsersLocal();
 	},
 	methods: {
 		...mapActions('users', ['loadUsers']),
-		async loadUsersLocal(refresh = false) {
+		async loadUsersLocal() {
 			this.isLoading = true;
 			try {
-				await this.loadUsers({ forcedRefresh: refresh });
+				await this.loadUsers();
 			} catch (error) {
 				this.error = `Component ${this.$options.name}, error: ${error.message}` || 'Something went wrong!';
 			}

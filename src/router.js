@@ -8,7 +8,7 @@ import TripView from './pages/trips/TripView.vue';
 import TripViewPrint from './pages/trips/TripViewPrint.vue';
 
 import UsersList from './pages/users/UsersList.vue';
-import UserAdd from './pages/users/UserAdd.vue';
+import UserCreate from './pages/users/UserCreate.vue';
 import UserEdit from './pages/users/UserEdit.vue';
 
 import indexPage from './pages/IndexPage.vue';
@@ -28,7 +28,7 @@ const router = createRouter({
 		{ name: 'trip-view-print', path: '/trip/view/print/:tripId', component: TripViewPrint, props: false, meta: { requiresAuth: true } },
 
 		{ name: 'users', path: '/users', component: UsersList, meta: { requiresAuth: true } },
-		{ name: 'user-add', path: '/user/add', component: UserAdd, meta: { requiresAuth: true } },
+		{ name: 'user-add', path: '/user/add', component: UserCreate, meta: { requiresAuth: true } },
 		{ name: 'user-edit', path: '/user/edit/:userId', component: UserEdit, props: false, meta: { requiresAuth: true } },
 
 		{ name: 'auth', path: '/auth', component: UserAuth, meta: { requiresUnauth: true } },

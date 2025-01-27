@@ -12,12 +12,13 @@
 		</div>
 		<div class="form-control" :class="{ invalid: !password1.isValid }">
 			<label for="password1">Password</label>
-			<input type="text" id="password1" v-model.trim="password1.val" @blur="clearValidity('password1')" />
+			<input type="password" autocomplete="new-password" id="password1" v-model.trim="password1.val"
+				@blur="clearValidity('password1')" />
 			<p v-if="!password1.isValid">password must not be empty!</p>
 		</div>
 		<div class="form-control" :class="{ invalid: !password2.isValid }">
 			<label for="password2">Confirm Password</label>
-			<input type="text" id="password2" v-model.trim="password2.val" @blur="clearValidity('password2')" />
+			<input type="password" id="password2" v-model.trim="password2.val" @blur="clearValidity('password2')" />
 			<p v-if="!password2.isValid">password must not be empty!</p>
 			<p v-if="!passwordMatch">Passwords must match!</p>
 		</div>
@@ -98,15 +99,12 @@ export default {
 		this.email.val = this.user.email || '';
 		this.role.val = this.user.role || 'user';
 	},
-	methods: {
-		async setUserId() {
-			try {
-				this.userId = await this.$store.dispatch('users/getUserNewId');
-			} catch (error) {
-				this.error = `Component ${this.$options.name}, Padlo fetch : ${error.message}` || 'Something went wrong!';
-				return;
-			}
+	computed: {
+		isEdit() {
+			return !!this.user.userId;
 		},
+	},
+	methods: {
 		clearValidity(input) {
 			this[input].isValid = true;
 		},
@@ -120,17 +118,25 @@ export default {
 				this.email.isValid = false;
 				this.formIsValid = false;
 			}
-			if (this.password1.val === '') {
-				this.password1.isValid = false;
-				this.formIsValid = false;
+			if (!this.isEdit) {
+				if (this.password1.val === '') {
+					this.password1.isValid = false;
+					this.formIsValid = false;
+				}
+				if (this.password2.val === '') {
+					this.password2.isValid = false;
+					this.formIsValid = false;
+				}
+				if (this.password1.val !== this.password2.val) {
+					this.passwordMatch = false;
+					this.formIsValid = false;
+				}
 			}
-			if (this.password2.val === '') {
-				this.password2.isValid = false;
-				this.formIsValid = false;
-			}
-			if (this.password1.val !== this.password2.val) {
-				this.passwordMatch = false;
-				this.formIsValid = false;
+			else {
+				if ((this.password1 || this.password2) && (this.password1.val !== this.password2.val)) {
+					this.passwordMatch = false;
+					this.formIsValid = false;
+				}
 			}
 
 		},

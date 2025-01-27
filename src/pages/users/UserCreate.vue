@@ -5,11 +5,11 @@
 		</base-dialog>
 		<section>
 			<base-card>
-				<h2>Add User.</h2>
+				<h2>Create User.</h2>
 				<div v-if="isLoading">
 					<base-spinner></base-spinner>
 				</div>
-				<user-form @save-data="addUserLocal"></user-form>
+				<user-form @save-data="createUserLocal"></user-form>
 			</base-card>
 		</section>
 	</div>
@@ -18,11 +18,12 @@
 <script>
 import { cloudFunctions } from '../../firebase.js';
 import { httpsCallable } from 'firebase/functions';
+import { mapActions } from 'vuex';
 import UserForm from '../../components/users/UserForm.vue';
-import { mapGetters, mapActions } from 'vuex';
+
 
 export default {
-	name: 'UserAdd',
+	name: 'UserCreate',
 	components: {
 		UserForm,
 	},
@@ -33,12 +34,8 @@ export default {
 		};
 	},
 	methods: {
-		...mapActions({
-			authAddUser: 'addUser', //vyhodit
-			usersAddUser: 'users/addUser', //vyhodit
-			userByEmail: 'users/userByEmail',
-		}),
-		async addUserLocal(userData) {
+		...mapActions('users', ['userByEmail']),
+		async createUserLocal(userData) {
 			this.isLoading = true;
 			try {
 				const userExists = await this.userByEmail(userData.email);
@@ -48,7 +45,7 @@ export default {
 					return;
 				}
 				const createUser = httpsCallable(cloudFunctions, 'createUser');
-				const result = await createUser({ user: userData });
+				await createUser({ user: userData });
 			} catch (error) {
 				this.error = `User was not created! ${error}`;
 				this.isLoading = false;

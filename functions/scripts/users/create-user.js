@@ -1,6 +1,6 @@
 const admin = require("firebase-admin");
 admin.initializeApp();
-const functions = require('firebase-functions');
+const { HttpsError } = require("firebase-functions/v2/https");
 const db = admin.firestore();
 const authRoleCheck = require('../auth/auth-role-check');
 
@@ -16,7 +16,6 @@ async function createUserHandler({ data, auth }) {
 
 		await admin.auth().setCustomUserClaims(userRecord.uid, { role: role });
 
-		// Add user to Firestore
 		await db.collection('users').doc(userRecord.uid).set({
 			name: name,
 			email: email,
@@ -27,7 +26,7 @@ async function createUserHandler({ data, auth }) {
 	} catch (error) {
 		const errorMessage = `Error creating user, ${error}`;
 		console.error(errorMessage);
-		throw new functions.https.HttpsError('internal', errorMessage);
+		throw new HttpsError('internal', errorMessage);
 	}
 }
 

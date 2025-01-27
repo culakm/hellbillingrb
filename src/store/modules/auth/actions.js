@@ -1,15 +1,6 @@
 let timer;
 import { auth } from '../../../firebase.js';
-import { onAuthStateChanged, getIdTokenResult, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "firebase/auth";
-
-const firebaseConfig = {
-	apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-	authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-	projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-	storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-	messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-	appId: import.meta.env.VITE_FIREBASE_APP_ID
-};
+import { onAuthStateChanged, getIdTokenResult, signInWithEmailAndPassword, signOut } from "firebase/auth";
 
 export default {
 	// sledovac zmeny usera, inicializuje sa v App.vue created()
@@ -22,17 +13,6 @@ export default {
 	// 		}
 	// 	});
 	// },
-	async addUser(context, payload) {
-		const email = payload.email;
-		const password = payload.password;
-		try {
-			const responseData = await createUserWithEmailAndPassword(auth, email, password);
-			return responseData.user.uid;
-		} catch (error) {
-			console.error('Error creating user:', error);
-			throw error;
-		}
-	},
 	async login(context, payload) {
 		const responseData = await signInWithEmailAndPassword(auth, payload.email, payload.password);
 		if (!responseData) {

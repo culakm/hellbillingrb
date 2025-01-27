@@ -1,20 +1,18 @@
-const functions = require('firebase-functions');
-const admin = require('firebase-admin');
-
-
+const admin = require("firebase-admin");
+admin.initializeApp();
+const { HttpsError } = require("firebase-functions/v2/https");
 async function helloWorldHandler({ data, auth }) {
 	console.log('helloWorldHandler startuje');
 
 	try {
-		await authRoleCheck(auth, 'admin');
 		console.log('moje data', data);
-		const someParameter = data.someParameter;
-		return { message: `${someParameter}, pridane vo funkcii tralala2! ${user.customClaims.role}` };
+		const mojInput = data.mojInput;
+		return { message: `Vstup do funkcie z clienta: "${mojInput}", toto uz som pridal na serveri!` };
 	}
 	catch (error) {
 		const errorMessage = `Error getting helloWorld, ${error}`;
 		console.error(errorMessage);
-		throw new functions.https.HttpsError('internal', errorMessage);
+		throw new HttpsError('internal', errorMessage);
 	}
 }
 
