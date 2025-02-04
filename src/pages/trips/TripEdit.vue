@@ -99,7 +99,6 @@ export default {
 			const lastOrder = this.trip.lines.length;
 			lineData.order = lastOrder + 1;
 			lineData.tripId = this.trip.tripId;
-
 			try {
 				await this.createLine(lineData);
 			} catch (error) {

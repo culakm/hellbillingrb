@@ -7,10 +7,27 @@ function sortLines(lines) {
 // }
 
 export default {
+	passedLine(state, payload) {
+		const lineId = payload.lineId;
+		const passed = payload.passed;
+		const line = state.trip.lines.find(line => line.lineId === lineId);
+		line.passed = passed;
+	},
+	updateLines(state, payload) {
+		state.trip.lines = payload;
+	},
 	createLine(state, payload) {
 		state.trip.linesCount++;
 		state.trip.lines.push(payload);
 		sortLines(state.trip.lines);
+	},
+	updateLine(state, payload) {
+		const line = state.trip.lines.find(line => line.lineId === payload.lineId);
+		line.name = payload.name;
+		line.kmTotal = payload.kmTotal;
+		line.tulip = payload.tulip;
+		line.roadNo = payload.roadNo;
+		line.note = payload.note;
 	},
 	deleteLine(state, payload) {
 		state.trip.linesCount--;
@@ -21,31 +38,9 @@ export default {
 			line.order = index + 1;
 		});
 	},
-	updateLine(state, payload) {
-		const line = state.trip.lines.find(line => line.lineId === payload.lineId);
-		line.name = payload.name;
-		line.kmTotal = payload.kmTotal;
-		line.tulip = payload.tulip;
-		line.roadNo = payload.roadNo;
-		line.note = payload.note;
-	},
-	passedLine(state, payload) {
-		const lineId = payload.lineId;
-		const passed = payload.passed;
-		const line = state.trip.lines.find(line => line.lineId === lineId);
-		line.passed = passed;
-	},
-	updateLines(state, payload) {
-		state.trip.lines = payload;
-	},
 	createTrip(state, payload) {
 		state.trips.push(payload);
 		sortLines(state.trips);
-	},
-	deleteTrip(state, payload) {
-		const tripId = payload.tripId;
-		const tripIndex = state.trips.findIndex(trip => trip.tripId === tripId);
-		state.trips.splice(tripIndex, 1);
 	},
 	updateTrip(state, payload) {
 		const trip = state.trip;
@@ -53,6 +48,11 @@ export default {
 		trip.description = payload.description;
 		trip.imageName = payload.imageName;
 		trip.linesCount = payload.linesCount;
+	},
+	deleteTrip(state, payload) {
+		const tripId = payload.tripId;
+		const tripIndex = state.trips.findIndex(trip => trip.tripId === tripId);
+		state.trips.splice(tripIndex, 1);
 	},
 	deleteTripImage(state) {
 		const trip = state.trip;

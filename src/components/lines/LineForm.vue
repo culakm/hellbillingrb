@@ -132,6 +132,7 @@ export default {
 				note: this.note.val,
 				passed: false,
 			};
+
 			this.order.val = null;
 			this.name.val = '';
 			this.kmTotal.val = null;

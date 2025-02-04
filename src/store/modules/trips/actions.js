@@ -2,6 +2,10 @@ import { db } from '../../../firebase.js';
 import { collection, doc, getDoc, addDoc, setDoc, updateDoc, deleteDoc, getDocs, writeBatch, query, orderBy, limit, startAfter } from "firebase/firestore";
 
 export default {
+	async getTripNewId() {
+		const newDocRef = doc(collection(db, 'trips'));
+		return newDocRef.id;
+	},
 	async passedLine(context, payload) {
 		const tripId = context.state.trip.tripId;
 		const lineId = payload.lineId;
@@ -20,12 +24,6 @@ export default {
 		});
 		context.commit('updateLines', lines);
 	},
-	async deleteLine(context, payload) {
-		const tripId = payload.tripId;
-		const lineId = payload.lineId;
-		await deleteDoc(doc(db, "trips", tripId, "lines", lineId));
-		context.commit('deleteLine', { lineId: lineId });
-	},
 	async createLine(context, payload) {
 		const tripId = payload.tripId;
 		const lineData = {
@@ -40,8 +38,7 @@ export default {
 
 		const lineRef = collection(db, `trips/${tripId}/lines`);
 		const docRef = await addDoc(lineRef, lineData);
-		lineData.id = docRef.id;
-
+		lineData.lineId = docRef.id;
 		context.commit('createLine', lineData);
 	},
 	async editLine(context, payload) {
@@ -60,9 +57,11 @@ export default {
 		await setDoc(doc(db, `trips/${tripId}/lines/`, lineId), lineData);
 		context.commit('updateLine', lineData);
 	},
-	async getTripNewId() {
-		const newDocRef = doc(collection(db, 'trips'));
-		return newDocRef.id;
+	async deleteLine(context, payload) {
+		const tripId = payload.tripId;
+		const lineId = payload.lineId;
+		await deleteDoc(doc(db, "trips", tripId, "lines", lineId));
+		context.commit('deleteLine', { lineId: lineId });
 	},
 	async createTrip(context, payload) {
 		const tripId = payload.tripId;
@@ -86,17 +85,6 @@ export default {
 		await setDoc(doc(db, "trips", tripId), tripData);
 		context.commit('updateTrip', tripData);
 	},
-	async deleteTripImage(context, payload) {
-		const tripId = payload.tripId;
-		const tripRef = doc(db, "trips", tripId);
-		try {
-			await updateDoc(tripRef, { imageName: null });
-		} catch (error) {
-			console.error('Error deleting file:', error);
-			throw new Error('Failed to delete trip image from firebase database!');
-		}
-		context.commit('deleteTripImage', { tripId });
-	},
 	async deleteTrip(context, payload) {
 		const tripId = payload.tripId;
 		const tripDocRef = doc(db, "trips", tripId);
@@ -110,6 +98,17 @@ export default {
 		batch.delete(tripDocRef);
 		await batch.commit();
 		context.commit('deleteTrip', { tripId: tripId });
+	},
+	async deleteTripImage(context, payload) {
+		const tripId = payload.tripId;
+		const tripRef = doc(db, "trips", tripId);
+		try {
+			await updateDoc(tripRef, { imageName: null });
+		} catch (error) {
+			console.error('Error deleting file:', error);
+			throw new Error('Failed to delete trip image from firebase database!');
+		}
+		context.commit('deleteTripImage', { tripId });
 	},
 	async loadTrips(context) {
 		const trips = [];

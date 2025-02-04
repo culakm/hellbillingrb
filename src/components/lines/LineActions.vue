@@ -66,7 +66,6 @@ export default {
 		},
 		async deleteLineLocal() {
 			this.isLoading = true;
-
 			try {
 				await this.deleteLine({ tripId: this.tripId, lineId: this.line.lineId });
 			} catch (error) {

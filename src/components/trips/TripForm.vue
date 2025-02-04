@@ -20,14 +20,10 @@
 				</div>
 				<input type="file" @change="previewImage" accept="image/*">
 
-
-
 				<div v-if="uploadProgress > 0" class="progress">
 					<p>Upload Progress: {{ uploadProgress }}%</p>
 					<progress :value="uploadProgress" max="100"></progress>
 				</div>
-
-
 
 			</div>
 
