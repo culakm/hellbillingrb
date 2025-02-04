@@ -8,12 +8,14 @@
             <base-button link :to="tripViewLink">View</base-button>
             <base-button link :to="tripEditLink">Edit</base-button>
             <base-button link :to="tripPrintLink" :newTab="true">Print</base-button>
-            <base-button @click="deleteTrip">Delete</base-button>
+            <base-button @click="deleteTripLocal">Delete</base-button>
         </div>
     </li>
 </template>
 
 <script>
+import { mapActions } from 'vuex';
+
 export default {
     name: 'TripActions',
     props: ['tripId', 'name', 'description'],
@@ -29,8 +31,9 @@ export default {
         },
     },
     methods: {
-        deleteTrip() {
-            this.$store.dispatch('trips/deleteTrip', { tripId: this.tripId });
+        ...mapActions('trips', ['deleteTrip']),
+        deleteTripLocal() {
+            this.deleteTrip({ tripId: this.tripId });
             this.$router.replace('/trips');
         },
     }

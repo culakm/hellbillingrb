@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 const UserAuth = () => import('./pages/auth/UserAuth.vue');
 
 import TripList from './pages/trips/TripList.vue';
-import TripAdd from './pages/trips/TripAdd.vue';
+import TripCreate from './pages/trips/TripCreate.vue';
 import TripEdit from './pages/trips/TripEdit.vue';
 import TripView from './pages/trips/TripView.vue';
 import TripViewPrint from './pages/trips/TripViewPrint.vue';
@@ -22,7 +22,7 @@ const router = createRouter({
 		{ path: '/', component: indexPage },
 
 		{ name: 'trips', path: '/trips', component: TripList, meta: { requiresAuth: true } },
-		{ name: 'trip-add', path: '/trip/add', component: TripAdd, meta: { requiresAuth: true } },
+		{ name: 'trip-add', path: '/trip/add', component: TripCreate, meta: { requiresAuth: true } },
 		{ name: 'trip-edit', path: '/trip/edit/:tripId', component: TripEdit, props: false, meta: { requiresAuth: true } },
 		{ name: 'trip-view', path: '/trip/view/:tripId', component: TripView, props: false, meta: { requiresAuth: true } },
 		{ name: 'trip-view-print', path: '/trip/view/print/:tripId', component: TripViewPrint, props: false, meta: { requiresAuth: true } },

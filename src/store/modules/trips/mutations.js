@@ -8,10 +8,12 @@ function sortLines(lines) {
 
 export default {
 	addLine(state, payload) {
+		state.trip.linesCount++;
 		state.trip.lines.push(payload);
 		sortLines(state.trip.lines);
 	},
 	deleteLine(state, payload) {
+		state.trip.linesCount--;
 		const lineId = payload.lineId;
 		const lineIndex = state.trip.lines.findIndex(line => line.lineId === lineId);
 		state.trip.lines.splice(lineIndex, 1);
@@ -36,7 +38,7 @@ export default {
 	updateLines(state, payload) {
 		state.trip.lines = payload;
 	},
-	addTrip(state, payload) {
+	createTrip(state, payload) {
 		state.trips.push(payload);
 		sortLines(state.trips);
 	},
@@ -50,6 +52,7 @@ export default {
 		trip.name = payload.name;
 		trip.description = payload.description;
 		trip.imageName = payload.imageName;
+		trip.linesCount = payload.linesCount;
 	},
 	deleteTripImage(state) {
 		const trip = state.trip;

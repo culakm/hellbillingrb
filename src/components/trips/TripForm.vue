@@ -47,7 +47,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapActions } from 'vuex';
 import { storage } from '../../firebase.js';
 import { ref as storageRef, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 
@@ -106,13 +106,19 @@ export default {
 		if (this.imageName.val) await this.fetchImageUrlLocal();
 	},
 	methods: {
+		...mapActions({
+			deleteTripImage: 'trips/deleteTripImage',
+			getTripNewId: 'trips/getTripNewId',
+			fetchImageUrl: 'tripsStorage/fetchImageUrl',
+			deleteStorageObject: 'tripsStorage/deleteStorageObject'
+		}),
 		async fetchImageUrlLocal() {
 			const tripData = {
 				tripId: this.trip.tripId,
 				imageName: this.trip.imageName,
 			};
 			try {
-				this.imageUrl = await this.$store.dispatch('tripsStorage/fetchImageUrl', tripData);
+				this.imageUrl = await this.fetchImageUrl(tripData);
 			} catch (error) {
 				this.error = `Component ${this.$options.name}, Padlo fetch : ${error.message}` || 'Something went wrong!';
 				return;
@@ -125,8 +131,8 @@ export default {
 			};
 			try {
 				await Promise.all([
-					this.$store.dispatch('tripsStorage/deleteStorageObject', tripData),
-					this.$store.dispatch('trips/deleteTripImage', tripData)
+					this.deleteStorageObject(tripData),
+					this.deleteTripImage(tripData)
 				]);
 			} catch (error) {
 				console.error(`Component ${this.$options.name}, Padlo fetch : ${error.message}` || 'Something went wrong!')
@@ -138,7 +144,7 @@ export default {
 		},
 		async setTripId() {
 			try {
-				this.tripId = await this.$store.dispatch('trips/getTripNewId');
+				this.tripId = await this.getTripNewId();
 			} catch (error) {
 				this.error = `Component ${this.$options.name}, Padlo fetch : ${error.message}` || 'Something went wrong!';
 				return;
@@ -191,13 +197,13 @@ export default {
 			this.validateForm();
 			if (!this.formIsValid) return;
 
-			const formData = {
+			const tripData = {
 				tripId: this.tripId,
 				name: this.name.val,
 				description: this.description.val,
 				imageName: this.imageName.val,
 			};
-			this.$emit('save-data', formData);
+			this.$emit('save-data', tripData);
 		},
 	},
 };

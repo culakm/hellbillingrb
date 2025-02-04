@@ -2,12 +2,13 @@
 	<div class="trip-full">
 		<h3>{{ trip.name }}</h3>
 		<p>{{ trip.description }}</p>
-		<p>linesCountll: {{ trip.linesCount }}</p>
+		<p>linesCount: {{ trip.linesCount }}</p>
 		<img v-if="trip.imageName" :src="imageUrl" alt="Downloaded">
 	</div>
 </template>
 
 <script>
+import { mapActions } from 'vuex';
 
 export default {
 	props: {
@@ -26,13 +27,14 @@ export default {
 		if (this.trip.imageName) await this.fetchImageUrlLocal();
 	},
 	methods: {
+		...mapActions('tripsStorage', ['fetchImageUrl']),
 		async fetchImageUrlLocal() {
 			const tripData = {
 				tripId: this.trip.tripId,
 				imageName: this.trip.imageName,
 			};
 			try {
-				this.imageUrl = await this.$store.dispatch('tripsStorage/fetchImageUrl', tripData);
+				this.imageUrl = await this.fetchImageUrl(tripData);
 			} catch (error) {
 				this.error = `Component ${this.$options.name}, Padlo fetch : ${error.message}` || 'Something went wrong!';
 				return;

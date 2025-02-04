@@ -11,7 +11,7 @@ export default {
 			trip: null,
 		};
 	},
-	mutations, // mutations: mutations ak su mena rovnake, tak staci len jedno meno
-	actions, // actions: actions
-	getters // getters: getters
+	mutations,
+	actions,
+	getters
 };

@@ -71,7 +71,7 @@ export default {
 		this.tripByIdLocal();
 	},
 	methods: {
-		...mapActions('trips', ['tripById', 'addLine', 'updateLines']),
+		...mapActions('trips', ['tripById', 'addLine', 'updateTrip', 'updateLines']),
 		async tripByIdLocal() {
 			this.isLoading = true;
 			try {
@@ -83,10 +83,11 @@ export default {
 		},
 		async updateTripLocal(tripData) {
 			this.isLoading = true;
+			tripData.linesCount = this.trip.linesCount;
 			try {
-				await this.$store.dispatch('trips/updateTrip', tripData);
+				await this.updateTrip(tripData);
 			} catch (error) {
-				this.error = `Component huhuh ${this.$options.name}, Padlo fetch : ${error.message}` || 'Something went wrong!';
+				this.error = `Component ${this.$options.name}, Padlo fetch : ${error.message}` || 'Something went wrong!';
 				return;
 			}
 

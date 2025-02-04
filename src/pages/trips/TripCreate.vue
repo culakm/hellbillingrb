@@ -9,16 +9,17 @@
 				<div v-if="isLoading">
 					<base-spinner></base-spinner>
 				</div>
-				<trip-form @save-data="addTripLocal"></trip-form>
+				<trip-form @save-data="createTripLocal"></trip-form>
 			</base-card>
 		</section>
 	</div>
 </template>
 
 <script>
+import { mapActions } from 'vuex';
 import TripForm from '../../components/trips/TripForm.vue';
 export default {
-	name: 'TripAdd',
+	name: 'TripCreate',
 	components: {
 		TripForm,
 	},
@@ -29,10 +30,11 @@ export default {
 		};
 	},
 	methods: {
-		async addTripLocal(tripData) {
+		...mapActions('trips', ['createTrip']),
+		async createTripLocal(tripData) {
 			this.isLoading = true;
 			try {
-				await this.$store.dispatch('trips/addTrip', tripData);
+				await this.createTrip(tripData);
 			} catch (error) {
 				this.error = `Component ${this.$options.name}, Padlo fetch : ${error.message}` || 'Something went wrong!';
 				return;

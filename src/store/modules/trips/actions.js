@@ -64,7 +64,7 @@ export default {
 		const newDocRef = doc(collection(db, 'trips'));
 		return newDocRef.id;
 	},
-	async addTrip(context, payload) {
+	async createTrip(context, payload) {
 		const tripId = payload.tripId;
 		const tripData = {
 			name: payload.name,
@@ -73,15 +73,15 @@ export default {
 			linesCount: 0,
 		};
 		await setDoc(doc(db, "trips", tripId), tripData);
-		context.commit('addTrip', tripData);
+		context.commit('createTrip', tripData);
 	},
 	async updateTrip(context, payload) {
 		const tripId = payload.tripId;
 		const tripData = {
-			tripId: tripId,
 			name: payload.name,
 			description: payload.description,
 			imageName: payload.imageName,
+			linesCount: payload.linesCount,
 		};
 		await setDoc(doc(db, "trips", tripId), tripData);
 		context.commit('updateTrip', tripData);
@@ -109,7 +109,6 @@ export default {
 		});
 		batch.delete(tripDocRef);
 		await batch.commit();
-
 		context.commit('deleteTrip', { tripId: tripId });
 	},
 	async loadTrips(context) {

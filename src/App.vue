@@ -22,10 +22,10 @@ export default {
 	},
 	created() {
 		this.tryLogin();
-		// this.$store.dispatch('handleAuthStateChange');
+		// this.handleAuthStateChange();
 	},
 	methods: {
-		...mapActions(['tryLogin'])
+		...mapActions(['tryLogin', 'handleAuthStateChange']),
 	},
 	watch: {
 		didAutoLogoutLocal(newValue, oldValue) {
