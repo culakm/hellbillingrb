@@ -20,7 +20,7 @@
 				<div v-if="isLoading">
 					<base-spinner></base-spinner>
 				</div>
-				<line-form @save-line="addLineLocal" :trip="trip"></line-form>
+				<line-form @save-line="createLineLocal" :trip="trip"></line-form>
 			</base-card>
 		</section>
 		<section>
@@ -71,7 +71,7 @@ export default {
 		this.tripByIdLocal();
 	},
 	methods: {
-		...mapActions('trips', ['tripById', 'addLine', 'updateTrip', 'updateLines']),
+		...mapActions('trips', ['tripById', 'createLine', 'updateTrip', 'updateLines']),
 		async tripByIdLocal() {
 			this.isLoading = true;
 			try {
@@ -94,14 +94,14 @@ export default {
 			this.isLoading = false;
 
 		},
-		async addLineLocal(lineData) {
+		async createLineLocal(lineData) {
 			this.isLoading = true;
 			const lastOrder = this.trip.lines.length;
 			lineData.order = lastOrder + 1;
 			lineData.tripId = this.trip.tripId;
 
 			try {
-				await this.addLine(lineData);
+				await this.createLine(lineData);
 			} catch (error) {
 				this.error = `Component ${this.$options.name}, Padlo fetch : ${error.message}` || 'Something went wrong!';
 				return;

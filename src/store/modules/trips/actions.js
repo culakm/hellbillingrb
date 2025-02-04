@@ -26,7 +26,7 @@ export default {
 		await deleteDoc(doc(db, "trips", tripId, "lines", lineId));
 		context.commit('deleteLine', { lineId: lineId });
 	},
-	async addLine(context, payload) {
+	async createLine(context, payload) {
 		const tripId = payload.tripId;
 		const lineData = {
 			order: payload.order,
@@ -42,7 +42,7 @@ export default {
 		const docRef = await addDoc(lineRef, lineData);
 		lineData.id = docRef.id;
 
-		context.commit('addLine', lineData);
+		context.commit('createLine', lineData);
 	},
 	async editLine(context, payload) {
 		const tripId = payload.tripId;

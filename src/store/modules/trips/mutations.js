@@ -7,7 +7,7 @@ function sortLines(lines) {
 // }
 
 export default {
-	addLine(state, payload) {
+	createLine(state, payload) {
 		state.trip.linesCount++;
 		state.trip.lines.push(payload);
 		sortLines(state.trip.lines);
