@@ -14,12 +14,16 @@
 
 		<div>
 			<p>isLoading : {{ isLoading }}</p>
+			<p>uploadProgress : {{ uploadProgress }}</p>
 			<div class="form-control">
 				<input type="file" @change="previewImage" accept="image/*">
 				<div v-if="isLoading">
 					<base-spinner></base-spinner>
 				</div>
-
+				<div v-if="uploadProgress > 0" class="progress">
+					<p>Upload Progress: {{ uploadProgressRounded }}%</p>
+					<progress :value="uploadProgress" max="100"></progress>
+				</div>
 				<div v-else-if="imageData">
 					<button @click.prevent="uploadImage">Upload Image</button>
 					<img :src="imagePreview" class="preview" alt="Preview">
@@ -78,6 +82,7 @@ export default {
 			imageData: null,
 			imagePreview: null,
 			isLoading: false,
+			uploadProgress: 0,
 
 
 		};
@@ -85,6 +90,9 @@ export default {
 	computed: {
 		tripViewLink() {
 			return `/trip/view/${this.tripId}`;
+		},
+		uploadProgressRounded() {
+			return Math.round(this.uploadProgress);
 		},
 	},
 	async created() {
@@ -157,22 +165,23 @@ export default {
 			const fileName = `trips/${this.tripId}/${this.imageData.name}`;
 			const fileRef = storageRef(storage, fileName);
 			const uploadTask = uploadBytesResumable(fileRef, this.imageData);
-
+			this.isLoading = true;
 			uploadTask.on('state_changed',
-				// (snapshot) => {
-				// 	this.uploadProgress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-				// },
-				null,
+				(snapshot) => {
+					this.uploadProgress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+				},
+				//null,
 				(error) => {
 					console.error('Upload failed:', error)
 				},
 				async () => {
-					this.isLoading = true;
+
 					this.imageUrl = await getDownloadURL(fileRef);
 					console.log('File available at:', this.imageUrl);
 					this.imageData = null;
 					this.imagePreview = null;
 					this.isLoading = false;
+					this.uploadProgress = 0;
 				}
 			);
 			const tripData = {
