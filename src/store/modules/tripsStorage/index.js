@@ -6,7 +6,7 @@ export default {
 	namespaced: true,
 	state() {
 		return {
-			uploadProgressState: 0
+			uploadProgress: 0
 		};
 	},
 	mutations,

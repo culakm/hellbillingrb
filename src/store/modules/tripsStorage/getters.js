@@ -1,5 +1,5 @@
 export default {
-	uploadProgressState(state) {
-		return state.uploadProgressState;
+	uploadProgress(state) {
+		return state.uploadProgress;
 	},
 };

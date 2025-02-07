@@ -1,6 +1,6 @@
 export default {
 	setUploadProgress(state, progress) {
-		state.uploadProgressState = progress;
+		state.uploadProgress = progress;
 	},
 	// NEPOUZIVA SA!!
 	deleteImage(state, { payload, rootState }) {

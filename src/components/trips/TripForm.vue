@@ -13,23 +13,18 @@
 		</div>
 
 		<div>
-			<p>isLoading : {{ isLoading }}</p>
-			<p>uploadProgress : {{ uploadProgress }}</p>
 			<div class="form-control">
 				<input type="file" @change="previewImage" accept="image/*">
 				<div v-if="isLoading">
 					<base-spinner></base-spinner>
 				</div>
-				<!-- <div v-if="uploadProgress > 0" class="progress">
-					<p>Upload Progress: {{ uploadProgressRounded }}%</p>
-					<progress :value="uploadProgress" max="100"></progress>
-				</div> -->
-				<div v-if="uploadProgress > 0 && uploadProgress < 100" class="progress">
-					{{ Math.round(uploadProgress) }}% VS. {{ uploadProgressRounded }}%
-					<progress :value="uploadProgress" max="100"></progress>
+				<div v-if="uploadProgressLocal > 0 && uploadProgressLocal < 100" class="progress">
+					{{ uploadProgressRounded }}%
+					<progress :value="uploadProgressLocal" max="100"></progress>
 				</div>
 				<div v-else-if="imageData">
-					<button @click.prevent="uploadImage">Upload Image</button>
+					<button @click.prevent="uploadImageLocal">Upload Image</button>
+					<p>generuje sa po nacitani obrazku</p>
 					<img :src="imagePreview" class="preview" alt="Preview">
 				</div>
 			</div>
@@ -86,25 +81,18 @@ export default {
 			imageData: null,
 			imagePreview: null,
 			isLoading: false,
-			//uploadProgress: 0,
-
-
 		};
 	},
 	computed: {
-		...mapGetters('tripsStorage', ['uploadProgressState']),
 		tripViewLink() {
 			return `/trip/view/${this.tripId}`;
 		},
 		uploadProgressRounded() {
-			return Math.round(this.uploadProgress);
+			return Math.round(this.uploadProgressLocal);
 		},
-		// uploadProgress() {
-		// 	return this.uploadProgressState;
-		// },
-		uploadProgress: {
+		uploadProgressLocal: {
 			get() {
-				return this.$store.getters['tripsStorage/uploadProgressState'];
+				return this.$store.getters['tripsStorage/uploadProgress'];
 			},
 			set(newValue) {
 				this.$store.commit('tripsStorage/setUploadProgress', newValue);
@@ -113,8 +101,6 @@ export default {
 
 	},
 	async created() {
-		console.log('TripForm created');
-		console.log('this.uploadProgressState', this.uploadProgressState);
 		if (this.trip.tripId) {
 			this.tripId = this.trip.tripId
 		}
@@ -174,7 +160,7 @@ export default {
 				return;
 			}
 		},
-		async uploadImage() {
+		async uploadImageLocal() {
 			if (!this.imageData) return;
 
 			if (this.imageName.val) await this.deleteImageLocal();
@@ -184,88 +170,32 @@ export default {
 			this.isLoading = true;
 			try {
 				const fileName = `trips/${this.tripId}/${this.imageData.name}`;
-
 				const downloadURL = await this.uploadStorageObject({
 					file,
 					path: fileName
 				});
-
-				// Handle successful upload, e.g., save URL to Firestore
 				this.imageUrl = downloadURL;
 			} catch (error) {
-				console.error('Error in uploadImage:', error);
+				console.error('Error in uploadImageLocal:', error);
 				throw error;
 			}
 			const tripData = {
 				tripId: this.tripId,
 				imageName: this.imageData.name,
 			};
+			this.imageData = null;
+			this.imagePreview = null;
 			this.isLoading = false;
+			this.uploadProgressLocal = 0;
 			//try tu ma byt a asi to treba spojit s await Promise.all([
 			this.updateTripImage(tripData);
-		},
-		async uploadImageAI(file) {
-			try {
-				const tripId = this.tripId; // Assuming you have tripId in your component
-				const fileName = `trips/${tripId}/${file.name}`;
-
-				const downloadURL = await this.$store.dispatch('uploadStorageObject', {
-					file,
-					path: fileName
-				});
-
-				// Handle successful upload, e.g., save URL to Firestore
-				return downloadURL;
-			} catch (error) {
-				console.error('Error in uploadImage:', error);
-				throw error;
-			}
-		},
-		async uploadImageV1() {
-
-			if (!this.imageData) return;
-
-			if (this.imageName.val) await this.deleteImageLocal();
-
-			this.imageName.val = this.imageData.name;
-			const fileName = `trips/${this.tripId}/${this.imageData.name}`;
-			const fileRef = storageRef(storage, fileName);
-			const uploadTask = uploadBytesResumable(fileRef, this.imageData);
-			this.isLoading = true;
-			uploadTask.on('state_changed',
-				(snapshot) => {
-					this.uploadProgress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-				},
-				//null,
-				(error) => {
-					console.error('Upload failed:', error);
-				},
-				async () => {
-					this.imageUrl = await getDownloadURL(fileRef);
-					console.log('File available at:', this.imageUrl);
-					this.imageData = null;
-					this.imagePreview = null;
-					this.isLoading = false;
-					this.uploadProgress = 0;
-				}
-			);
-			const tripData = {
-				tripId: this.tripId,
-				imageName: this.imageData.name,
-			};
-
-			//try tu ma byt a asi to treba spojit s await Promise.all([
-			this.updateTripImage(tripData);
-
 		},
 		previewImage(event) {
 			const file = event.target.files[0];
 			if (!file) return;
 			this.imageData = file;
 			this.imagePreview = URL.createObjectURL(file);
-			console.log('this.uploadProgress in previewImage 1', this.uploadProgress);
-			this.uploadProgress = 0
-			console.log('this.uploadProgress in previewImage 2', this.uploadProgress);
+			this.uploadProgressLocal = 0;
 		},
 		clearValidity(input) {
 			this[input].isValid = true;
