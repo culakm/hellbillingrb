@@ -25,6 +25,35 @@ export default {
 			throw new Error('Failed to delete trip image from firbase storage!');
 		}
 	},
+	async uploadStorageObject({ commit }, payload) {
+		const { file, path } = payload;
+		const fileRef = storageRef(storage, path);
+
+		const uploadTask = uploadBytesResumable(fileRef, file);
+
+		return new Promise((resolve, reject) => {
+			uploadTask.on('state_changed',
+				(snapshot) => {
+					const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+					commit('setUploadProgress', progress);
+				},
+				(error) => {
+					console.error('Error uploading file:', error);
+					reject(error);
+				},
+				async () => {
+					try {
+						const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+						resolve(downloadURL);
+					} catch (error) {
+						console.error('Error getting download URL:', error);
+						reject(error);
+					}
+				}
+			);
+		});
+	}
+
 	// toto je zatial nedoriesene
 	// async uploadStorageObject(context, payload) {
 	// 	console.log('uploadStorageObject called', payload);

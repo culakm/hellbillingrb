@@ -20,8 +20,12 @@
 				<div v-if="isLoading">
 					<base-spinner></base-spinner>
 				</div>
-				<div v-if="uploadProgress > 0" class="progress">
+				<!-- <div v-if="uploadProgress > 0" class="progress">
 					<p>Upload Progress: {{ uploadProgressRounded }}%</p>
+					<progress :value="uploadProgress" max="100"></progress>
+				</div> -->
+				<div v-if="uploadProgress > 0 && uploadProgress < 100" class="progress">
+					{{ Math.round(uploadProgress) }}% VS. {{ uploadProgressRounded }}%
 					<progress :value="uploadProgress" max="100"></progress>
 				</div>
 				<div v-else-if="imageData">
@@ -47,7 +51,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 import { storage } from '../../firebase.js';
 import { ref as storageRef, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 
@@ -82,20 +86,35 @@ export default {
 			imageData: null,
 			imagePreview: null,
 			isLoading: false,
-			uploadProgress: 0,
+			//uploadProgress: 0,
 
 
 		};
 	},
 	computed: {
+		...mapGetters('tripsStorage', ['uploadProgressState']),
 		tripViewLink() {
 			return `/trip/view/${this.tripId}`;
 		},
 		uploadProgressRounded() {
 			return Math.round(this.uploadProgress);
 		},
+		// uploadProgress() {
+		// 	return this.uploadProgressState;
+		// },
+		uploadProgress: {
+			get() {
+				return this.$store.getters['tripsStorage/uploadProgressState'];
+			},
+			set(newValue) {
+				this.$store.commit('tripsStorage/setUploadProgress', newValue);
+			}
+		}
+
 	},
 	async created() {
+		console.log('TripForm created');
+		console.log('this.uploadProgressState', this.uploadProgressState);
 		if (this.trip.tripId) {
 			this.tripId = this.trip.tripId
 		}
@@ -114,6 +133,7 @@ export default {
 			updateTripImage: 'trips/updateTripImage',
 			getTripNewId: 'trips/getTripNewId',
 			fetchImageUrl: 'tripsStorage/fetchImageUrl',
+			uploadStorageObject: 'tripsStorage/uploadStorageObject',
 			deleteStorageObject: 'tripsStorage/deleteStorageObject'
 
 		}),
@@ -140,7 +160,6 @@ export default {
 					this.deleteTripImage(tripData)
 				]);
 			} catch (error) {
-				console.error(`Component ${this.$options.name}, Padlo fetch : ${error.message}` || 'Something went wrong!')
 				this.error = `Component ${this.$options.name}, Padlo fetch : ${error.message}` || 'Something went wrong!';
 				return;
 			}
@@ -156,6 +175,53 @@ export default {
 			}
 		},
 		async uploadImage() {
+			if (!this.imageData) return;
+
+			if (this.imageName.val) await this.deleteImageLocal();
+
+			this.imageName.val = this.imageData.name;
+			const file = this.imageData;
+			this.isLoading = true;
+			try {
+				const fileName = `trips/${this.tripId}/${this.imageData.name}`;
+
+				const downloadURL = await this.uploadStorageObject({
+					file,
+					path: fileName
+				});
+
+				// Handle successful upload, e.g., save URL to Firestore
+				this.imageUrl = downloadURL;
+			} catch (error) {
+				console.error('Error in uploadImage:', error);
+				throw error;
+			}
+			const tripData = {
+				tripId: this.tripId,
+				imageName: this.imageData.name,
+			};
+			this.isLoading = false;
+			//try tu ma byt a asi to treba spojit s await Promise.all([
+			this.updateTripImage(tripData);
+		},
+		async uploadImageAI(file) {
+			try {
+				const tripId = this.tripId; // Assuming you have tripId in your component
+				const fileName = `trips/${tripId}/${file.name}`;
+
+				const downloadURL = await this.$store.dispatch('uploadStorageObject', {
+					file,
+					path: fileName
+				});
+
+				// Handle successful upload, e.g., save URL to Firestore
+				return downloadURL;
+			} catch (error) {
+				console.error('Error in uploadImage:', error);
+				throw error;
+			}
+		},
+		async uploadImageV1() {
 
 			if (!this.imageData) return;
 
@@ -168,14 +234,13 @@ export default {
 			this.isLoading = true;
 			uploadTask.on('state_changed',
 				(snapshot) => {
-					this.uploadProgress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+					this.uploadProgress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
 				},
 				//null,
 				(error) => {
-					console.error('Upload failed:', error)
+					console.error('Upload failed:', error);
 				},
 				async () => {
-
 					this.imageUrl = await getDownloadURL(fileRef);
 					console.log('File available at:', this.imageUrl);
 					this.imageData = null;
@@ -197,8 +262,10 @@ export default {
 			const file = event.target.files[0];
 			if (!file) return;
 			this.imageData = file;
-			this.imagePreview = URL.createObjectURL(file)
+			this.imagePreview = URL.createObjectURL(file);
+			console.log('this.uploadProgress in previewImage 1', this.uploadProgress);
 			this.uploadProgress = 0
+			console.log('this.uploadProgress in previewImage 2', this.uploadProgress);
 		},
 		clearValidity(input) {
 			this[input].isValid = true;
