@@ -9,6 +9,6 @@ export default {
 		return state.trips && state.trips.length > 0;
 	},
 	hasLines(state) {
-		return state.trip && state.trip.lines && state.trip.lines.length > 0;
+		return state.trip && state.trip.linesCount && state.trip.linesCount > 0;
 	}
 };

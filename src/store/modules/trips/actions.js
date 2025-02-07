@@ -99,20 +99,32 @@ export default {
 		await batch.commit();
 		context.commit('deleteTrip', { tripId: tripId });
 	},
+	async updateTripImage(context, payload) {
+		const tripId = payload.tripId;
+		const imageName = payload.imageName;
+		const tripRef = doc(db, "trips", tripId);
+		try {
+			await updateDoc(tripRef, { imageName });
+		} catch (error) {
+			console.error('Error deleting file:', error);
+			throw new Error('Failed to update trip image in firebase database!');
+		}
+		context.commit('updateTripImage', { imageName });
+	},
 	async deleteTripImage(context, payload) {
 		const tripId = payload.tripId;
 		const tripRef = doc(db, "trips", tripId);
 		try {
-			await updateDoc(tripRef, { imageName: null });
+			await updateDoc(tripRef, { imageName: '' });
 		} catch (error) {
 			console.error('Error deleting file:', error);
 			throw new Error('Failed to delete trip image from firebase database!');
 		}
-		context.commit('deleteTripImage', { tripId });
+		context.commit('deleteTripImage');
 	},
 	async loadTrips(context) {
 		const trips = [];
-		const querySnapshot = await getDocs(collection(db, "trips"));
+		const querySnapshot = await getDocs(collection(db, 'trips'));
 		querySnapshot.forEach((doc) => {
 			const tripData = doc.data();
 			const trip = {
@@ -169,7 +181,7 @@ export default {
 			trip.lines = lines;
 			context.commit('setTrip', trip);
 		} else {
-			console.log("No such document!");
+			throw new Error("Can't find trip with id: " + tripId);
 		}
 	},
 	async tripByIdReset(context) {

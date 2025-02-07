@@ -45,7 +45,7 @@ export default {
         ...mapActions('users', ['deleteUser']),
         async deleteUserLocal() {
             if (this.currentUserId === this.user.userId) {
-                alert('You cannot delete yourself!');
+                this.error = 'You cannot delete yourself!';
                 return;
             }
 

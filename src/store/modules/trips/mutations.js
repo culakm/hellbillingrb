@@ -54,9 +54,13 @@ export default {
 		const tripIndex = state.trips.findIndex(trip => trip.tripId === tripId);
 		state.trips.splice(tripIndex, 1);
 	},
-	deleteTripImage(state) {
+	updateTripImage(state, payload) {
 		const trip = state.trip;
-		trip.imageName = null;
+		trip.imageName = payload.imageName;
+	},
+	deleteTripImage(state, payload) {
+		const trip = state.trip;
+		trip.imageName = '';
 	},
 	loadTrips(state, payload) {
 		state.trips = payload;
