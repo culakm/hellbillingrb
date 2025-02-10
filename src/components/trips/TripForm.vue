@@ -46,9 +46,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex';
-import { storage } from '../../firebase.js';
-import { ref as storageRef, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import { mapActions } from 'vuex';
 
 export default {
 	name: 'TripForm',
@@ -74,13 +72,13 @@ export default {
 				val: '',
 				isValid: true
 			},
-
 			tripId: '',
-			imageUrl: '',
+			isLoading: false,
 			formIsValid: true,
+			imageUrl: '',
 			imageData: null,
 			imagePreview: null,
-			isLoading: false,
+
 		};
 	},
 	computed: {
@@ -90,6 +88,7 @@ export default {
 		uploadProgressRounded() {
 			return Math.round(this.uploadProgressLocal);
 		},
+		// tymto sposobom vieme computed zo store citat aj zapisovat
 		uploadProgressLocal: {
 			get() {
 				return this.$store.getters['tripsStorage/uploadProgress'];
