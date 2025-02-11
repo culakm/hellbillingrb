@@ -1,4 +1,7 @@
 <template>
+	<base-dialog @close="handleError" :show="!!error" title="An error is ocurred!">
+		<p>{{ error }}</p>
+	</base-dialog>
 	<form @submit.prevent="submitForm">
 		<div class="form-control" :class="{ invalid: !name.isValid }">
 			<label for="name">Name</label>
@@ -74,19 +77,18 @@ export default {
 			},
 			tripId: '',
 			isLoading: false,
+			error: null,
 			formIsValid: true,
 			imageUrl: '',
 			imageData: null,
 			imagePreview: null,
 			imageNameOriginal: '',
-
 		};
 	},
 	computed: {
 		tripViewLink() {
 			return `/trip/view/${this.tripId}`;
 		},
-		// tymto sposobom vieme computed zo store citat aj zapisovat
 		uploadProgressLocal: {
 			get() {
 				return this.$store.getters['tripsStorage/uploadProgress'];
@@ -98,13 +100,11 @@ export default {
 		imageSrc() {
 			return this.imagePreview ? this.imagePreview : this.imageUrl;
 		},
-
 	},
 	async created() {
 		if (this.trip.tripId) {
-			this.tripId = this.trip.tripId
-		}
-		else {
+			this.tripId = this.trip.tripId;
+		} else {
 			await this.setTripId();
 		}
 
@@ -124,14 +124,12 @@ export default {
 			fetchImageUrl: 'tripsStorage/fetchImageUrl',
 			uploadStorageObject: 'tripsStorage/uploadStorageObject',
 			deleteStorageObject: 'tripsStorage/deleteStorageObject'
-
 		}),
 		async setTripId() {
 			try {
 				this.tripId = await this.getTripNewId();
 			} catch (error) {
-				this.error = `Component ${this.$options.name}, Padlo fetch : ${error.message}` || 'Something went wrong!';
-				return;
+				this.handleErrorMessge(error);
 			}
 		},
 		async fetchImageUrlLocal() {
@@ -142,9 +140,28 @@ export default {
 			try {
 				this.imageUrl = await this.fetchImageUrl(tripData);
 			} catch (error) {
-				this.error = `Component ${this.$options.name}, Padlo fetch : ${error.message}` || 'Something went wrong!';
-				return;
+				this.handleErrorMessge(error);
 			}
+		},
+		async deleteImageLocal() {
+			const tripData = {
+				tripId: this.trip.tripId,
+				imageName: this.trip.imageName,
+			};
+			try {
+				await Promise.all([
+					this.deleteStorageObject(tripData),
+					this.deleteTripImage(tripData)
+				]);
+			} catch (error) {
+				this.handleErrorMessge(error);
+			}
+		},
+		handleErrorMessge(error) {
+			this.error = `Component ${this.$options.name}, Padlo fetch : ${error.message}` || 'Something went wrong!';
+		},
+		handleError() {
+			this.error = null;
 		},
 		previewImage(event) {
 			const file = event.target.files[0];
@@ -170,7 +187,7 @@ export default {
 				]);
 				this.imageUrl = downloadURL;
 			} catch (error) {
-				console.error('Error in uploadImageLocal:', error);
+				this.handleErrorMessge(error);
 				throw error;
 			}
 
@@ -178,27 +195,10 @@ export default {
 			this.imagePreview = null;
 			this.isLoading = false;
 			this.uploadProgressLocal = 0;
-
 		},
 		deleteImageCurrent() {
 			this.imageName.val = '';
 			this.imageUrl = '';
-		},
-		async deleteImageLocal() {
-			const tripData = {
-				tripId: this.trip.tripId,
-				imageName: this.trip.imageName,
-			};
-			try {
-				await Promise.all([
-					this.deleteStorageObject(tripData),
-					this.deleteTripImage(tripData)
-				]);
-
-			} catch (error) {
-				this.error = `Component ${this.$options.name}, Padlo fetch : ${error.message}` || 'Something went wrong!';
-				return;
-			}
 		},
 		clearValidity(input) {
 			this[input].isValid = true;
@@ -210,16 +210,16 @@ export default {
 				this.formIsValid = false;
 			}
 		},
-		submitForm() {
+		async submitForm() {
 			this.validateForm();
 			if (!this.formIsValid) return;
 
 			if (!this.imageName.val && this.imageNameOriginal) {
-				this.deleteImageLocal();
+				await this.deleteImageLocal();
 			}
 
 			if (this.imageName.val !== this.imageNameOriginal) {
-				this.uploadImageLocal();
+				await this.uploadImageLocal();
 			}
 
 			const tripData = {

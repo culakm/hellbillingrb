@@ -10,7 +10,7 @@ export default {
 		try {
 			return await getDownloadURL(fileRef);
 		} catch (error) {
-			console.error('Error fetching file URL:', error);
+			throw new Error(`Error fetching file URL: ${imageName}: ${error.message}`);
 		}
 	},
 	async deleteStorageObject(context, { tripId, imageName }) {
@@ -24,25 +24,28 @@ export default {
 	},
 
 	async uploadStorageObject({ commit }, { file, path }) {
+		try {
+			const fileRef = storageRef(storage, path);
+			const uploadTask = uploadBytesResumable(fileRef, file);
 
-		const fileRef = storageRef(storage, path);
-		const uploadTask = uploadBytesResumable(fileRef, file);
+			let lastProgressUpdate = 0;
+			const PROGRESS_THROTTLE = 500;
 
-		let lastProgressUpdate = 0;
-		const PROGRESS_THROTTLE = 500;
+			uploadTask.on('state_changed', (snapshot) => {
+				const now = Date.now();
+				if (now - lastProgressUpdate >= PROGRESS_THROTTLE) {
+					const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+					commit('setUploadProgress', progress);
+					lastProgressUpdate = now;
+				}
+			});
 
-		uploadTask.on('state_changed', (snapshot) => {
-			const now = Date.now();
-			if (now - lastProgressUpdate >= PROGRESS_THROTTLE) {
-				const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-				commit('setUploadProgress', progress);
-				lastProgressUpdate = now;
-			}
-		});
-
-		await uploadTask;
-		commit('setUploadProgress', 100);
-		return await getDownloadURL(uploadTask.snapshot.ref);
+			await uploadTask;
+			commit('setUploadProgress', 100);
+			return await getDownloadURL(uploadTask.snapshot.ref);
+		} catch (error) {
+			throw new Error(`Failed to upload file: ${error.message}`);
+		}
 	}
 
 };
