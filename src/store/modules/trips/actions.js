@@ -111,16 +111,15 @@ export default {
 		}
 		context.commit('updateTripImage', { imageName });
 	},
-	async deleteTripImage(context, payload) {
-		const tripId = payload.tripId;
+	async deleteTripImage({ commit }, { tripId }) {
 		const tripRef = doc(db, "trips", tripId);
 		try {
 			await updateDoc(tripRef, { imageName: '' });
+			commit('deleteTripImage');
+			return tripId; // Useful for chaining or tracking which operation completed
 		} catch (error) {
-			console.error('Error deleting file:', error);
-			throw new Error('Failed to delete trip image from firebase database!');
+			throw new Error(`Failed to update trip ${tripId}: ${error.message}`);
 		}
-		context.commit('deleteTripImage');
 	},
 	async loadTrips(context) {
 		const trips = [];

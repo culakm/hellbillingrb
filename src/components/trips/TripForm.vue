@@ -19,21 +19,21 @@
 					<base-spinner></base-spinner>
 				</div>
 				<div v-if="uploadProgressLocal > 0 && uploadProgressLocal < 100" class="progress">
-					{{ uploadProgressRounded }}%
+					{{ uploadProgressLocal }}%
 					<progress :value="uploadProgressLocal" max="100"></progress>
 				</div>
-				<div v-else-if="imageData">
-					<button @click.prevent="uploadImageLocal">Upload Image</button>
-					<p>generuje sa po nacitani obrazku</p>
-					<img :src="imagePreview" class="preview" alt="Preview">
+				<div v-else>
+					<div v-if="!imageSrc">
+						<p>No image selected</p>
+					</div>
+					<div v-else>
+						<div v-if="imageData">
+							<button @click.prevent="uploadImageLocal">Upload Image</button>
+						</div>
+						<base-button @click.prevent="deleteImageLocal">Delete Image</base-button>
+						<img :src="imageSrc" alt="trip image" style="max-width: 100%; max-height: 200px;">
+					</div>
 				</div>
-			</div>
-
-
-			<div v-if="imageUrl" class="display-section">
-				<h3>Uploaded Image:</h3>
-				<img :src="imageUrl" alt="Uploaded">
-				<button @click.prevent="deleteImageLocal">Delete Image</button>
 			</div>
 		</div>
 
@@ -85,9 +85,6 @@ export default {
 		tripViewLink() {
 			return `/trip/view/${this.tripId}`;
 		},
-		uploadProgressRounded() {
-			return Math.round(this.uploadProgressLocal);
-		},
 		// tymto sposobom vieme computed zo store citat aj zapisovat
 		uploadProgressLocal: {
 			get() {
@@ -96,7 +93,10 @@ export default {
 			set(newValue) {
 				this.$store.commit('tripsStorage/setUploadProgress', newValue);
 			}
-		}
+		},
+		imageSrc() {
+			return this.imagePreview ? this.imagePreview : this.imageUrl;
+		},
 
 	},
 	async created() {
@@ -144,10 +144,12 @@ export default {
 					this.deleteStorageObject(tripData),
 					this.deleteTripImage(tripData)
 				]);
+
 			} catch (error) {
 				this.error = `Component ${this.$options.name}, Padlo fetch : ${error.message}` || 'Something went wrong!';
 				return;
 			}
+
 			this.imageName.val = null;
 			this.imageUrl = '';
 		},
@@ -161,7 +163,6 @@ export default {
 		},
 		async uploadImageLocal() {
 			if (!this.imageData) return;
-
 			if (this.imageName.val) await this.deleteImageLocal();
 
 			this.imageName.val = this.imageData.name;
@@ -209,7 +210,6 @@ export default {
 		submitForm() {
 			this.validateForm();
 			if (!this.formIsValid) return;
-
 			const tripData = {
 				tripId: this.tripId,
 				name: this.name.val,
