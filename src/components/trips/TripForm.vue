@@ -27,10 +27,10 @@
 						<p>No image selected</p>
 					</div>
 					<div v-else>
-						<div v-if="imageData">
+						<!-- <div v-if="imageData">
 							<button @click.prevent="uploadImageLocal">Upload Image</button>
-						</div>
-						<base-button @click.prevent="deleteImageLocal">Delete Image</base-button>
+						</div> -->
+						<base-button @click.prevent="deleteImageCurrent">Delete Image</base-button>
 						<img :src="imageSrc" alt="trip image" style="max-width: 100%; max-height: 200px;">
 					</div>
 				</div>
@@ -78,6 +78,7 @@ export default {
 			imageUrl: '',
 			imageData: null,
 			imagePreview: null,
+			imageNameOriginal: '',
 
 		};
 	},
@@ -110,7 +111,10 @@ export default {
 		this.name.val = this.trip.name || '';
 		this.description.val = this.trip.description || '';
 		this.imageName.val = this.trip.imageName || '';
-		if (this.imageName.val) await this.fetchImageUrlLocal();
+		if (this.imageName.val) {
+			await this.fetchImageUrlLocal();
+			this.imageNameOriginal = this.imageName.val;
+		}
 	},
 	methods: {
 		...mapActions({
@@ -122,6 +126,14 @@ export default {
 			deleteStorageObject: 'tripsStorage/deleteStorageObject'
 
 		}),
+		async setTripId() {
+			try {
+				this.tripId = await this.getTripNewId();
+			} catch (error) {
+				this.error = `Component ${this.$options.name}, Padlo fetch : ${error.message}` || 'Something went wrong!';
+				return;
+			}
+		},
 		async fetchImageUrlLocal() {
 			const tripData = {
 				tripId: this.trip.tripId,
@@ -134,46 +146,25 @@ export default {
 				return;
 			}
 		},
-		async deleteImageLocal() {
-			const tripData = {
-				tripId: this.trip.tripId,
-				imageName: this.trip.imageName,
-			};
-			try {
-				await Promise.all([
-					this.deleteStorageObject(tripData),
-					this.deleteTripImage(tripData)
-				]);
-
-			} catch (error) {
-				this.error = `Component ${this.$options.name}, Padlo fetch : ${error.message}` || 'Something went wrong!';
-				return;
-			}
-
-			this.imageName.val = null;
-			this.imageUrl = '';
-		},
-		async setTripId() {
-			try {
-				this.tripId = await this.getTripNewId();
-			} catch (error) {
-				this.error = `Component ${this.$options.name}, Padlo fetch : ${error.message}` || 'Something went wrong!';
-				return;
-			}
+		previewImage(event) {
+			const file = event.target.files[0];
+			if (!file) return;
+			this.imageData = file;
+			this.imagePreview = URL.createObjectURL(file);
+			this.uploadProgressLocal = 0;
+			this.imageName.val = file.name;
 		},
 		async uploadImageLocal() {
 			if (!this.imageData) return;
-			if (this.imageName.val) await this.deleteImageLocal();
+
+			if (this.imageNameOriginal) await this.deleteImageLocal();
 
 			this.imageName.val = this.imageData.name;
 			const file = this.imageData;
 			this.isLoading = true;
 			try {
 				const fileName = `trips/${this.tripId}/${this.imageData.name}`;
-				const downloadURL = await this.uploadStorageObject({
-					file,
-					path: fileName
-				});
+				const downloadURL = await this.uploadStorageObject({ file, path: fileName });
 				this.imageUrl = downloadURL;
 			} catch (error) {
 				console.error('Error in uploadImageLocal:', error);
@@ -190,12 +181,25 @@ export default {
 			//try tu ma byt a asi to treba spojit s await Promise.all([
 			this.updateTripImage(tripData);
 		},
-		previewImage(event) {
-			const file = event.target.files[0];
-			if (!file) return;
-			this.imageData = file;
-			this.imagePreview = URL.createObjectURL(file);
-			this.uploadProgressLocal = 0;
+		deleteImageCurrent() {
+			this.imageName.val = '';
+			this.imageUrl = '';
+		},
+		async deleteImageLocal() {
+			const tripData = {
+				tripId: this.trip.tripId,
+				imageName: this.trip.imageName,
+			};
+			try {
+				await Promise.all([
+					this.deleteStorageObject(tripData),
+					this.deleteTripImage(tripData)
+				]);
+
+			} catch (error) {
+				this.error = `Component ${this.$options.name}, Padlo fetch : ${error.message}` || 'Something went wrong!';
+				return;
+			}
 		},
 		clearValidity(input) {
 			this[input].isValid = true;
@@ -210,6 +214,15 @@ export default {
 		submitForm() {
 			this.validateForm();
 			if (!this.formIsValid) return;
+
+			if (!this.imageName.val && this.imageNameOriginal) {
+				this.deleteImageLocal();
+			}
+
+			if (this.imageName.val !== this.imageNameOriginal) {
+				this.uploadImageLocal();
+			}
+
 			const tripData = {
 				tripId: this.tripId,
 				name: this.name.val,
