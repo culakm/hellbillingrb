@@ -154,33 +154,6 @@ export default {
 			this.uploadProgressLocal = 0;
 			this.imageName.val = file.name;
 		},
-		async uploadImageLocalV1() {
-			if (!this.imageData) return;
-
-			if (this.imageNameOriginal) await this.deleteImageLocal();
-
-			this.imageName.val = this.imageData.name;
-			const file = this.imageData;
-			this.isLoading = true;
-			try {
-				const fileName = `trips/${this.tripId}/${this.imageData.name}`;
-				const downloadURL = await this.uploadStorageObject({ file, path: fileName });
-				this.imageUrl = downloadURL;
-			} catch (error) {
-				console.error('Error in uploadImageLocal:', error);
-				throw error;
-			}
-			const tripData = {
-				tripId: this.tripId,
-				imageName: this.imageData.name,
-			};
-			this.imageData = null;
-			this.imagePreview = null;
-			this.isLoading = false;
-			this.uploadProgressLocal = 0;
-			//try tu ma byt a asi to treba spojit s await Promise.all([
-			this.updateTripImage(tripData);
-		},
 		async uploadImageLocal() {
 			if (!this.imageData) return;
 
@@ -191,14 +164,10 @@ export default {
 			this.isLoading = true;
 			try {
 				const fileName = `trips/${this.tripId}/${this.imageData.name}`;
-				const downloadURL = await this.uploadStorageObject({
-					file,
-					path: fileName
-				});
-				await this.updateTripImage({
-					tripId: this.tripId,
-					imageName: this.imageData.name,
-				});
+				const [downloadURL] = await Promise.all([
+					this.uploadStorageObject({ file, path: fileName }),
+					this.updateTripImage({ tripId: this.tripId, imageName: this.imageData.name })
+				]);
 				this.imageUrl = downloadURL;
 			} catch (error) {
 				console.error('Error in uploadImageLocal:', error);
