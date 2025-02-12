@@ -129,7 +129,7 @@ export default {
 			try {
 				this.tripId = await this.getTripNewId();
 			} catch (error) {
-				this.handleErrorMessge(error);
+				this.$loadErrorMessage(this.$options.name, error);
 			}
 		},
 		async fetchImageUrlLocal() {
@@ -140,7 +140,7 @@ export default {
 			try {
 				this.imageUrl = await this.fetchImageUrl(tripData);
 			} catch (error) {
-				this.handleErrorMessge(error);
+				this.$loadErrorMessage(this.$options.name, error);
 			}
 		},
 		async deleteImageLocal() {
@@ -154,11 +154,8 @@ export default {
 					this.deleteTripImage(tripData)
 				]);
 			} catch (error) {
-				this.handleErrorMessge(error);
+				this.$loadErrorMessage(this.$options.name, error);
 			}
-		},
-		handleErrorMessge(error) {
-			this.error = `Component ${this.$options.name}, Padlo fetch : ${error.message}` || 'Something went wrong!';
 		},
 		handleError() {
 			this.error = null;
@@ -187,8 +184,7 @@ export default {
 				]);
 				this.imageUrl = downloadURL;
 			} catch (error) {
-				this.handleErrorMessge(error);
-				throw error;
+				this.$loadErrorMessage(this.$options.name, error);
 			}
 
 			this.imageData = null;

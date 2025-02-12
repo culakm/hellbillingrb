@@ -4,8 +4,6 @@ import usersModule from './modules/users/index.js';
 import tripsModule from './modules/trips/index.js';
 import tripsStorageModule from './modules/tripsStorage/index.js';
 
-
-
 const store = createStore({
 	modules: {
 		auth: authModule,
@@ -14,4 +12,5 @@ const store = createStore({
 		tripsStorage: tripsStorageModule
 	}
 });
+
 export default store;

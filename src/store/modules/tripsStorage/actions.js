@@ -10,7 +10,9 @@ export default {
 		try {
 			return await getDownloadURL(fileRef);
 		} catch (error) {
-			throw new Error(`Error fetching file URL: ${imageName}: ${error.message}`);
+			const errorOut = `Error fetching file URL: ${imageName}: ${error.message}`;
+			console.error(errorOut);
+			throw new Error(errorOut);
 		}
 	},
 	async deleteStorageObject(context, { tripId, imageName }) {
@@ -19,7 +21,9 @@ export default {
 		try {
 			return await deleteObject(fileRef);
 		} catch (error) {
-			throw new Error(`Failed to delete image ${imageName}: ${error.message}`);
+			const errorOut = `Failed to delete file ${imageName}: ${error.message}`;
+			console.error(errorOut);
+			throw new Error(errorOut);
 		}
 	},
 
@@ -44,7 +48,9 @@ export default {
 			commit('setUploadProgress', 100);
 			return await getDownloadURL(uploadTask.snapshot.ref);
 		} catch (error) {
-			throw new Error(`Failed to upload file: ${error.message}`);
+			const errorOut = `Failed to upload file: ${file.name}: ${error.message}`;
+			console.error(errorOut);
+			throw new Error(errorOut);
 		}
 	}
 
