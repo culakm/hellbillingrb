@@ -4,9 +4,15 @@ import { cloudFunctions } from '../../../firebase.js';
 import { httpsCallable } from 'firebase/functions';
 
 const _getUserRole = async (email) => {
-	const getUserRole = httpsCallable(cloudFunctions, 'getUserRole');
-	const roleResult = await getUserRole({ email });
-	return roleResult.data.role;
+	try {
+		const getUserRole = httpsCallable(cloudFunctions, 'getUserRole');
+		const roleResult = await getUserRole({ email });
+		return roleResult.data.role;
+	} catch (error) {
+		const errorOut = `Error fetching user role: ${error.message}`;
+		console.error(errorOut);
+		throw new Error(errorOut);
+	}
 };
 
 export default {
@@ -22,9 +28,10 @@ export default {
 				let role;
 				try {
 					role = await _getUserRole(userData.email);
-				} catch (roleError) {
-					console.error(`Error fetching role for user ${userData.email}:`, roleError);
-					throw roleError;
+				} catch (error) {
+					const errorOut = `Error fetching role for user ${userData.email}: ${error.message}`;
+					console.error(errorOut);
+					throw new Error(errorOut);
 				}
 				const user = {
 					userId: doc.id,
@@ -38,13 +45,20 @@ export default {
 
 			context.commit('loadUsers', users);
 		} catch (error) {
-			console.error("Error loading users:", error);
-			throw error;
+			const errorOut = `Error loading users: ${error.message}`;
+			console.error(errorOut);
+			throw new Error(errorOut);
 		}
 	},
 	async deleteUser(context, payload) {
-		const userId = payload.userId;
-		context.commit('deleteUser', { userId: userId });
+		try {
+			const userId = payload.userId;
+			context.commit('deleteUser', { userId: userId });
+		} catch (error) {
+			const errorOut = `Error deleting user: ${error.message}`;
+			console.error(errorOut);
+			throw new Error(errorOut);
+		}
 	},
 	async userByIdFB(context, userId) {
 		if (!userId) { return null; }
@@ -64,8 +78,9 @@ export default {
 			}
 			return null;
 		} catch (error) {
-			console.error("Error fetching user:", error);
-			throw error;
+			const errorOut = `Error fetching user by ID from Firestore: ${error.message}`;
+			console.error(errorOut);
+			throw new Error(errorOut);
 		}
 	},
 	async userByIdStore(context, userId) {
@@ -83,8 +98,9 @@ export default {
 			}
 			return null;
 		} catch (error) {
-			console.error("Error fetching user from store:", error);
-			throw error;
+			const errorOut = `Error fetching user by ID from store: ${error.message}`;
+			console.error(errorOut);
+			throw new Error(errorOut);
 		}
 	},
 	async userByEmail(context, email) {
@@ -109,8 +125,9 @@ export default {
 			}
 			return null;
 		} catch (error) {
-			console.error("Error fetching user:", error);
-			throw error;
+			const errorOut = `Error fetching user by email: ${error.message}`;
+			console.error(errorOut);
+			throw new Error(errorOut);
 		}
 	}
 };

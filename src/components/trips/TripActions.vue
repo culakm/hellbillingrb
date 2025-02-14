@@ -1,4 +1,7 @@
 <template>
+    <base-dialog @close="handleError" :show="!!error" title="An error is ocurred!">
+        <p>{{ error }}</p>
+    </base-dialog>
     <li>
         <div class="header">
             <h3>{{ name }}</h3>
@@ -19,6 +22,11 @@ import { mapActions } from 'vuex';
 export default {
     name: 'TripActions',
     props: ['tripId', 'name', 'description'],
+    data() {
+        return {
+            error: null,
+        };
+    },
     computed: {
         tripViewLink() {
             return `/trip/view/${this.tripId}`;
@@ -32,9 +40,16 @@ export default {
     },
     methods: {
         ...mapActions('trips', ['deleteTrip']),
-        deleteTripLocal() {
-            this.deleteTrip({ tripId: this.tripId });
+        async deleteTripLocal() {
+            try {
+                await this.deleteTrip({ tripId: this.tripId });
+            } catch (error) {
+                this.$loadErrorMessage(this.$options.name, error);
+            }
             this.$router.replace('/trips');
+        },
+        handleError() {
+            this.error = null;
         },
     }
 };

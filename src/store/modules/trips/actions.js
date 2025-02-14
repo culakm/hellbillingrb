@@ -67,6 +67,7 @@ export default {
 	},
 	async editLine(context, payload) {
 		try {
+			console.log('editLine', payload);
 			const tripId = payload.tripId;
 			const lineId = payload.lineId;
 			const lineData = {
@@ -134,9 +135,14 @@ export default {
 		}
 	},
 	async deleteTrip(context, payload) {
+		const tripId = payload.tripId;
 		try {
-			const tripId = payload.tripId;
-			const tripDocRef = doc(db, "trips", tripId);
+
+			const tripDocRef = doc(db, "trips", tripId + "asdfgas");
+			const docSnap = await getDoc(tripDocRef);
+			if (!docSnap.exists()) {
+				throw new Error(`Trip document ${tripId} does not exist`);
+			}
 			const linesCollectionRef = collection(db, "trips", tripId, "lines");
 			const linesSnapshot = await getDocs(linesCollectionRef);
 
@@ -146,19 +152,20 @@ export default {
 			});
 			batch.delete(tripDocRef);
 			await batch.commit();
-			context.commit('deleteTrip', { tripId: tripId });
+
 		} catch (error) {
 			const errorOut = `Error deleting trip: ${error.message}`;
 			console.error(errorOut);
 			throw new Error(errorOut);
 		}
+		context.commit('deleteTrip', { tripId: tripId });
 	},
 	async updateTripImage(context, payload) {
 		try {
 			const tripId = payload.tripId;
 			const imageName = payload.imageName;
 			const tripRef = doc(db, "trips", tripId);
-			await updateDoc(tripRef, { imageName });
+			await setDoc(tripRef, { imageName }, { merge: true });
 			context.commit('updateTripImage', { imageName });
 		} catch (error) {
 			const errorOut = `Error updating trip image: ${error.message}`;

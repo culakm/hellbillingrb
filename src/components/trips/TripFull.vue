@@ -1,4 +1,7 @@
 <template>
+	<base-dialog @close="handleError" :show="!!error" title="An error is ocurred!">
+		<p>{{ error }}</p>
+	</base-dialog>
 	<div class="trip-full">
 		<h3>{{ trip.name }}</h3>
 		<p>{{ trip.description }}</p>
@@ -21,6 +24,7 @@ export default {
 	data() {
 		return {
 			imageUrl: '',
+			error: null,
 		};
 	},
 	async created() {
@@ -36,9 +40,11 @@ export default {
 			try {
 				this.imageUrl = await this.fetchImageUrl(tripData);
 			} catch (error) {
-				this.error = `Component ${this.$options.name}, Padlo fetch : ${error.message}` || 'Something went wrong!';
-				return;
+				this.$loadErrorMessage(this.$options.name, error);
 			}
+		},
+		handleError() {
+			this.error = null;
 		},
 	},
 };

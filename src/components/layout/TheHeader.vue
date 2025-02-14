@@ -25,8 +25,6 @@
 <script>
 
 import { mapGetters, mapActions } from 'vuex';
-import { cloudFunctions } from '../../firebase.js';
-import { httpsCallable } from 'firebase/functions';
 
 export default {
 	name: 'TheHeader',
@@ -43,8 +41,12 @@ export default {
 			logout: 'logout',
 		}),
 		logoutLocal() {
-			this.logout();
-			this.$router.replace('/');
+			try {
+				this.logout();
+				this.$router.replace('/');
+			} catch (error) {
+				this.$loadErrorMessage(this.$options.name, error);
+			}
 		}
 	},
 };

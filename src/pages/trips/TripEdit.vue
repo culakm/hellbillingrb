@@ -24,6 +24,7 @@
 			</base-card>
 		</section>
 		<section>
+
 			<ul v-if="hasLines">
 				<draggable :list="trip.lines" :disabled="!draggableEnabled" item-key="order" class="list-group"
 					ghost-class="ghost" @start="dragging = true" @end="onEnd">
