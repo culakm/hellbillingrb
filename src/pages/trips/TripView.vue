@@ -22,12 +22,14 @@
 </template>
 
 <script>
+import { errorMixin } from '@/mixins/errorMixin';
 import { mapGetters, mapActions } from 'vuex';
 import TripFull from '../../components/trips/TripFull.vue';
 import LineView from '../../components/lines/LineView.vue';
 
 export default {
 	name: 'TripView',
+	mixins: [errorMixin],
 	components: {
 		TripFull,
 		LineView,
@@ -63,10 +65,7 @@ export default {
 		},
 		toggle() {
 			this.fullscreen = !this.fullscreen;
-		},
-		handleError() {
-			this.error = null;
-		},
+		}
 	},
 };
 </script>

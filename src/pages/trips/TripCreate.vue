@@ -16,10 +16,12 @@
 </template>
 
 <script>
+import { errorMixin } from '@/mixins/errorMixin';
 import { mapActions } from 'vuex';
 import TripForm from '../../components/trips/TripForm.vue';
 export default {
 	name: 'TripCreate',
+	mixins: [errorMixin],
 	components: {
 		TripForm,
 	},
@@ -42,9 +44,6 @@ export default {
 
 			this.isLoading = false;
 			this.$router.replace('/trips');
-		},
-		handleError() {
-			this.error = null;
 		},
 	},
 };

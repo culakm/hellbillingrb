@@ -7,8 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "local-fb-emul-empty": "firebase emulators:start --only firestore",
-    "local-fb-emul": "firebase emulators:start --only firestore,auth,storage,functions --import=./my_hbrb_data/hbrb_export_2025_01_23"
+    "fb-emul-empty": "firebase emulators:start --only firestore",
+    "fb-emul": "firebase emulators:start --only firestore,auth,storage,functions --import=./my_hbrb_data/hbrb_export_2025_02_21"
   },
   "dependencies": {
     "firebase": "^10.12.2",

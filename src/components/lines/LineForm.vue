@@ -27,6 +27,44 @@
 			<input type="text" id="roadNo" v-model.trim="roadNo.val" @blur="clearValidity('roadNo')" />
 			<p v-if="!roadNo.isValid">RoadNo must not be empty!</p>
 		</div>
+		<div class="form-control">
+			<div>
+				<input id="roadType-d" name="roadType" type="radio" />
+				<label for="roadType-d">Diaľnica</label>
+			</div>
+			<div>
+				<input id="roadType-r" name="roadType" type="radio" />
+				<label for="roadType-r">Rýchlostná cesta</label>
+			</div>
+			<div>
+				<input id="roadType-c1" name="roadType" type="radio" />
+				<label for="roadType-c1">Cesta I. triedy</label>
+			</div>
+			<div>
+				<input id="roadType-c2" name="roadType" type="radio" />
+				<label for="roadType-c2">Cesta II. triedy</label>
+			</div>
+			<div>
+				<input id="roadType-c3" name="roadType" type="radio" />
+				<label for="roadType-c3">Cesta III. triedy</label>
+			</div>
+		</div>
+
+		<div class="form-control">
+			<label for="interest">Zaujímavosť</label>
+			<div>
+				<input id="interest-history" name="interest" type="checkbox" v-model="interest" />
+				<label for="interest-history">Pamiatky</label>
+			</div>
+			<div>
+				<input id="interest-culture" name="interest" type="checkbox" v-model="interest" />
+				<label for="interest-tutorials">Kultúra</label>
+			</div>
+			<div>
+				<input id="interest-sport" name="interest" type="checkbox" v-model="interest" />
+				<label for="interest-sport">Šport</label>
+			</div>
+		</div>
 		<div class="form-control" :class="{ invalid: !note.isValid }">
 			<label for="note">Note</label>
 			<textarea id="note" rows="2" v-model.trim="note.val" @blur="clearValidity('note')"></textarea>
@@ -40,6 +78,7 @@
 
 <script>
 export default {
+	name: 'LineForm',
 	emits: ['save-line'],
 	props: {
 		line: {
@@ -70,6 +109,14 @@ export default {
 				val: '',
 				isValid: true
 			},
+			roadType: {
+				val: '',
+				isValid: true
+			},
+			interest: {
+				val: '',
+				isValid: true
+			},
 			note: {
 				val: '',
 				isValid: true
@@ -84,6 +131,8 @@ export default {
 		this.kmTotal.val = this.line.kmTotal || null;
 		this.tulip.val = this.line.tulip || '';
 		this.roadNo.val = this.line.roadNo || null;
+		this.roadType.val = this.line.roadType || null;
+		this.interest.val = this.line.interest || null;
 		this.note.val = this.line.note || '';
 	},
 	computed: {

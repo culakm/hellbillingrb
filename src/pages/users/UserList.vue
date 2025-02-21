@@ -1,10 +1,7 @@
 <template>
 	<div v-if="isAdmin">
-		<base-dialog :show="!!error" title="An error occured..." @close="handleError">
+		<base-dialog @close="handleError" :show="!!error" title="An error is ocurred!">
 			<p>{{ error }}</p>
-		</base-dialog>
-		<base-dialog :show="!!confirm" title="Really???">
-			<p>Are you shure you want to delete this user?</p>
 		</base-dialog>
 		<section>
 			<base-card>
@@ -24,10 +21,12 @@
 </template>
 
 <script>
+import { errorMixin } from '@/mixins/errorMixin';
 import { mapGetters, mapActions } from 'vuex';
 import UserActions from '../../components/users/UserActions.vue';
 export default {
-	name: 'UsersList',
+	name: 'UserList',
+	mixins: [errorMixin],
 	components: {
 		UserActions,
 	},
@@ -35,7 +34,6 @@ export default {
 		return {
 			isLoading: false,
 			error: null,
-			confirm: false,
 		};
 	},
 	computed: {
@@ -56,15 +54,11 @@ export default {
 			try {
 				await this.loadUsers();
 			} catch (error) {
-				this.error = `Component ${this.$options.name}, error: ${error.message}` || 'Something went wrong!';
+				this.$loadErrorMessage(this.$options.name, error);
 			}
 			this.isLoading = false;
-		},
-		handleError() {
-			this.error = null;
-		},
-	},
-
+		}
+	}
 };
 </script>
 

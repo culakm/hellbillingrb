@@ -7,7 +7,10 @@
             <h3>{{ name }}</h3>
             <p>{{ description }}</p>
         </div>
-        <div class="actions">
+        <div v-if="isLoading">
+            <base-spinner></base-spinner>
+        </div>
+        <div v-else class="actions">
             <base-button link :to="tripViewLink">View</base-button>
             <base-button link :to="tripEditLink">Edit</base-button>
             <base-button link :to="tripPrintLink" :newTab="true">Print</base-button>
@@ -17,13 +20,16 @@
 </template>
 
 <script>
+import { errorMixin } from '@/mixins/errorMixin';
 import { mapActions } from 'vuex';
 
 export default {
     name: 'TripActions',
+    mixins: [errorMixin],
     props: ['tripId', 'name', 'description'],
     data() {
         return {
+            isLoading: false,
             error: null,
         };
     },
@@ -41,16 +47,15 @@ export default {
     methods: {
         ...mapActions('trips', ['deleteTrip']),
         async deleteTripLocal() {
+            this.isLoading = true;
             try {
                 await this.deleteTrip({ tripId: this.tripId });
             } catch (error) {
                 this.$loadErrorMessage(this.$options.name, error);
             }
+            this.isLoading = false;
             this.$router.replace('/trips');
-        },
-        handleError() {
-            this.error = null;
-        },
+        }
     }
 };
 </script>

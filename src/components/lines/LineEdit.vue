@@ -4,25 +4,46 @@
   </base-dialog>
   <div class="roadbook-item">
     <div class="order">{{ line.order }}</div>
-    <input class="name" type="text" id="name" v-model.trim="line.name" />
-    <input type="text" id="kmTotal" v-model.trim="line.kmTotal" />
-    <select id="tulip" v-model="line.tulip">
+    <input class="name" id="name" name="name" type="text" v-model.trim="line.name" />
+    <input class="kmTotal" id="kmTotal" name="kmTotal" type="number" v-model.number="line.kmTotal" />
+    <select class="tuplip" id="tulip" name="tulip" v-model="line.tulip">
       <option value="">Select a Tulip</option>
       <option value="tulipR">Tulip Right</option>
       <option value="tulipL">Tulip Left</option>
       <option value="tulipF">Tulip Front</option>
     </select>
-    <input type="text" id="roadNo" v-model.trim="line.roadNo" />
-    <textarea id="note" rows="2" v-model.trim="line.note"></textarea>
+    <input type="text" id="roadNo" name="roadNo" v-model.trim="line.roadNo" />
+    <select class="raodType" id="roadType" name="roadType" v-model.trim="line.roadNo">
+      <option value="d">Diaľnica</option>
+      <option value="r">Rýchlostná cesta</option>
+      <option value="c1">Cesta I. triedy</option>
+      <option value="c2">Cesta II. triedy</option>
+      <option value="c3">Cesta III. triedy</option>
+    </select>
+    <div>
+      <input id="interest-history" name="interest" type="checkbox" />
+      <label for="interest-history">Pamiatky</label>
+    </div>
+    <div>
+      <input id="interest-culture" name="interest" type="checkbox" />
+      <label for="interest-tutorials">Kultúra</label>
+    </div>
+    <div>
+      <input id="interest-sport" name="interest" type="checkbox" />
+      <label for="interest-sport">Šport</label>
+    </div>
   </div>
+  <textarea id="note" rows="2" v-model.trim="line.note"></textarea>
   <base-button @click="editLineLocal">Save</base-button>
   <base-button @click="cancelLineLocal">Cancel</base-button>
 </template>
 
 <script>
+import { errorMixin } from '@/mixins/errorMixin';
 
 export default {
   name: 'LineEdit',
+  mixins: [errorMixin],
   emits: ['save-line', 'cancel-edit'],
   props: {
     line: {
@@ -57,9 +78,6 @@ export default {
     },
     tulipSrc(tulip) {
       return `/img/${tulip}.svg`;
-    },
-    handleError() {
-      this.error = null;
     },
     submitForm() {
       this.validateForm();

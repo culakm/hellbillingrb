@@ -5,6 +5,9 @@
 		<component :is="selectedComponent" @update-content="updateContent"></component>
 		ale co s tlacitkami, eventami a tak? je to zlozitejsie ako treba
 		-->
+		<div v-if="isLoading">
+			<base-spinner></base-spinner>
+		</div>
 		<template v-if="!isEdited">
 			<line-view :line="localLine"></line-view>
 			<div class="actions">
@@ -52,13 +55,12 @@ export default {
 	methods: {
 		...mapActions('trips', ['deleteLine', 'editLine']),
 		async editLineLocal(lineData) {
-			lineData.tripId = this.tripId;
 			this.isLoading = true;
 			try {
+				lineData.tripId = this.tripId;
 				await this.editLine(lineData);
 			} catch (error) {
-				this.error = `Component ${this.$options.name}, Padlo fetch : ${error.message}` || 'Something went wrong!';
-				return;
+				this.$loadErrorMessage(this.$options.name, error);
 			}
 			this.isLoading = false;
 			this.setEditedLine();
@@ -69,7 +71,7 @@ export default {
 			try {
 				await this.deleteLine({ tripId: this.tripId, lineId: this.line.lineId });
 			} catch (error) {
-				this.error = `Component ${this.$options.name}, Padlo fetch : ${error.message}` || 'Something went wrong!';
+				this.$loadErrorMessage(this.$options.name, error);
 				return;
 			}
 			this.isLoading = false;

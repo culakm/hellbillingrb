@@ -7,6 +7,7 @@
 	</div>
 	<div v-else>
 		<section>
+			<trip-full v-if="trip" :trip="trip"></trip-full>
 			<div v-if="hasLines" class="roadbook">
 				<line-view v-for="line in trip.lines" :key="line.lineId" :line="line"></line-view>
 			</div>
@@ -15,13 +16,14 @@
 </template>
 
 <script>
+import { errorMixin } from '@/mixins/errorMixin';
 import { mapGetters, mapActions } from 'vuex';
 import TripFull from '../../components/trips/TripFull.vue';
 import LineView from '../../components/lines/LineView.vue';
 
 export default {
 	name: 'TripView',
-	// props: ['tripId'],
+	mixins: [errorMixin],
 	components: {
 		TripFull,
 		LineView,
@@ -56,9 +58,6 @@ export default {
 			this.trip.lines.forEach(line => {
 				line.passed = false;
 			});
-		},
-		handleError() {
-			this.error = null;
 		},
 	},
 };

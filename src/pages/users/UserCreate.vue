@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div v-if="isAdmin">
 		<base-dialog @close="handleError" :show="!!error" title="An error is ocurred!">
 			<p>{{ error }}</p>
 		</base-dialog>
@@ -16,14 +16,16 @@
 </template>
 
 <script>
+import { errorMixin } from '@/mixins/errorMixin';
 import { cloudFunctions } from '../../firebase.js';
 import { httpsCallable } from 'firebase/functions';
-import { mapActions } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 import UserForm from '../../components/users/UserForm.vue';
 
 
 export default {
 	name: 'UserCreate',
+	mixins: [errorMixin],
 	components: {
 		UserForm,
 	},
@@ -33,6 +35,11 @@ export default {
 			error: null,
 		};
 	},
+	computed: {
+		...mapGetters({
+			isAdmin: 'isAdmin'
+		})
+	},
 	methods: {
 		...mapActions('users', ['userByEmail']),
 		async createUserLocal(userData) {
@@ -40,23 +47,20 @@ export default {
 			try {
 				const userExists = await this.userByEmail(userData.email);
 				if (userExists) {
-					this.error = `User with email ${userExists.email} already exists!`;
+					this.$loadErrorMessage(this.$options.name, `User with email ${userExists.email} already exists!`);
 					this.isLoading = false;
 					return;
 				}
 				const createUser = httpsCallable(cloudFunctions, 'createUser');
-				await createUser({ user: userData });
+				const result = await createUser({ user: userData });
 			} catch (error) {
-				this.error = `User was not created! ${error}`;
+				this.$loadErrorMessage(this.$options.name, error);
 				this.isLoading = false;
 				return;
 			}
 
 			this.isLoading = false;
 			this.$router.replace('/users');
-		},
-		handleError() {
-			this.error = null;
 		}
 	},
 };

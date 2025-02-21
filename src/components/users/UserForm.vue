@@ -144,7 +144,6 @@ export default {
 			this.validateForm();
 			if (!this.formIsValid) return;
 
-
 			const formData = {
 				userId: this.userId,
 				name: this.name.val,

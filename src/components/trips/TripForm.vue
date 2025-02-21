@@ -49,10 +49,12 @@
 </template>
 
 <script>
+import { errorMixin } from '@/mixins/errorMixin';
 import { mapActions } from 'vuex';
 
 export default {
 	name: 'TripForm',
+	mixins: [errorMixin],
 	emits: ['save-data'],
 	props: {
 		trip: {
@@ -102,6 +104,7 @@ export default {
 		},
 	},
 	async created() {
+		this.submitForm = this.submitForm.bind(this);
 		if (this.trip.tripId) {
 			this.tripId = this.trip.tripId;
 		} else {
@@ -133,6 +136,7 @@ export default {
 			}
 		},
 		async fetchImageUrlLocal() {
+			// this.$loadErrorMessage(this.$options.name, 'fetchImageUrlLocal');
 			const tripData = {
 				tripId: this.trip.tripId,
 				imageName: this.trip.imageName,
@@ -156,9 +160,6 @@ export default {
 			} catch (error) {
 				this.$loadErrorMessage(this.$options.name, error);
 			}
-		},
-		handleError() {
-			this.error = null;
 		},
 		previewImage(event) {
 			const file = event.target.files[0];
@@ -207,6 +208,7 @@ export default {
 			}
 		},
 		async submitForm() {
+
 			this.validateForm();
 			if (!this.formIsValid) return;
 

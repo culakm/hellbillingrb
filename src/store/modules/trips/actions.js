@@ -67,7 +67,6 @@ export default {
 	},
 	async editLine(context, payload) {
 		try {
-			console.log('editLine', payload);
 			const tripId = payload.tripId;
 			const lineId = payload.lineId;
 			const lineData = {
@@ -138,7 +137,7 @@ export default {
 		const tripId = payload.tripId;
 		try {
 
-			const tripDocRef = doc(db, "trips", tripId + "asdfgas");
+			const tripDocRef = doc(db, "trips", tripId);
 			const docSnap = await getDoc(tripDocRef);
 			if (!docSnap.exists()) {
 				throw new Error(`Trip document ${tripId} does not exist`);

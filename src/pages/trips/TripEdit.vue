@@ -17,14 +17,10 @@
 		</section>
 		<section>
 			<base-card>
-				<div v-if="isLoading">
-					<base-spinner></base-spinner>
-				</div>
 				<line-form @save-line="createLineLocal" :trip="trip"></line-form>
 			</base-card>
 		</section>
 		<section>
-
 			<ul v-if="hasLines">
 				<draggable :list="trip.lines" :disabled="!draggableEnabled" item-key="order" class="list-group"
 					ghost-class="ghost" @start="dragging = true" @end="onEnd">
@@ -41,6 +37,7 @@
 </template>
 
 <script>
+import { errorMixin } from '@/mixins/errorMixin';
 import { mapGetters, mapActions } from 'vuex';
 import draggable from "vuedraggable";
 import TripForm from '../../components/trips/TripForm.vue';
@@ -49,6 +46,7 @@ import LineActions from '../../components/lines/LineActions.vue';
 
 export default {
 	name: 'TripEdit',
+	mixins: [errorMixin],
 	components: {
 		draggable,
 		TripForm,
@@ -110,9 +108,6 @@ export default {
 		},
 		lineIsEdited() {
 			this.draggableEnabled = !this.draggableEnabled;
-		},
-		handleError() {
-			this.error = null;
 		},
 		onEnd(evt) {
 			this.dragging = false;

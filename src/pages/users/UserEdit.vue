@@ -18,13 +18,15 @@
 </template>
 
 <script>
+import { errorMixin } from '@/mixins/errorMixin';
 import { cloudFunctions } from '../../firebase.js';
 import { httpsCallable } from 'firebase/functions';
 import UserForm from '../../components/users/UserForm.vue';
-import { mapGetters, mapActions } from 'vuex';
+import { mapActions } from 'vuex';
 
 export default {
 	name: 'UserEdit',
+	mixins: [errorMixin],
 	components: {
 		UserForm,
 	},
@@ -41,25 +43,23 @@ export default {
 		this.user = await this.userByIdStore(this.userId);
 	},
 	methods: {
-		...mapActions('users', ['userByIdStore', 'userByEmail']),
+		...mapActions('users', ['userByIdStore']),
 
 		async updateUserLocal(userData) {
 			this.isLoading = true;
 			try {
 				const updateUser = httpsCallable(cloudFunctions, 'updateUser');
 				const result = await updateUser({ user: userData });
+				//this.$loadErrorMessage(this.$options.name, result.data.message);
 			} catch (error) {
-				this.error = `User was not updated! ${error}`;
+				this.$loadErrorMessage(this.$options.name, error);
 				this.isLoading = false;
 				return;
 			}
 
 			this.isLoading = false;
 			this.$router.replace('/users');
-		},
-		handleError() {
-			this.error = null;
-		},
+		}
 	},
 };
 </script>

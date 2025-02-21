@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<base-dialog :show="!!error" title="An error occured..." @close="handleError">
+		<base-dialog @close="handleError" :show="!!error" title="An error is ocurred!">
 			<p>{{ error }}</p>
 		</base-dialog>
 		<base-dialog :show="!!confirm" title="Really???">
@@ -25,10 +25,13 @@
 </template>
 
 <script>
+import { errorMixin } from '@/mixins/errorMixin';
+
 import { mapGetters, mapActions } from 'vuex';
 import TripActions from '../../components/trips/TripActions.vue';
 export default {
 	name: 'TripList',
+	mixins: [errorMixin],
 	components: {
 		TripActions,
 	},
@@ -56,10 +59,7 @@ export default {
 				this.error = `Component ${this.$options.name}, error: ${error.message}` || 'Something went wrong!';
 			}
 			this.isLoading = false;
-		},
-		handleError() {
-			this.error = null;
-		},
+		}
 	},
 
 };

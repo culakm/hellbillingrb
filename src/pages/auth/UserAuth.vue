@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<base-dialog :show="!!error" title="An error occured..." @close="handleError">
+		<base-dialog @close="handleError" :show="!!error" title="An error is ocurred!">
 			<p>{{ error }}</p>
 		</base-dialog>
 		<base-dialog :show="isLoading" fixed title="Authenticating...">
@@ -25,10 +25,12 @@
 </template>
 
 <script>
+import { errorMixin } from '@/mixins/errorMixin';
 import { mapActions } from 'vuex';
 
 export default {
 	name: 'UserAuth',
+	mixins: [errorMixin],
 	data() {
 		return {
 			email: {
@@ -83,9 +85,6 @@ export default {
 		clearValidity(input) {
 			this[input].isValid = true;
 		},
-		handleError() {
-			this.error = null;
-		}
 	}
 };
 </script>

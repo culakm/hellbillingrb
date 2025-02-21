@@ -8,15 +8,19 @@
     <div class="km-total">{{ line.kmTotal }}</div>
     <div class="tulip"><img class="tulip-img" v-if="line.tulip" :src="tulipSrc(line.tulip)" /></div>
     <div class="road-no">{{ line.roadNo }}</div>
+    <div class="road-type">{{ line.roadType }}</div>
+    <div class="interest">{{ line.interest }}</div>
     <div class="note" v-html="line.note"></div>
   </div>
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex';
+import { errorMixin } from '@/mixins/errorMixin';
+import { mapActions } from 'vuex';
 
 export default {
   name: 'LineView',
+  mixins: [errorMixin],
   props: {
     line: {
       type: Object,
@@ -55,10 +59,7 @@ export default {
     },
     tulipSrc(tulip) {
       return `/img/${tulip}.svg`;
-    },
-    handleError() {
-      this.error = null;
-    },
+    }
   },
 };
 </script>
@@ -87,6 +88,8 @@ export default {
   .km-total,
   .tulip,
   .road-no,
+  .road-type,
+  .interest,
   .note {
     text-align: center;
     border-left: 1px solid #ccc;
@@ -101,7 +104,10 @@ export default {
   .roadbook-item> :nth-child(1),
   .roadbook-item> :nth-child(3),
   .roadbook-item> :nth-child(4),
-  .roadbook-item> :nth-child(5) {
+  .roadbook-item> :nth-child(5),
+  .roadbook-item> :nth-child(6),
+  .roadbook-item> :nth-child(7),
+  .roadbook-item> :nth-child(8) {
     display: flex;
     justify-content: center;
     align-items: center;

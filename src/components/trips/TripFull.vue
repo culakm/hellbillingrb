@@ -11,9 +11,12 @@
 </template>
 
 <script>
+import { errorMixin } from '@/mixins/errorMixin';
 import { mapActions } from 'vuex';
 
 export default {
+	name: 'TripFull',
+	mixins: [errorMixin],
 	props: {
 		trip: {
 			type: Object,
@@ -42,9 +45,6 @@ export default {
 			} catch (error) {
 				this.$loadErrorMessage(this.$options.name, error);
 			}
-		},
-		handleError() {
-			this.error = null;
 		},
 	},
 };

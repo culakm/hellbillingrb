@@ -22,12 +22,14 @@
 </template>
 
 <script>
+import { errorMixin } from '@/mixins/errorMixin';
 import { cloudFunctions } from '../../firebase.js';
 import { httpsCallable } from 'firebase/functions';
 import { mapGetters, mapActions } from 'vuex';
 
 export default {
     name: 'UserActions',
+    mixins: [errorMixin],
     props: ['user'],
     data() {
         return {
@@ -45,15 +47,12 @@ export default {
         ...mapActions('users', ['deleteUser']),
         async deleteUserLocal() {
             if (this.currentUserId === this.user.userId) {
-                this.error = 'You cannot delete yourself!';
+                this.$loadErrorMessage(this.$options.name, 'You cannot delete yourself!');
                 return;
             }
 
             const confirmed = confirm(`Are you sure you want to delete user: ${this.user.name}?`);
-            if (!confirmed) {
-                this.isLoading = false;
-                return;
-            }
+            if (!confirmed) { return; }
 
             this.isLoading = true;
 
@@ -61,17 +60,13 @@ export default {
                 const deleteUser = httpsCallable(cloudFunctions, 'deleteUser');
                 const result = await deleteUser({ userId: this.user.userId });
             } catch (error) {
-                console.error('Error calling cloud function:', error);
-                this.error = `User was not deleted! ${error}`;
+                this.$loadErrorMessage(this.$options.name, 'You cannot delete yourself!');
                 this.isLoading = false;
                 return;
             }
             this.deleteUser({ userId: this.user.userId });
             this.isLoading = false;
             this.$router.replace('/users');
-        },
-        handleError() {
-            this.error = null;
         },
     },
 };
