@@ -52,8 +52,7 @@ export default {
       try {
         await this.passedLine({ lineId: this.line.lineId, passed: passed });
       } catch (error) {
-        this.error = `Component ${this.$options.name}, Padlo fetch : ${error.message}` || 'Something went wrong!';
-        return;
+        this.$loadErrorMessage(this.$options.name, error);
       }
       this.isLoading = false;
     },

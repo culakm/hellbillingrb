@@ -1,9 +1,10 @@
 export function loadErrorMessage(componentName, errorMessage) {
-	this.error = `Component ${componentName}, ERROR: ${errorMessage}` || 'Something went wrong!';
+	const error = `Component ${componentName}, ERROR: ${errorMessage}` || 'Something went wrong!';
+	console.error(error);
+	this.error = error;
 }
 
 export function handleError() {
-	console.log('naozaj som to vypol cez mixin v utils.js');
 	this.error = null;
 }
 

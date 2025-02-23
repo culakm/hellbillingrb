@@ -77,7 +77,7 @@ export default {
 				await this.login(userData);
 				this.$router.replace('/');
 			} catch (error) {
-				this.error = error.message || 'Failed to login, try again';
+				this.$loadErrorMessage(this.$options.name, error);
 				this.password.val = '';
 			}
 			this.isLoading = false;

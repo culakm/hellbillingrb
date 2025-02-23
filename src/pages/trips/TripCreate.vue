@@ -38,7 +38,8 @@ export default {
 			try {
 				await this.createTrip(tripData);
 			} catch (error) {
-				this.error = `Component ${this.$options.name}, Padlo fetch : ${error.message}` || 'Something went wrong!';
+				this.$loadErrorMessage(this.$options.name, error);
+				this.isLoading = false;
 				return;
 			}
 

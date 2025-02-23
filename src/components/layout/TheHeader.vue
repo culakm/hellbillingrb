@@ -45,7 +45,8 @@ export default {
 				this.logout();
 				this.$router.replace('/');
 			} catch (error) {
-				this.$loadErrorMessage(this.$options.name, error);
+				console.error(`Extra error, Component ${this.$options.name}, ERROR: ${error.message}`);
+				//this.$loadErrorMessage(this.$options.name, error);
 			}
 		}
 	},

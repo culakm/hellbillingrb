@@ -1,6 +1,9 @@
 <template>
 	<!-- <router-link :to="tripViewLink"> -->
 	<li class="line-item">
+		<base-dialog @close="handleError" :show="!!error" title="An error is ocurred!">
+			<p>{{ error }}</p>
+		</base-dialog>
 		<!-- toto rozhodovanie sa da urobit aj
 		<component :is="selectedComponent" @update-content="updateContent"></component>
 		ale co s tlacitkami, eventami a tak? je to zlozitejsie ako treba
@@ -23,12 +26,14 @@
 	<!-- </router-link> -->
 </template>
 <script>
+import { errorMixin } from '@/mixins/errorMixin';
 import { mapActions } from 'vuex';
 import LineView from './LineView.vue';
 import LineEdit from './LineEdit.vue';
 
 export default {
 	name: 'LineActions',
+	mixins: [errorMixin],
 	components: {
 		LineView,
 		LineEdit,
@@ -72,7 +77,6 @@ export default {
 				await this.deleteLine({ tripId: this.tripId, lineId: this.line.lineId });
 			} catch (error) {
 				this.$loadErrorMessage(this.$options.name, error);
-				return;
 			}
 			this.isLoading = false;
 		},

@@ -56,7 +56,10 @@ export default {
 	},
 	updateTripImage(state, payload) {
 		const trip = state.trip;
-		trip.imageName = payload.imageName;
+		// for updated trip
+		if (trip) {
+			trip.imageName = payload.imageName;
+		}
 	},
 	deleteTripImage(state, payload) {
 		const trip = state.trip;
@@ -64,6 +67,7 @@ export default {
 	},
 	loadTrips(state, payload) {
 		state.trips = payload;
+		state.trip = null;
 		//sortTrips(state.trips); //toto je nahradene orderBy v actions.js
 	},
 	setTrip(state, payload) {

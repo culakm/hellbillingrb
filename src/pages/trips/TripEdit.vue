@@ -76,7 +76,7 @@ export default {
 			try {
 				await this.tripById(this.tripId);
 			} catch (error) {
-				this.error = `Component ${this.$options.name}, error: ${error.message}` || 'Something went wrong!';
+				this.$loadErrorMessage(this.$options.name, error);
 			}
 			this.isLoading = false;
 		},
@@ -86,8 +86,7 @@ export default {
 			try {
 				await this.updateTrip(tripData);
 			} catch (error) {
-				this.error = `Component ${this.$options.name}, Padlo fetch : ${error.message}` || 'Something went wrong!';
-				return;
+				this.$loadErrorMessage(this.$options.name, error);
 			}
 
 			this.isLoading = false;
@@ -101,8 +100,7 @@ export default {
 			try {
 				await this.createLine(lineData);
 			} catch (error) {
-				this.error = `Component ${this.$options.name}, Padlo fetch : ${error.message}` || 'Something went wrong!';
-				return;
+				this.$loadErrorMessage(this.$options.name, error);
 			}
 			this.isLoading = false;
 		},

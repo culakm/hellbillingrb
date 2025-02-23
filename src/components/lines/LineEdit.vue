@@ -1,7 +1,4 @@
 <template>
-  <base-dialog @close="handleError" :show="!!error" title="An error is ocurred!">
-    <p>{{ error }}</p>
-  </base-dialog>
   <div class="roadbook-item">
     <div class="order">{{ line.order }}</div>
     <input class="name" id="name" name="name" type="text" v-model.trim="line.name" />
@@ -39,11 +36,8 @@
 </template>
 
 <script>
-import { errorMixin } from '@/mixins/errorMixin';
-
 export default {
   name: 'LineEdit',
-  mixins: [errorMixin],
   emits: ['save-line', 'cancel-edit'],
   props: {
     line: {
@@ -54,8 +48,6 @@ export default {
   },
   data() {
     return {
-      isLoading: false,
-      error: null,
       origLine: { ...this.line },
     };
   },

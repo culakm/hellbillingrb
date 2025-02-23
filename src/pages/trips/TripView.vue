@@ -56,7 +56,7 @@ export default {
 			try {
 				await this.tripById(this.tripId);
 			} catch (error) {
-				this.error = `Component ${this.$options.name}, error: ${error.message}` || 'Something went wrong!';
+				this.$loadErrorMessage(this.$options.name, error);
 			}
 			this.isLoading = false;
 		},

@@ -104,7 +104,6 @@ export default {
 		},
 	},
 	async created() {
-		this.submitForm = this.submitForm.bind(this);
 		if (this.trip.tripId) {
 			this.tripId = this.trip.tripId;
 		} else {
@@ -136,7 +135,6 @@ export default {
 			}
 		},
 		async fetchImageUrlLocal() {
-			// this.$loadErrorMessage(this.$options.name, 'fetchImageUrlLocal');
 			const tripData = {
 				tripId: this.trip.tripId,
 				imageName: this.trip.imageName,
@@ -208,7 +206,6 @@ export default {
 			}
 		},
 		async submitForm() {
-
 			this.validateForm();
 			if (!this.formIsValid) return;
 
