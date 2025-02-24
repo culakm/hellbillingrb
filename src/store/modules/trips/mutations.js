@@ -27,6 +27,8 @@ export default {
 		line.kmTotal = payload.kmTotal;
 		line.tulip = payload.tulip;
 		line.roadNo = payload.roadNo;
+		line.interest = payload.interest;
+		line.stop = payload.stop;
 		line.note = payload.note;
 	},
 	deleteLine(state, payload) {

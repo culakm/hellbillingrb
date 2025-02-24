@@ -10,26 +10,20 @@
       <option value="tulipF">Tulip Front</option>
     </select>
     <input type="text" id="roadNo" name="roadNo" v-model.trim="line.roadNo" />
-    <select class="raodType" id="roadType" name="roadType" v-model.trim="line.roadNo">
-      <option value="d">Diaľnica</option>
-      <option value="r">Rýchlostná cesta</option>
-      <option value="c1">Cesta I. triedy</option>
-      <option value="c2">Cesta II. triedy</option>
-      <option value="c3">Cesta III. triedy</option>
-    </select>
     <div>
-      <input id="interest-history" name="interest" type="checkbox" />
+      <input id="interest-history" name="interest" type="checkbox" value="history" v-model="line.interest" />
       <label for="interest-history">Pamiatky</label>
     </div>
     <div>
-      <input id="interest-culture" name="interest" type="checkbox" />
+      <input id="interest-culture" name="interest" type="checkbox" value="culture" v-model="line.interest" />
       <label for="interest-tutorials">Kultúra</label>
     </div>
     <div>
-      <input id="interest-sport" name="interest" type="checkbox" />
+      <input id="interest-sport" name="interest" type="checkbox" value="sport" v-model="line.interest" />
       <label for="interest-sport">Šport</label>
     </div>
   </div>
+  <input id="stop" name="stop" type="checkbox" v-model="line.stop" />
   <textarea id="note" rows="2" v-model.trim="line.note"></textarea>
   <base-button @click="editLineLocal">Save</base-button>
   <base-button @click="cancelLineLocal">Cancel</base-button>
@@ -60,6 +54,8 @@ export default {
         kmTotal: this.line.kmTotal,
         tulip: this.line.tulip,
         roadNo: this.line.roadNo,
+        interest: this.line.interest,
+        stop: this.line.stop,
         note: this.line.note,
         passed: this.line.passed,
       };
@@ -83,14 +79,19 @@ export default {
         kmTotal: this.kmTotal.val,
         tulip: this.tulip.val,
         roadNo: this.roadNo.val,
+        interest: this.interest.val,
+        stop: this.stop.val,
         note: this.note.val,
         passed: false,
       };
+
       this.order.val = null;
       this.name.val = '';
       this.kmTotal.val = null,
         this.tulip.val = '';
       this.roadNo.val = '';
+      this.interest.val = [];
+      this.stop.val = false;
       this.note.val = '';
 
       this.$emit('save-line', formData);
@@ -102,7 +103,7 @@ export default {
 <style scoped>
   .roadbook-item {
     display: grid;
-    grid-template-columns: 0.1fr 1.3fr 1.1fr 0.5fr 2fr;
+    grid-template-columns: 0.1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
     /* Adjusted column widths */
     width: 100%;
     min-height: 100px;
@@ -118,6 +119,8 @@ export default {
   .kmTotal,
   .tulip,
   .roadNo,
+  .interest,
+  .stop,
   .note {
     text-align: center;
     border-left: 1px solid #ccc;
@@ -132,7 +135,11 @@ export default {
   .roadbook-item> :nth-child(1),
   .roadbook-item> :nth-child(3),
   .roadbook-item> :nth-child(4),
-  .roadbook-item> :nth-child(5) {
+  .roadbook-item> :nth-child(5),
+  .roadbook-item> :nth-child(6),
+  .roadbook-item> :nth-child(7),
+  .roadbook-item> :nth-child(8),
+  .roadbook-item> :nth-child(9) {
     display: flex;
     justify-content: center;
     align-items: center;

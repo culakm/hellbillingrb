@@ -51,6 +51,8 @@ export default {
 				kmTotal: payload.kmTotal,
 				tulip: payload.tulip,
 				roadNo: payload.roadNo,
+				interest: payload.interest,
+				stop: payload.stop,
 				note: payload.note,
 				passed: payload.passed,
 			};
@@ -76,6 +78,8 @@ export default {
 				kmTotal: payload.kmTotal,
 				tulip: payload.tulip,
 				roadNo: payload.roadNo,
+				interest: payload.interest,
+				stop: payload.stop,
 				note: payload.note,
 				passed: payload.passed,
 			};

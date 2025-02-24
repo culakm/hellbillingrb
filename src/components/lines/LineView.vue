@@ -8,8 +8,8 @@
     <div class="km-total">{{ line.kmTotal }}</div>
     <div class="tulip"><img class="tulip-img" v-if="line.tulip" :src="tulipSrc(line.tulip)" /></div>
     <div class="road-no">{{ line.roadNo }}</div>
-    <div class="road-type">{{ line.roadType }}</div>
     <div class="interest">{{ line.interest }}</div>
+    <div class="stop">{{ line.stop ? 'Stop' : 'Free' }}</div>
     <div class="note" v-html="line.note"></div>
   </div>
 </template>
@@ -67,7 +67,7 @@ export default {
   .roadbook-item {
     user-select: none;
     display: grid;
-    grid-template-columns: 0.1fr 1.3fr 1.1fr 0.5fr 1fr 1fr;
+    grid-template-columns: 0.1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
     /* Adjusted column widths */
     width: 100%;
     min-height: 100px;
@@ -89,6 +89,7 @@ export default {
   .road-no,
   .road-type,
   .interest,
+  .stop,
   .note {
     text-align: center;
     border-left: 1px solid #ccc;
@@ -106,7 +107,8 @@ export default {
   .roadbook-item> :nth-child(5),
   .roadbook-item> :nth-child(6),
   .roadbook-item> :nth-child(7),
-  .roadbook-item> :nth-child(8) {
+  .roadbook-item> :nth-child(8),
+  .roadbook-item> :nth-child(9) {
     display: flex;
     justify-content: center;
     align-items: center;
