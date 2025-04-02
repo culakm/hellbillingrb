@@ -1,33 +1,35 @@
 <template>
-	<form @submit.prevent="submitForm">
-		<div class="form-control" :class="{ invalid: !name.isValid }">
-			<label for="name">Name</label>
+	<form @submit.prevent="submitForm" class="line-form">
+		<div class="form-item-name" :class="{ invalid: !name.isValid }">
+			<label for="name">Meno</label>
 			<input type="text" id="name" v-model.trim="name.val" @blur="clearValidity('name')" />
 			<p v-if="!name.isValid">name must not be empty!</p>
 		</div>
-		<div class="form-control form-control-tulip" :class="{ invalid: !kmTotal.isValid }">
+		<div class="form-item-kmTotal" :class="{ invalid: !kmTotal.isValid }">
 			<label for="kmTotal">kmTotal</label>
 			<input type="number" id="kmTotal" v-model.trim="kmTotal.val" @blur="clearValidity('kmTotal')" />
 			<p v-if="!kmTotal.isValid">kmTotal must not be empty!</p>
 		</div>
-		<div class="form-control" :class="{ invalid: !tulip.isValid }">
-			<label for="tulip">Tulip</label>
-			<select id="tulip" v-model="tulip.val" @change="clearValidity('tulip')">
-				<option value="">Select a Tulip</option>
-				<option value="tulipR">Tulip Right</option>
-				<option value="tulipL">Tulip Left</option>
-				<option value="tulipF">Tulip Front</option>
-			</select>
-			<!-- Image preview -->
-			<img class="tulip-img" v-if="tulip.val" :src="tulipSrc" alt="Selected Tulip" />
-			<p v-if="!tulip.isValid">Tulip must be selected!</p>
-		</div>
-		<div class="form-control form-control-tulip" :class="{ invalid: !roadNo.isValid }">
+		<div class="form-item-roadNo" :class="{ invalid: !roadNo.isValid }">
 			<label for="roadNo">RoadNo</label>
 			<input type="text" id="roadNo" v-model.trim="roadNo.val" @blur="clearValidity('roadNo')" />
 			<p v-if="!roadNo.isValid">RoadNo must not be empty!</p>
 		</div>
-		<div class="form-control">
+		<div class="form-item-tulip" :class="{ invalid: !tulip.isValid }">
+			<div>
+				<label for="tulip" class="form-item-tulip-label">Tulip</label>
+				<select class="form-item-tulip-select" id="tulip" v-model="tulip.val" @change="clearValidity('tulip')">
+					<option value="">Select a Tulip</option>
+					<option value="tulipR">Tulip Right</option>
+					<option value="tulipL">Tulip Left</option>
+					<option value="tulipF">Tulip Front</option>
+				</select>
+			</div>
+			<img class="form-item-tulip-img" v-if="tulip.val" :src="tulipSrc" alt="Selected Tulip" />
+			<p class="form-item-tulip-img-placeholder" v-else>Tulip</p>
+			<p v-if="!tulip.isValid">Tulip must be selected!</p>
+		</div>
+		<div class="form-item-interest">
 			<label for="interest">Zaujímavosť</label>
 			<div>
 				<input id="interest-history" name="interest" type="checkbox" value="history" v-model="interest.val" />
@@ -42,7 +44,7 @@
 				<label for="interest-sport">Šport</label>
 			</div>
 		</div>
-		<div class="form-control">
+		<div class="form-item-stop">
 			<label for="stop">Zastaviť</label>
 			<div>
 				<input id="stop" name="stop" type="checkbox" v-model="stop.val" />
@@ -50,15 +52,16 @@
 			</div>
 
 		</div>
-		<div class="form-control" :class="{ invalid: !note.isValid }">
+		<div class="form-item-note" :class="{ invalid: !note.isValid }">
 			<label for="note">Note</label>
 			<textarea id="note" rows="2" v-model.trim="note.val" @blur="clearValidity('note')"></textarea>
 			<p v-if="!note.isValid">Note must not be empty!</p>
 		</div>
 		<p v-if="!formIsValid">Please fix errors</p>
-		<base-button v-if="Object.keys(line).length === 0">Add Line</base-button>
-		<base-button v-else>Edit Line</base-button>
+		<base-button class="form-item-button" v-if="Object.keys(line).length === 0">Add Line</base-button>
+		<base-button class="form-item-button" v-else>Edit Line</base-button>
 	</form>
+
 </template>
 
 <script>
@@ -185,7 +188,13 @@ export default {
 </script>
 
 <style scoped>
-	.form-control {
+	.line-form {
+		display: grid;
+		grid-template-columns: repeat(4, 1fr);
+		grid-template-rows: auto;
+	}
+
+	.form-item {
 		margin: 0.5rem 0;
 	}
 
@@ -240,23 +249,42 @@ export default {
 		border: 1px solid red;
 	}
 
-	/* .tulip-img {
-	width: 40px;
-	height: 40px;
-} */
-
-	.form-control-tulip {
-		display: flex;
-		align-items: center;
-		/* Aligns items vertically in the center */
-		gap: 20px;
-		/* Adds some space between the select and the image */
+	[class^="form-item"] {
+		padding: 20px;
 	}
 
-	.tulip-img {
-		max-width: 100px;
-		/* Adjusts the image width */
-		height: auto;
-		/* Keeps the image aspect ratio */
+	.form-item-tulip {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+	}
+
+	.form-item-tulip-label {
+		margin-bottom: 0;
+		padding: 0 0 0.5rem 0;
+	}
+
+	.form-item-tulip-select {
+		margin: 0;
+		padding: 0;
+	}
+
+	.form-item-tulip-img {
+		place-self: center;
+		max-height: 50px;
+		margin: 0;
+		padding: 0;
+	}
+
+	.form-item-tulip-img-placeholder {
+		place-self: center;
+		padding: 0;
+	}
+
+	.form-item-button {
+		justify-self: center;
+		align-self: center;
+		width: 40%;
+		height: 2rem;
+		padding: 5px;
 	}
 </style>
