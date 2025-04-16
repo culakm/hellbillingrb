@@ -42,9 +42,11 @@
 
 
 		<p v-if="!formIsValid">Please fix errors</p>
-		<base-button v-if="Object.keys(trip).length === 0">Add Trip</base-button>
-		<base-button v-else>Save Trip</base-button>
-		<base-button link :to="tripViewLink">View</base-button>
+		<div class="controls">
+			<base-button v-if="Object.keys(trip).length === 0">Add Trip</base-button>
+			<base-button v-else>Save Trip</base-button>
+			<base-button v-if="Object.keys(trip).length > 0" link :to="tripViewLink">View</base-button>
+		</div>
 	</form>
 </template>
 
@@ -278,5 +280,10 @@ export default {
 	.invalid input,
 	.invalid textarea {
 		border: 1px solid red;
+	}
+
+	.controls {
+		display: flex;
+		justify-content: flex-start;
 	}
 </style>

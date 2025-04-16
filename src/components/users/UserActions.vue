@@ -92,7 +92,8 @@ export default {
     }
 
     .actions {
-        margin-top: 10px;
+        display: flex;
+        justify-content: flex-start;
         /* Adjust spacing between the header and actions */
     }
 </style>

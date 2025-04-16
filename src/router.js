@@ -13,6 +13,8 @@ import UserEdit from './pages/users/UserEdit.vue';
 
 import indexPage from './pages/IndexPage.vue';
 
+import testPage from './pages/TestPage.vue';
+
 import NotFound from './pages/NotFound.vue';
 import store from './store/index.js';
 
@@ -20,6 +22,7 @@ const router = createRouter({
 	history: createWebHistory(),
 	routes: [
 		{ path: '/', component: indexPage },
+		{ path: '/test', component: testPage, meta: { requiresAuth: true } },
 
 		{ name: 'trips', path: '/trips', component: TripList, meta: { requiresAuth: true } },
 		{ name: 'trip-add', path: '/trip/add', component: TripCreate, meta: { requiresAuth: true } },

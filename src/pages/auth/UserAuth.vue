@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<main>
 		<base-dialog @close="handleError" :show="!!error" title="An error is ocurred!">
 			<p>{{ error }}</p>
 		</base-dialog>
@@ -18,10 +18,10 @@
 						@blur="clearValidity('password')" />
 				</div>
 				<p v-if="!formIsValid" class="invalid">Please fix errors, password min. 6 characters</p>
-				<base-button>Login</base-button>
+				<base-button submit>Login</base-button>
 			</form>
 		</base-card>
-	</div>
+	</main>
 </template>
 
 <script>

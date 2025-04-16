@@ -42,46 +42,64 @@ export default {
 </script>
 
 <style scoped>
-
-	button,
-	a {
+	button {
+		display: block;
+		margin: 0px;
+		/* vertical-align: middle; */
+		width: auto;
+		text-align: center;
 		text-decoration: none;
-		padding: 0.75rem 1.5rem;
-		font: inherit;
-		background-color: #3a0061;
-		border: 1px solid #3a0061;
-		color: white;
+		line-height: normal;
 		cursor: pointer;
-		border-radius: 30px;
-		margin-right: 0.5rem;
-		display: inline-block;
+		font: inherit;
+		font-weight: bold;
+		color: #344a60;
+		background: #ffa700;
+		padding: 0.5rem 1rem;
+		border-radius: 8px;
+		border: 1px solid #ffa700;
+		margin: 0 0.5rem;
+	}
+
+	a {
+		margin: 0 0.5rem;
+		text-decoration: none;
+		color: #ffa700;
+		font-weight: bold;
+		color: #344a60;
+		background: #ffa700;
+		padding: 0.5rem 1rem;
+		border-radius: 8px;
+		border: 1px solid #ffa700;
 	}
 
 	a:hover,
 	a:active,
 	button:hover,
 	button:active {
-		background-color: #270041;
-		border-color: #270041;
+		color: #ffa700;
+		background: white;
+		border: 1px solid #344a60;
 	}
 
-	/* flat and outline su mode */
 	.flat {
 		background-color: transparent;
-		color: #3a0061;
+		color: #344a60;
 		border: none;
 	}
 
 	.outline {
 		background-color: transparent;
-		border-color: #270041;
-		color: #270041;
+		border: 1px solid #000000;
+		color: #344a60;
 	}
+
 
 	.flat:hover,
 	.flat:active,
 	.outline:hover,
 	.outline:active {
-		background-color: #edd2ff;
+		background-color: #ffa700;
+		;
 	}
 </style>

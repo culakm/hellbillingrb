@@ -1,5 +1,5 @@
 <template>
-	<div v-if="isAdmin">
+	<main v-if="isAdmin">
 		<base-dialog @close="handleError" :show="!!error" title="An error is ocurred!">
 			<p>{{ error }}</p>
 		</base-dialog>
@@ -12,7 +12,7 @@
 				<user-form @save-data="createUserLocal"></user-form>
 			</base-card>
 		</section>
-	</div>
+	</main>
 </template>
 
 <script>

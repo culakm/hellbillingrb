@@ -46,7 +46,9 @@ export default {
 		line: {
 			type: Object,
 			required: true,
-			default: () => ({}),
+			default: () => ({
+				interest: [],
+			}),
 		},
 	},
 	data() {

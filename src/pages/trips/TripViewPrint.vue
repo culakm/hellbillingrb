@@ -1,18 +1,20 @@
 <template>
-	<base-dialog @close="handleError" :show="!!error" title="An error is ocurred!">
-		<p>{{ error }}</p>
-	</base-dialog>
-	<div v-if="isLoading">
-		<base-spinner></base-spinner>
-	</div>
-	<div v-else>
-		<section>
-			<trip-full v-if="trip" :trip="trip"></trip-full>
-			<div v-if="hasLines" class="roadbook">
-				<line-view v-for="line in trip.lines" :key="line.lineId" :line="line"></line-view>
-			</div>
-		</section>
-	</div>
+	<main>
+		<base-dialog @close="handleError" :show="!!error" title="An error is ocurred!">
+			<p>{{ error }}</p>
+		</base-dialog>
+		<div v-if="isLoading">
+			<base-spinner></base-spinner>
+		</div>
+		<div v-else>
+			<section>
+				<trip-full v-if="trip" :trip="trip"></trip-full>
+				<div v-if="hasLines" class="roadbook">
+					<line-view v-for="line in trip.lines" :key="line.lineId" :line="line"></line-view>
+				</div>
+			</section>
+		</div>
+	</main>
 </template>
 
 <script>

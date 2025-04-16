@@ -16,7 +16,7 @@
     </div>
     <div>
       <input id="interest-culture" name="interest" type="checkbox" value="culture" v-model="line.interest" />
-      <label for="interest-tutorials">Kultúra</label>
+      <label for="interest-culture">Kultúra</label>
     </div>
     <div>
       <input id="interest-sport" name="interest" type="checkbox" value="sport" v-model="line.interest" />
@@ -37,7 +37,9 @@ export default {
     line: {
       type: Object,
       required: true,
-      default: () => ({}),
+      default: () => ({
+        interest: [],
+      }),
     },
   },
   data() {

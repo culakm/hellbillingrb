@@ -13,7 +13,7 @@
         <div v-else class="actions">
             <base-button link :to="tripViewLink">View</base-button>
             <base-button link :to="tripEditLink">Edit</base-button>
-            <base-button link :to="tripPrintLink" :newTab="true">Print</base-button>
+            <base-button link newTab :to="tripPrintLink">Print</base-button>
             <base-button @click="deleteTripLocal">Delete</base-button>
         </div>
     </li>
@@ -80,7 +80,8 @@ export default {
     }
 
     .actions {
-        margin-top: 10px;
+        display: flex;
+        justify-content: flex-start;
         /* Adjust spacing between the header and actions */
     }
 </style>

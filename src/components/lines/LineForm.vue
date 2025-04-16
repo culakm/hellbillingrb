@@ -37,7 +37,7 @@
 			</div>
 			<div>
 				<input id="interest-culture" name="interest" type="checkbox" value="culture" v-model="interest.val" />
-				<label for="interest-tutorials">Kultúra</label>
+				<label for="interest-culture">Kultúra</label>
 			</div>
 			<div>
 				<input id="interest-sport" name="interest" type="checkbox" value="sport" v-model="interest.val" />

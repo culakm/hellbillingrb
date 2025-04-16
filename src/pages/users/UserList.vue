@@ -1,5 +1,5 @@
 <template>
-	<div v-if="isAdmin">
+	<main v-if="isAdmin">
 		<base-dialog @close="handleError" :show="!!error" title="An error is ocurred!">
 			<p>{{ error }}</p>
 		</base-dialog>
@@ -17,7 +17,7 @@
 				<h3 v-else>No users found</h3>
 			</base-card>
 		</section>
-	</div>
+	</main>
 </template>
 
 <script>
