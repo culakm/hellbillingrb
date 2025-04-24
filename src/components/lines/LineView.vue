@@ -3,14 +3,34 @@
     <p>{{ error }}</p>
   </base-dialog>
   <div class="roadbook-item" :class="{ passed: line.passed }" @click="passedLineLocal()">
-    <div class="order">{{ line.order }}</div>
-    <div class="name" v-html="line.name"></div>
-    <div class="km-total">{{ line.kmTotal }}</div>
-    <div class="tulip"><img class="tulip-img" v-if="line.tulip" :src="tulipSrc(line.tulip)" /></div>
-    <div class="road-no">{{ line.roadNo }}</div>
-    <div class="interest">{{ line.interest }}</div>
-    <div class="stop">{{ line.stop ? 'Stop' : 'Free' }}</div>
-    <div class="note" v-html="line.note"></div>
+    <div class="roadbook-item-place">
+      <div class="order">{{ line.order }}</div>
+      <div class="point">
+        <div class="point-grid">
+          <div class="name" v-html="line.name"></div>
+          <div class="tags">
+            <div class="stop">
+              <div class="svgicon color-stop"><img src="/img/interest_stop_transparent.svg" alt="stop"></div>
+            </div>
+            <div class="interest">
+              <div class="svgicon color-culture"><img src="/img/interest_c_transparent.svg" alt="culture"></div>
+              <div class="svgicon color-history"><img src="/img/interest_h_transparent.svg" alt="history"></div>
+              <div class="svgicon color-sport"><img src="/img/interest_s_transparent.svg" alt="sport"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="distance">
+        <div class="km-total">{{ line.kmTotal !== null ? line.kmTotal + ' Km' : '--' }}</div>
+        <div class="km-part">{{ line.kmPart > 0 ? line.kmPart + ' Km' : '--' }}</div>
+      </div>
+    </div>
+    <p>{{ line.kmPart }}</p>
+    <div class="roadbook-item-road">
+      <div class="tulip"><img class="tulip-img" v-if="line.tulip" :src="tulipSrc(line.tulip)" alt="tulip"></div>
+      <div class="road-no">{{ line.roadNo }}</div>
+      <div class="note" v-html="line.note"></div>
+    </div>
   </div>
 </template>
 
@@ -65,76 +85,164 @@ export default {
 
 <style scoped>
   .roadbook-item {
-    user-select: none;
     display: grid;
-    grid-template-columns: 0.1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
-    /* Adjusted column widths */
+    grid-template-areas:
+      "place"
+      "road";
+    border: 2px solid #111;
+    padding: 0;
     width: 100%;
-    min-height: 100px;
-    /* Adjust based on content */
-    padding: 10px;
+  }
+
+  .roadbook-item-place {
+    height: 4rem;
+    grid-area: place;
+    border: #000 1px solid;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: stretch;
+  }
+
+  .roadbook-item-place>div {
+    border: #000 1px solid;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+  }
+
+  .roadbook-item-place>div.order {
+    /* flex-grow: 0; flex-shrink: 0; flex-basis: 5%; */
+    flex: 0 0 5%;
+  }
+
+  .roadbook-item-place>div.point {
+    flex: 0 0 70%;
+  }
+
+  .roadbook-item-place>div.point .point-grid {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-areas:
+      "name"
+      "tags";
+  }
+
+  .roadbook-item-place>div.point .point-grid .name {
+    margin: 0 1rem;
+    grid-area: name;
+    justify-self: left;
+    align-self: center;
+  }
+
+  .roadbook-item-place>div.point .point-grid .tags {
+    margin: 0 1rem;
+    grid-area: tags;
+    justify-self: left;
+    align-self: center;
+    display: flex;
+  }
+
+  .roadbook-item-place>div.point .point-grid .tags .stop {
+    margin-right: 1rem;
+  }
+
+  .roadbook-item-place>div.point .point-grid .tags .interest {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  .roadbook-item-place>div.distance {
+    flex: 0 0 25%;
+    position: relative;
+  }
+
+
+  .km-total {}
+
+  .km-part {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 25%;
+    height: 50%;
+    border-left: 1px solid #000;
+    border-top: 1px solid #000;
     box-sizing: border-box;
-    /* Include padding in height calculation */
-    border-top: 1px solid #ccc;
-  }
-
-  .roadbook-item.passed {
-    background-color: #f0f0f0;
-  }
-
-  .order,
-  .name,
-  .km-total,
-  .tulip,
-  .road-no,
-  .road-type,
-  .interest,
-  .stop,
-  .note {
-    text-align: center;
-    border-left: 1px solid #ccc;
-    padding: 10px;
-  }
-
-  .order {
-    border-left: none;
-  }
-
-  /* Centering order, kmTotal, tulip, and roadNo */
-  .roadbook-item> :nth-child(1),
-  .roadbook-item> :nth-child(3),
-  .roadbook-item> :nth-child(4),
-  .roadbook-item> :nth-child(5),
-  .roadbook-item> :nth-child(6),
-  .roadbook-item> :nth-child(7),
-  .roadbook-item> :nth-child(8),
-  .roadbook-item> :nth-child(9) {
     display: flex;
     justify-content: center;
     align-items: center;
   }
 
-  .tulip {
-    width: 100%;
-    /* Ensures the div takes the full width of its parent */
-    height: auto;
-    /* Adjusts the height automatically */
+  .svgicon {
+    width: 1.5rem;
     display: flex;
-    /* Uses Flexbox for centering */
     justify-content: center;
-    /* Centers the image horizontally */
     align-items: center;
-    /* Centers the image vertically */
+    border-radius: 50%;
+  }
+
+  .svgicon img {
+    max-height: 1.5rem;
+  }
+
+  .color-culture {
+    background-color: yellow;
+  }
+
+  .color-history {
+    background-color: brown;
+  }
+
+  .color-sport {
+    background-color: blue;
+  }
+
+  .color-stop {
+    background-color: red;
+  }
+
+  .roadbook-item-road {
+    height: 4rem;
+    grid-area: road;
+    border: #000 1px solid;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: stretch;
+  }
+
+  .roadbook-item-road>div {
+    border: #000 1px solid;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+  }
+
+  .roadbook-item-road>div.tulip {
+    flex: 0 0 15%;
   }
 
   .tulip-img {
-    max-width: 100%;
-    /* Image can grow up to the div's width, but no more */
-    max-height: 100%;
-    /* Image can grow up to the div's height, but no more */
-    height: 80px;
-    /* Maintains the aspect ratio */
-    width: auto;
-    /* Adjusts the width automatically */
+    max-width: 70px;
+    max-height: 50px;
+    display: block;
+  }
+
+  .roadbook-item-road>div.road-no {
+    flex: 0 0 15%;
+  }
+
+  .roadbook-item-road>div.note {
+    flex: 0 0 70%;
+    padding: 0.5rem;
+    font-weight: normal;
+    justify-content: left;
   }
 </style>

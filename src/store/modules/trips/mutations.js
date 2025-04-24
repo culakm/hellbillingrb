@@ -2,9 +2,30 @@ function sortLines(lines) {
 	lines.sort((a, b) => a.order - b.order);
 }
 
-// function sortTrips(trips) {
-// 	trips.sort((a, b) => a.name.localeCompare(b.name));
-// }
+function reaclculateLineExtraValues(state) {
+	const lines = state.trip.lines;
+	console.log('reaclculateLineExtraValues');
+	lines.forEach((line, index) => {
+		console.log('line kmTotal', line.kmTotal);
+		line.kmPart = null;
+		if (index === 0) {
+			line.kmPart = 0;
+		} else {
+			let previousKmTotal = null;
+			for (let i = index - 1; i >= 0; i--) {
+				if (lines[i].kmTotal !== null) {
+					previousKmTotal = lines[i].kmTotal;
+					break;
+				}
+			}
+
+			if (line.kmTotal !== null && previousKmTotal !== null) {
+				line.kmPart = line.kmTotal - previousKmTotal;
+			}
+		}
+	});
+	console.log('reaclculateLineExtraValues lines', state.trip.lines);
+}
 
 export default {
 	passedLine(state, payload) {
@@ -30,6 +51,7 @@ export default {
 		line.interest = payload.interest;
 		line.stop = payload.stop;
 		line.note = payload.note;
+		reaclculateLineExtraValues(state);
 	},
 	deleteLine(state, payload) {
 		state.trip.linesCount--;
@@ -75,7 +97,9 @@ export default {
 	setTrip(state, payload) {
 		state.trip = payload;
 		if (state.trip.lines) {
-			state.trip.lines.sort((a, b) => a.order - b.order);
+			// state.trip.lines.sort((a, b) => a.order - b.order);
+			sortLines(state.trip.lines);
+			reaclculateLineExtraValues(state);
 		}
 	},
 	resetTrip(state, payload) {

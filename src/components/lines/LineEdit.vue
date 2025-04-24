@@ -25,8 +25,10 @@
   </div>
   <input id="stop" name="stop" type="checkbox" v-model="line.stop" />
   <textarea id="note" rows="2" v-model.trim="line.note"></textarea>
-  <base-button @click="editLineLocal">Save</base-button>
-  <base-button @click="cancelLineLocal">Cancel</base-button>
+  <div class="actions">
+    <base-button @click="editLineLocal">Save</base-button>
+    <base-button @click="cancelLineLocal">Cancel</base-button>
+  </div>
 </template>
 
 <script>
@@ -68,35 +70,6 @@ export default {
     },
     tulipSrc(tulip) {
       return `/img/${tulip}.svg`;
-    },
-    submitForm() {
-      this.validateForm();
-      if (!this.formIsValid) {
-        return;
-      }
-      const formData = {
-        lineId: this.lineId,
-        order: this.order.val,
-        name: this.name.val,
-        kmTotal: this.kmTotal.val,
-        tulip: this.tulip.val,
-        roadNo: this.roadNo.val,
-        interest: this.interest.val,
-        stop: this.stop.val,
-        note: this.note.val,
-        passed: false,
-      };
-
-      this.order.val = null;
-      this.name.val = '';
-      this.kmTotal.val = null,
-        this.tulip.val = '';
-      this.roadNo.val = '';
-      this.interest.val = [];
-      this.stop.val = false;
-      this.note.val = '';
-
-      this.$emit('save-line', formData);
     },
   },
 };
@@ -169,5 +142,12 @@ export default {
     /* Maintains the aspect ratio */
     width: auto;
     /* Adjusts the width automatically */
+  }
+
+  .actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    justify-content: flex-end;
   }
 </style>

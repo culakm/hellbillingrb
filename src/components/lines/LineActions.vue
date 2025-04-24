@@ -91,7 +91,14 @@ export default {
 			this.isEdited = false;
 			this.$emit('line-is-edited');
 		},
-	}
+	},
+	watch: {
+		isEdited(newVal) {
+			console.log('isEdited is true');
+			console.log('kmPart: ', this.localLine.kmPart);
+			console.log('kmTotal: ', this.localLine.kmTotal);
+		}
+	},
 };
 </script>
 
@@ -159,6 +166,8 @@ export default {
 
 	.actions {
 		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
 		justify-content: flex-end;
 	}
 </style>
