@@ -25,7 +25,6 @@
         <div class="km-part">{{ line.kmPart > 0 ? line.kmPart + ' Km' : '--' }}</div>
       </div>
     </div>
-    <p>{{ line.kmPart }}</p>
     <div class="roadbook-item-road">
       <div class="tulip"><img class="tulip-img" v-if="line.tulip" :src="tulipSrc(line.tulip)" alt="tulip"></div>
       <div class="road-no">{{ line.roadNo }}</div>

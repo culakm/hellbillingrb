@@ -4,9 +4,7 @@ function sortLines(lines) {
 
 function reaclculateLineExtraValues(state) {
 	const lines = state.trip.lines;
-	console.log('reaclculateLineExtraValues');
 	lines.forEach((line, index) => {
-		console.log('line kmTotal', line.kmTotal);
 		line.kmPart = null;
 		if (index === 0) {
 			line.kmPart = 0;
@@ -24,7 +22,6 @@ function reaclculateLineExtraValues(state) {
 			}
 		}
 	});
-	console.log('reaclculateLineExtraValues lines', state.trip.lines);
 }
 
 export default {

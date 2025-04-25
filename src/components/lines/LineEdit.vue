@@ -66,7 +66,8 @@ export default {
       this.$emit('save-line', lineData);
     },
     cancelLineLocal() {
-      this.$emit('cancel-edit', this.origLine);
+      Object.assign(this.line, this.origLine);
+      this.$emit('cancel-edit');
     },
     tulipSrc(tulip) {
       return `/img/${tulip}.svg`;

@@ -12,14 +12,14 @@
 			<base-spinner></base-spinner>
 		</div>
 		<template v-if="!isEdited">
-			<line-view :line="localLine"></line-view>
+			<line-view :line="line"></line-view>
 			<div class="actions">
 				<base-button @click="setEditedLine()">Edit</base-button>
 				<base-button @click="deleteLineLocal">Delete</base-button>
 			</div>
 		</template>
 		<template v-else>
-			<line-edit :line="localLine" @save-line="editLineLocal" @cancel-edit="cancelEditLocal"></line-edit>
+			<line-edit :line="line" @save-line="editLineLocal" @cancel-edit="cancelEditLocal"></line-edit>
 		</template>
 
 	</li>
@@ -86,18 +86,10 @@ export default {
 			this.isEdited = !this.isEdited;
 			this.$emit('line-is-edited');
 		},
-		async cancelEditLocal(lineData) {
-			this.localLine = lineData;
+		async cancelEditLocal() {
 			this.isEdited = false;
 			this.$emit('line-is-edited');
 		},
-	},
-	watch: {
-		isEdited(newVal) {
-			console.log('isEdited is true');
-			console.log('kmPart: ', this.localLine.kmPart);
-			console.log('kmTotal: ', this.localLine.kmTotal);
-		}
 	},
 };
 </script>

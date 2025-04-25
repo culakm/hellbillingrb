@@ -106,11 +106,6 @@ export default {
 		},
 		lineIsEdited() {
 			this.draggableEnabled = !this.draggableEnabled;
-			// toto je hack, aby se to reloadlo a zobrazili sa tam kmParty
-			if (this.draggableEnabled) {
-				window.location.reload();
-			}
-
 		},
 		onEnd(evt) {
 			this.dragging = false;
