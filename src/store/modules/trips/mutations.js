@@ -5,6 +5,8 @@ function sortLines(lines) {
 function reaclculateLineExtraValues(state) {
 	const lines = state.trip.lines;
 	lines.forEach((line, index) => {
+
+		// kmParts
 		line.kmPart = null;
 		if (index === 0) {
 			line.kmPart = 0;
@@ -21,6 +23,12 @@ function reaclculateLineExtraValues(state) {
 				line.kmPart = line.kmTotal - previousKmTotal;
 			}
 		}
+
+		// interests
+		line.interest.forEach(value => {
+			line[value] = true;
+		});
+
 	});
 }
 

@@ -10,12 +10,16 @@
           <div class="name" v-html="line.name"></div>
           <div class="tags">
             <div class="stop">
-              <div class="svgicon color-stop"><img src="/img/interest_stop_transparent.svg" alt="stop"></div>
+              <div v-if="line.stop" class="svgicon color-stop"><img src="/img/interest_stop_transparent.svg" alt="stop">
+              </div>
             </div>
             <div class="interest">
-              <div class="svgicon color-culture"><img src="/img/interest_c_transparent.svg" alt="culture"></div>
-              <div class="svgicon color-history"><img src="/img/interest_h_transparent.svg" alt="history"></div>
-              <div class="svgicon color-sport"><img src="/img/interest_s_transparent.svg" alt="sport"></div>
+              <div v-if="line.culture" class="svgicon color-culture"><img src="/img/interest_c_transparent.svg"
+                  alt="culture"></div>
+              <div v-if="line.history" class="svgicon color-history"><img src="/img/interest_h_transparent.svg"
+                  alt="history"></div>
+              <div v-if="line.sport" class="svgicon color-sport"><img src="/img/interest_s_transparent.svg" alt="sport">
+              </div>
             </div>
           </div>
         </div>
