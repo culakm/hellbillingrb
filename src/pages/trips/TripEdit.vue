@@ -21,17 +21,19 @@
 			</base-card>
 		</section>
 		<section>
-			<ul v-if="hasLines">
-				<draggable :list="trip.lines" :disabled="!draggableEnabled" item-key="order" class="list-group"
-					ghost-class="ghost" @start="dragging = true" @end="onEnd">
-					<template #item="{ element }">
-						<div class="list-group-item" :class="{ 'not-draggable': !draggableEnabled }">
-							<line-actions class="line-item" :key="element.lineId" :line="element" :trip-id="trip.tripId"
-								@line-is-edited="lineIsEdited"></line-actions>
-						</div>
-					</template>
-				</draggable>
-			</ul>
+			<base-card>
+				<ul v-if="hasLines">
+					<draggable :list="trip.lines" :disabled="!draggableEnabled" item-key="order" class="list-group"
+						ghost-class="ghost" @start="dragging = true" @end="onEnd">
+						<template #item="{ element }">
+							<div class="list-group-item" :class="{ 'not-draggable': !draggableEnabled }">
+								<line-actions class="line-item" :key="element.lineId" :line="element"
+									:trip-id="trip.tripId" @line-is-edited="lineIsEdited"></line-actions>
+							</div>
+						</template>
+					</draggable>
+				</ul>
+			</base-card>
 		</section>
 	</main>
 </template>
@@ -131,5 +133,11 @@ export default {
 
 	.not-draggable {
 		cursor: no-drop;
+	}
+
+	ul {
+		list-style: none;
+		padding: 0;
+		margin: 0;
 	}
 </style>

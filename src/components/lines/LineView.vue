@@ -9,23 +9,26 @@
         <div class="point-grid">
           <div class="name" v-html="line.name"></div>
           <div class="tags">
-            <div class="stop">
-              <div v-if="line.stop" class="svgicon color-stop"><img src="/img/interest_stop_transparent.svg" alt="stop">
+            <div v-if="line.stop" class="stop">
+              <div class="svgicon" :class="{ 'color-stop': !isTripViewPrint }">
+                <img src="/img/interest_stop_transparent.svg" alt="stop">
               </div>
             </div>
             <div class="interest">
-              <div v-if="line.culture" class="svgicon color-culture"><img src="/img/interest_c_transparent.svg"
-                  alt="culture"></div>
-              <div v-if="line.history" class="svgicon color-history"><img src="/img/interest_h_transparent.svg"
-                  alt="history"></div>
-              <div v-if="line.sport" class="svgicon color-sport"><img src="/img/interest_s_transparent.svg" alt="sport">
+              <div v-if="line.culture" class="svgicon" :class="{ 'color-culture': !isTripViewPrint }"><img
+                  src="/img/interest_c_transparent.svg" alt="culture"></div>
+              <div v-if="line.history" class="svgicon" :class="{ 'color-history': !isTripViewPrint }"><img
+                  src="/img/interest_h_transparent.svg" alt="history"></div>
+              <div v-if="line.sport" class="svgicon" :class="{ 'color-sport': !isTripViewPrint }"><img
+                  src="/img/interest_s_transparent.svg" alt="sport">
               </div>
             </div>
           </div>
         </div>
       </div>
       <div class="distance">
-        <div class="km-total">{{ line.kmTotal !== null ? line.kmTotal + ' Km' : '--' }}</div>
+        <div class="km-total">{{ typeof line.kmTotal === 'number' && line.kmTotal >= 0 ? line.kmTotal + ' Km' : '--' }}
+        </div>
         <div class="km-part">{{ line.kmPart > 0 ? line.kmPart + ' Km' : '--' }}</div>
       </div>
     </div>
@@ -59,17 +62,16 @@ export default {
   },
   computed: {
     isTripViewPrint() {
-      if (this.$route.path.includes("trip/view/print") || this.$route.path.includes("trip/edit")) {
-        return true;
-      } else {
-        return false;
-      }
+      return this.$route.path.includes("trip/view/print");
+    },
+    passFunctionality() {
+      return this.isTripViewPrint() || this.$route.path.includes("trip/edit");
     }
   },
   methods: {
     ...mapActions('trips', ['passedLine']),
     async passedLineLocal() {
-      if (this.isTripViewPrint) { return; }
+      if (this.passFunctionality) { return; }
       this.isLoading = true;
       const passed = !this.line.passed;
       try {

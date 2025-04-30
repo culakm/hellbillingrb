@@ -189,6 +189,7 @@ export default {
 
 <style scoped>
 	.line-form {
+		font-size: 0.8rem;
 		display: grid;
 		grid-template-columns: repeat(4, 1fr);
 		grid-template-rows: auto;
@@ -250,7 +251,7 @@ export default {
 	}
 
 	[class^="form-item"] {
-		padding: 20px;
+		padding: 0.3rem;
 	}
 
 	.form-item-tulip {

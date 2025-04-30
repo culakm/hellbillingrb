@@ -46,6 +46,7 @@ export default {
 		state.trip.linesCount++;
 		state.trip.lines.push(payload);
 		sortLines(state.trip.lines);
+		reaclculateLineExtraValues(state);
 	},
 	updateLine(state, payload) {
 		const line = state.trip.lines.find(line => line.lineId === payload.lineId);

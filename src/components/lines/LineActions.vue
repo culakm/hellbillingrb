@@ -95,22 +95,6 @@ export default {
 </script>
 
 <style scoped>
-	.draggable-list {
-		background: #3f51b5;
-		color: #fff;
-		border: 1px solid;
-		height: 50vh;
-	}
-
-	.list-item {
-		margin: 10px;
-		padding: 40px;
-		cursor: pointer;
-		font-size: 18px;
-		border-radius: 5px;
-		background: #f44336;
-		display: inline-block;
-	}
 
 	.line-item {
 		display: flex;
