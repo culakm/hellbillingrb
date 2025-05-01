@@ -27,8 +27,12 @@
         </div>
       </div>
       <div class="distance">
-        <div class="km-total">{{ typeof line.kmTotal === 'number' && line.kmTotal >= 0 ? line.kmTotal + ' Km' : '--' }}
+
+        <div class="km-total">
+          {{ typeof line.kmTotal === 'number' && line.kmTotal >= 0 ? (line.kmTotal === 0 ? 'DSS' : line.kmTotal + ' Km')
+            : '--' }}
         </div>
+
         <div class="km-part">{{ line.kmPart > 0 ? line.kmPart + ' Km' : '--' }}</div>
       </div>
     </div>

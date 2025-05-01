@@ -58,8 +58,13 @@
 			<p v-if="!note.isValid">Note must not be empty!</p>
 		</div>
 		<p v-if="!formIsValid">Please fix errors</p>
-		<base-button class="form-item-button" v-if="Object.keys(line).length === 0">Add Line</base-button>
-		<base-button class="form-item-button" v-else>Edit Line</base-button>
+		<template v-if="Object.keys(line).length === 0">
+			<base-button class="form-item-button">Add</base-button>
+		</template>
+		<template v-else>
+			<base-button class="form-item-button">Save</base-button>
+			<base-button class="form-item-button" @click="$emit('cancel-edit')">Cancel</base-button>
+		</template>
 	</form>
 
 </template>
@@ -67,7 +72,7 @@
 <script>
 export default {
 	name: 'LineForm',
-	emits: ['save-line'],
+	emits: ['save-line', 'cancel-edit'],
 	props: {
 		line: {
 			type: Object,
@@ -281,7 +286,7 @@ export default {
 		padding: 0;
 	}
 
-	.form-item-button {
+	li form button.form-item-button {
 		justify-self: center;
 		align-self: center;
 		width: 40%;

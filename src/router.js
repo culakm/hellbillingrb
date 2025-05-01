@@ -13,7 +13,8 @@ import UserEdit from './pages/users/UserEdit.vue';
 
 import indexPage from './pages/IndexPage.vue';
 
-import testPage from './pages/TestPage.vue';
+// dynamicky importovany component, ostatne su naloadovane vzdy
+const testPage = () => import('./pages/TestPage.vue');
 
 import NotFound from './pages/NotFound.vue';
 import store from './store/index.js';

@@ -17,7 +17,7 @@
 		</section>
 		<section>
 			<base-card>
-				<line-form @save-line="createLineLocal" :trip="trip"></line-form>
+				<line-form @save-line="createLineLocal"></line-form>
 			</base-card>
 		</section>
 		<section>

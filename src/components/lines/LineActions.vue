@@ -19,7 +19,8 @@
 			</div>
 		</template>
 		<template v-else>
-			<line-edit :line="line" @save-line="editLineLocal" @cancel-edit="cancelEditLocal"></line-edit>
+			<!-- <line-edit :line="line" @save-line="editLineLocal" @cancel-edit="cancelEditLocal"></line-edit> -->
+			<line-form @save-line="editLineLocal" @cancel-edit="cancelEditLocal" :line="line"></line-form>
 		</template>
 
 	</li>
@@ -30,6 +31,7 @@ import { errorMixin } from '@/mixins/errorMixin';
 import { mapActions } from 'vuex';
 import LineView from './LineView.vue';
 import LineEdit from './LineEdit.vue';
+import LineForm from './LineForm.vue';
 
 export default {
 	name: 'LineActions',
@@ -37,6 +39,7 @@ export default {
 	components: {
 		LineView,
 		LineEdit,
+		LineForm,
 	},
 	props: {
 		tripId: {
