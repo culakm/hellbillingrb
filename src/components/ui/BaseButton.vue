@@ -52,6 +52,7 @@ export default {
 		line-height: normal;
 		cursor: pointer;
 		font: inherit;
+		font-size: 1rem;
 		font-weight: bold;
 		color: #344a60;
 		background: #ffa700;

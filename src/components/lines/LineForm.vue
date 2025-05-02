@@ -58,13 +58,15 @@
 			<p v-if="!note.isValid">Note must not be empty!</p>
 		</div>
 		<p v-if="!formIsValid">Please fix errors</p>
-		<template v-if="Object.keys(line).length === 0">
-			<base-button class="form-item-button">Add</base-button>
-		</template>
-		<template v-else>
-			<base-button class="form-item-button">Save</base-button>
-			<base-button class="form-item-button" @click="$emit('cancel-edit')">Cancel</base-button>
-		</template>
+		<div class="form-item-buttons">
+			<template v-if="Object.keys(line).length === 0">
+				<base-button>Add</base-button>
+			</template>
+			<template v-else>
+				<base-button>Save</base-button>
+				<base-button @click="$emit('cancel-edit')">Cancel</base-button>
+			</template>
+		</div>
 	</form>
 
 </template>
@@ -195,9 +197,11 @@ export default {
 <style scoped>
 	.line-form {
 		font-size: 0.8rem;
+		width: 100%;
 		display: grid;
-		grid-template-columns: repeat(4, 1fr);
-		grid-template-rows: auto;
+		grid-template-areas:
+			"form-item-name form-item-kmTotal form-item-roadNo form-item-tulip form-item-buttons"
+			"form-item-interest form-item-stop form-item-note form-item-tulip form-item-buttons";
 	}
 
 	.form-item {
@@ -259,7 +263,36 @@ export default {
 		padding: 0.3rem;
 	}
 
+	.form-item-name {
+		grid-area: form-item-name;
+	}
+
+	.form-item-kmTotal {
+		grid-area: form-item-kmTotal;
+	}
+
+	.form-item-roadNo {
+		grid-area: form-item-roadNo;
+	}
+
+	.form-item-interest {
+		grid-area: form-item-interest;
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+	}
+
+	.form-item-stop {
+		grid-area: form-item-stop;
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+	}
+
+	.form-item-note {
+		grid-area: form-item-note;
+	}
+
 	.form-item-tulip {
+		grid-area: form-item-tulip;
 		display: grid;
 		grid-template-columns: 1fr 1fr;
 	}
@@ -289,8 +322,15 @@ export default {
 	li form button.form-item-button {
 		justify-self: center;
 		align-self: center;
-		width: 40%;
 		height: 2rem;
 		padding: 5px;
+	}
+
+	.form-item-buttons {
+		grid-area: form-item-buttons;
+		display: flex;
+		flex-direction: column;
+		align-items: normal;
+		justify-content: space-evenly;
 	}
 </style>

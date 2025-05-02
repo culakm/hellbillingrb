@@ -13,7 +13,7 @@
         <div v-else class="actions">
             <base-button link :to="tripViewLink">View</base-button>
             <base-button link :to="tripEditLink">Edit</base-button>
-            <base-button link newTab :to="tripPrintLink">Print</base-button>
+            <div class="print-button"><base-button link newTab :to="tripPrintLink">Print</base-button></div>
             <base-button @click="deleteTripLocal">Delete</base-button>
         </div>
     </li>
@@ -61,6 +61,19 @@ export default {
 </script>
 
 <style scoped>
+
+    @media (max-width: 46rem) {
+        .print-button {
+            display: none;
+        }
+    }
+
+    @media (min-width: 46rem) {
+        .print-button {
+            display: inherit;
+        }
+    }
+
     li {
         margin: 1rem 0;
         border: 1px solid #424242;

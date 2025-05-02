@@ -73,114 +73,91 @@ export default {
 </script>
 
 <style scoped>
+
+	@media (max-width: 46rem) {
+
+		.go-home,
+		.go-fullscreen {
+			display: block;
+		}
+	}
+
+	@media (min-width: 46rem) {
+
+		.go-home,
+		.go-fullscreen {
+			display: none;
+		}
+	}
+
 	.roadbook {
 		width: calc(100% - 20px);
-		/* Adjust for body padding */
 		margin: 0 auto;
-		/* Center the roadbook */
 		background-color: #fff;
 		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 		border: 1px solid #ccc;
 	}
 
-	.go-home {
+	.go-home,
+	.go-fullscreen {
 		position: fixed;
-		top: 20px;
-		right: 20px;
-		background-color: #007bff;
+		top: 0.5rem;
+		left: calc(50% - 2rem);
+		background-color: #ffa700;
 		color: #fff;
-		width: 40px;
-		height: 40px;
+		width: 3rem;
+		height: 3rem;
 		border-radius: 50%;
 		text-align: center;
-		line-height: 40px;
-		font-size: 24px;
+		line-height: 3rem;
+		font-size: 1rem;
 		text-decoration: none;
 		z-index: 999;
-		/* Ensure it's above other content */
-	}
-
-	.go-home::after {
-		content: "Trips";
-		/* Text you want to add */
-		position: absolute;
-		top: 50%;
-		/* Center vertically */
-		left: 50%;
-		/* Center horizontally */
-		transform: translate(-50%, -50%);
-		/* Adjust both horizontally and vertically */
-		color: #fff;
-		/* Text color */
-		font-size: 14px;
-		/* Text size */
-		line-height: 1;
-		/* Ensure the text aligns properly */
-	}
-
-	.go-home:hover {
-		background-color: #0056b3;
-		cursor: pointer;
-		/* Indicates a clickable element, commonly used for links */
 	}
 
 	.go-fullscreen {
-		position: fixed;
-		top: 80px;
-		right: 20px;
-		background-color: #ff3c00;
+		left: calc(50% + 2rem);
+	}
+
+	.go-home::after,
+	.go-fullscreen::after {
+		content: "Trips";
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
 		color: #fff;
-		width: 40px;
-		height: 40px;
-		border-radius: 50%;
-		text-align: center;
-		line-height: 40px;
-		font-size: 24px;
-		text-decoration: none;
-		z-index: 999;
-		/* Ensure it's above other content */
+		font-size: 14px;
+		line-height: 1;
 	}
 
 	.go-fullscreen::after {
 		content: "Full";
-		/* Text you want to add */
-		position: absolute;
-		top: 50%;
-		/* Center vertically */
-		left: 50%;
-		/* Center horizontally */
-		transform: translate(-50%, -50%);
-		/* Adjust both horizontally and vertically */
-		color: #fff;
-		/* Text color */
-		font-size: 14px;
-		/* Text size */
-		line-height: 1;
-		/* Ensure the text aligns properly */
 	}
 
+	.go-home:hover,
 	.go-fullscreen:hover {
-		background-color: #a32600;
+		background-color: #fff;
 		cursor: pointer;
-		/* Indicates a clickable element, commonly used for links */
+	}
+
+	.go-home:hover::after,
+	.go-fullscreen:hover::after {
+		color: #344a60;
+		/* Change text color to green on hover */
 	}
 
 	.scrollable-content {
 		height: 100vh;
-		/* Full viewport height */
 		overflow-y: auto;
-		/* Enable vertical scrolling */
 		padding: 20px;
-		/* Add some padding */
 	}
 
-	/* Ensure the fullscreen element takes up the full screen */
 	:fullscreen {
 		width: 100%;
 		height: 100%;
 	}
 
-	/* Styles for browsers that don't support :fullscreen */
 	:-webkit-full-screen {
 		width: 100%;
 		height: 100%;

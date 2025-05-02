@@ -5,7 +5,7 @@
 	<div class="trip-full">
 		<h3>{{ trip.name }}</h3>
 		<p>{{ trip.description }}</p>
-		<p>linesCount: {{ trip.linesCount }}</p>
+		<p>Lines: {{ trip.linesCount }}</p>
 		<img v-if="trip.imageName" :src="imageUrl" alt="Downloaded">
 	</div>
 </template>

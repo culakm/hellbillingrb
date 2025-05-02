@@ -37,14 +37,11 @@
 			<li v-if="isAuthenticated" class="main-nav__item">
 				<router-link to="/trips">Trips OK</router-link>
 			</li>
-			<li v-if="isAuthenticated" class="main-nav__item">
-				<base-button @click="logoutLocal">Logout {{ email }}, role {{ role }}</base-button>
+			<li v-if="isAuthenticated" class="main-nav__item main-nav__item--cta">
+				<base-button @click="logoutLocal">Logout {{ email }}, role {{ role }} hohoh</base-button>
 			</li>
 			<li v-else class="main-nav__item main-nav__item--cta">
 				<router-link to="/auth">Login</router-link>
-			</li>
-			<li class="main-nav__item main-nav__item--cta">
-				<a href="start-hosting/index.html">Login OK</a>
 			</li>
 		</ul>
 	</nav>
@@ -180,6 +177,7 @@ export default {
 		background: #ffa700;
 		padding: 0.5rem 1rem;
 		border-radius: 8px;
+		border-color: red;
 	}
 
 	.main-nav__item--cta a:hover,
@@ -191,14 +189,8 @@ export default {
 		border: none;
 	}
 
-	@media (min-width: 46rem) {
-		.toggle-button {
-			display: none;
-		}
-
-		.main-nav {
-			display: flex;
-		}
+	.main-nav__item--cta button {
+		margin: 0;
 	}
 
 	.main-footer {
@@ -223,10 +215,13 @@ export default {
 		width: 90%;
 		height: 100%;
 		list-style: none;
-		margin: 0 auto;
 		padding: 0;
 		display: flex;
 		flex-direction: column;
+		justify-content: flex-start;
+		align-items: flex-start;
+		gap: 1rem;
+
 	}
 
 	.mobile-nav__item {
@@ -278,5 +273,15 @@ export default {
 		width: 100vw;
 		height: 100vh;
 		background: rgba(0, 0, 0, 0.5);
+	}
+
+	@media (min-width: 46rem) {
+		.toggle-button {
+			display: none;
+		}
+
+		.main-nav {
+			display: flex;
+		}
 	}
 </style>

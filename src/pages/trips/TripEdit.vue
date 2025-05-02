@@ -27,8 +27,8 @@
 						ghost-class="ghost" @start="dragging = true" @end="onEnd">
 						<template #item="{ element }">
 							<div class="list-group-item" :class="{ 'not-draggable': !draggableEnabled }">
-								<line-actions class="line-item" :key="element.lineId" :line="element"
-									:trip-id="trip.tripId" @line-is-edited="lineIsEdited"></line-actions>
+								<line-actions :key="element.lineId" :line="element" :trip-id="trip.tripId"
+									@line-is-edited="lineIsEdited"></line-actions>
 							</div>
 						</template>
 					</draggable>

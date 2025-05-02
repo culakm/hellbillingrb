@@ -62,6 +62,7 @@ export default {
   }
 
   dialog {
+    font-family: "Montserrat", sans-serif;
     position: fixed;
     top: 20vh;
     left: 10%;
