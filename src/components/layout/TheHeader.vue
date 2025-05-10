@@ -6,9 +6,9 @@
 		</div>
 		<nav class="main-nav">
 			<ul class="main-nav__items">
-				<!-- <li v-if="isAdmin" class="main-nav__item">
+				<li v-if="isAdmin" class="main-nav__item">
 					<router-link to="/test">Test page</router-link>
-				</li> -->
+				</li>
 				<li v-if="isAdmin" class="main-nav__item">
 					<router-link to="/users">Users</router-link>
 				</li>

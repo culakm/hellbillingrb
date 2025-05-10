@@ -1,18 +1,31 @@
 <template>
 	<main>
+		<div data-html2canvas-ignore>
+			<button @click="exportToPDF">Export to PDF</button>
+			<label>
+				<input type="checkbox" v-model="printHeader" />
+				Print Header
+			</label>
+		</div>
 		<base-dialog @close="handleError" :show="!!error" title="An error is ocurred!">
 			<p>{{ error }}</p>
 		</base-dialog>
 		<div v-if="isLoading">
 			<base-spinner></base-spinner>
 		</div>
-		<div v-else>
-			<section>
+		<div v-else :id="printHeader ? 'element-to-pdf' : null" :class="{ 'print-area': printHeader }">
+			<div class="roadbook-header pagebreak-after">
 				<trip-full v-if="trip" :trip="trip"></trip-full>
-				<div v-if="hasLines" class="roadbook">
-					<line-view v-for="line in trip.lines" :key="line.lineId" :line="line"></line-view>
-				</div>
-			</section>
+			</div>
+			<div v-if="hasLines" :id="printHeader ? null : 'element-to-pdf'" class="roadbook"
+				:class="{ 'print-area': !printHeader }">
+				<template v-for="(line, index) in trip.lines" :key="line.lineId">
+					<div class="roadbook-item-wrap"
+						:class="{ 'pagebreak-after': isEvery7th(index), 'offset': isEvery7thPlus1(index) }">
+						<line-view :line="line"></line-view>
+					</div>
+				</template>
+			</div>
 		</div>
 	</main>
 </template>
@@ -22,7 +35,7 @@ import { errorMixin } from '@/mixins/errorMixin';
 import { mapGetters, mapActions } from 'vuex';
 import TripFull from '../../components/trips/TripFull.vue';
 import LineView from '../../components/lines/LineView.vue';
-
+import html2pdf from "html2pdf.js";
 export default {
 	name: 'TripView',
 	mixins: [errorMixin],
@@ -35,10 +48,20 @@ export default {
 			isLoading: false,
 			error: null,
 			tripId: null,
+			printHeader: true,
 		};
 	},
 	computed: {
-		...mapGetters('trips', ['trip', 'hasLines'])
+		...mapGetters('trips', ['trip', 'hasLines']),
+		isEvery7th() {
+			return (index) => (index + 1) % 7 === 0;
+		},
+		isEvery7thPlus1() {
+			return (index) => index > 0 && (index + 1) % 7 === 1;
+		},
+		tripNamePrint() {
+			return this.trip.name.replace(/ /g, '_').toLowerCase();
+		},
 	},
 	async created() {
 		this.tripId = this.$route.params.tripId;
@@ -61,18 +84,94 @@ export default {
 				line.passed = false;
 			});
 		},
+		exportToPDF() {
+			const element = document.getElementById('element-to-pdf');
+			const opt = {
+				// margin: [0, 0, 0, 0], // Set all margins to 0
+				margin: 10,
+				filename: 'hbrb_' + this.tripNamePrint + '.pdf',
+				image: { type: 'jpeg', quality: 0.98 },
+				html2canvas: { scale: 2, useCORS: true },
+				jsPDF: { format: 'letter', orientation: 'portrait' },
+				pagebreak: {
+					mode: ['avoid-all', 'css'],
+					before: '.pagebreak-before',
+					after: '.pagebreak-after',
+				},
+			};
+			html2pdf().set(opt).from(element).save();
+		},
 	},
 };
 </script>
 
 <style scoped>
-	.roadbook {
-		width: calc(100% - 20px);
-		/* Adjust for body padding */
-		margin: 0 auto;
-		/* Center the roadbook */
-		background-color: #fff;
-		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-		border: 1px solid #ccc;
+	@media print {
+		@page {
+			margin: 10px;
+			/* Remove all margins */
+			size: auto;
+			/* Use the full page size */
+		}
+
+		[data-html2canvas-ignore] {
+			display: none !important;
+		}
+
+		body button {
+			display: none;
+		}
+
+		.offset {
+			display: none;
+		}
+
+		.firebase-emulator-warning {
+			display: none;
+		}
+
+		.roadbook-header {
+			width: 100%;
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+			break-after: page;
+		}
+
+		.roadbook {
+			width: 100%;
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		.roadbook-item-wrap {
+			width: 100%;
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		body {
+			margin: 0;
+			padding: 0;
+		}
+	}
+
+	.roadbook-item-wrap {
+		width: 100%;
+		/* page-break-inside: avoid; */
+	}
+
+	.offset {
+		margin-top: 1rem;
+	}
+
+	.print-area {
+		font-family: "Montserrat", sans-serif !important;
+		width: 100%;
+		margin: 0;
+		padding: 0;
+		box-sizing: border-box;
 	}
 </style>

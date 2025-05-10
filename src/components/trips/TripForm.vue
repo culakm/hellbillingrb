@@ -46,6 +46,7 @@
 			<base-button v-if="Object.keys(trip).length === 0">Add Trip</base-button>
 			<base-button v-else>Save Trip</base-button>
 			<base-button v-if="Object.keys(trip).length > 0" link :to="tripViewLink">View</base-button>
+			<base-button link newTab :to="tripPrintLink">Print</base-button>
 		</div>
 	</form>
 </template>
@@ -92,6 +93,9 @@ export default {
 	computed: {
 		tripViewLink() {
 			return `/trip/view/${this.tripId}`;
+		},
+		tripPrintLink() {
+			return `/trip/view/print/${this.tripId}`;
 		},
 		uploadProgressLocal: {
 			get() {

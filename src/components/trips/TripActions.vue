@@ -47,6 +47,8 @@ export default {
     methods: {
         ...mapActions('trips', ['deleteTrip']),
         async deleteTripLocal() {
+            const confirmed = confirm('Are you sure you want to delete this trip?');
+            if (!confirmed) { return; }
             this.isLoading = true;
             try {
                 await this.deleteTrip({ tripId: this.tripId });

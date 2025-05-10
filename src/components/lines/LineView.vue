@@ -100,7 +100,9 @@ export default {
       "road";
     border: 2px solid #111;
     padding: 0;
+    margin: 0;
     width: 100%;
+    page-break-inside: avoid;
   }
 
   .roadbook-item-place {
@@ -177,8 +179,8 @@ export default {
     position: absolute;
     right: 0;
     bottom: 0;
-    width: 25%;
-    height: 50%;
+    width: 50%;
+    height: 33%;
     border-left: 1px solid #000;
     border-top: 1px solid #000;
     box-sizing: border-box;
