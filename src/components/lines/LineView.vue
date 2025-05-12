@@ -26,19 +26,26 @@
           </div>
         </div>
       </div>
+      <div class="map-page">
+        <div class="map-page-label">Map Page</div>
+        <div class="map-page-value">{{ line.roadNo }}</div>
+      </div>
       <div class="distance">
-
         <div class="km-total">
-          {{ typeof line.kmTotal === 'number' && line.kmTotal >= 0 ? (line.kmTotal === 0 ? 'DSS' : line.kmTotal + ' Km')
-            : '--' }}
+          {{ typeof line.kmTotal === 'number' && line.kmTotal >= 0 ? line.kmTotal + ' Km' : '--' }}
         </div>
-
+        <div class="km-start-end">
+          {{ line.order === 1 ? 'DSS' : (line.order === this.trip.linesCount ? 'ASS' : '') }}
+        </div>
         <div class="km-part">{{ line.kmPart > 0 ? line.kmPart + ' Km' : '--' }}</div>
       </div>
     </div>
     <div class="roadbook-item-road">
       <div class="tulip"><img class="tulip-img" v-if="line.tulip" :src="tulipSrc(line.tulip)" alt="tulip"></div>
-      <div class="road-no">{{ line.roadNo }}</div>
+      <div class="road-no">
+        <div class="road-no-label">Road No.</div>
+        <div class="road-no-value">{{ line.roadNo }}</div>
+      </div>
       <div class="note" v-html="line.note"></div>
     </div>
   </div>
@@ -46,7 +53,7 @@
 
 <script>
 import { errorMixin } from '@/mixins/errorMixin';
-import { mapActions } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 
 export default {
   name: 'LineView',
@@ -65,6 +72,7 @@ export default {
     };
   },
   computed: {
+    ...mapGetters('trips', ['trip']),
     isTripViewPrint() {
       return this.$route.path.includes("trip/view/print");
     },
@@ -130,7 +138,7 @@ export default {
   }
 
   .roadbook-item-place>div.point {
-    flex: 0 0 70%;
+    flex: 0 0 55%;
   }
 
   .roadbook-item-place>div.point .point-grid {
@@ -183,6 +191,18 @@ export default {
     height: 33%;
     border-left: 1px solid #000;
     border-top: 1px solid #000;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .km-start-end {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 50%;
+    height: 33%;
     box-sizing: border-box;
     display: flex;
     justify-content: center;
@@ -248,6 +268,20 @@ export default {
 
   .roadbook-item-road>div.road-no {
     flex: 0 0 15%;
+    position: relative;
+  }
+
+  .road-no-label {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 33%;
+    font-weight: normal;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
   }
 
   .roadbook-item-road>div.note {
@@ -255,5 +289,23 @@ export default {
     padding: 0.5rem;
     font-weight: normal;
     justify-content: left;
+  }
+
+  .roadbook-item-place>div.map-page {
+    flex: 0 0 15%;
+    position: relative;
+  }
+
+  .map-page-label {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 33%;
+    font-weight: normal;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
   }
 </style>

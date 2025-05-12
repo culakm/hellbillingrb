@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "fb-emul-empty": "firebase emulators:start --only firestore",
     "fb-emul": "firebase emulators:start --only firestore,auth,storage,functions --import=./my_hbrb_data/hbrb_emulator_export",
-    "_comment": "--export-on-exit=./my_hbrb_data/hbrb_export_2025_05_05"
+    "fb-emul-exit": "firebase emulators:start --only firestore,auth,storage,functions --import=./my_hbrb_data/hbrb_emulator_export --export-on-exit=./my_hbrb_data/hbrb_emulator_export"
   },
   "dependencies": {
     "firebase": "^10.12.2",
