@@ -53,6 +53,7 @@ export default {
 		line.name = payload.name;
 		line.kmTotal = payload.kmTotal;
 		line.tulip = payload.tulip;
+		line.mapPage = payload.mapPage;
 		line.roadNo = payload.roadNo;
 		line.interest = payload.interest;
 		line.stop = payload.stop;

@@ -10,6 +10,11 @@
 			<input type="number" id="kmTotal" v-model.trim="kmTotal.val" @blur="clearValidity('kmTotal')" />
 			<p v-if="!kmTotal.isValid">kmTotal must not be empty!</p>
 		</div>
+		<div class="form-item-mapPage" :class="{ invalid: !mapPage.isValid }">
+			<label for="mapPage">mapPage</label>
+			<input type="text" id="mapPage" v-model.trim="mapPage.val" @blur="clearValidity('mapPage')" />
+			<p v-if="!mapPage.isValid">mapPage must not be empty!</p>
+		</div>
 		<div class="form-item-roadNo" :class="{ invalid: !roadNo.isValid }">
 			<label for="roadNo">RoadNo</label>
 			<input type="text" id="roadNo" v-model.trim="roadNo.val" @blur="clearValidity('roadNo')" />
@@ -100,6 +105,10 @@ export default {
 				val: '',
 				isValid: true
 			},
+			mapPage: {
+				val: '',
+				isValid: true
+			},
 			roadNo: {
 				val: '',
 				isValid: true
@@ -125,6 +134,7 @@ export default {
 		this.name.val = this.line.name || '';
 		this.kmTotal.val = this.line.kmTotal || null;
 		this.tulip.val = this.line.tulip || '';
+		this.mapPage.val = this.line.mapPage || null;
 		this.roadNo.val = this.line.roadNo || null;
 		this.interest.val = this.line.interest || [];
 		this.stop.val = this.line.stop || false;
@@ -172,6 +182,7 @@ export default {
 				name: this.name.val,
 				kmTotal: this.kmTotal.val,
 				tulip: this.tulip.val,
+				mapPage: this.mapPage.val,
 				roadNo: this.roadNo.val,
 				interest: this.interest.val,
 				stop: this.stop.val,
@@ -183,6 +194,7 @@ export default {
 			this.name.val = '';
 			this.kmTotal.val = null;
 			this.tulip.val = '';
+			this.mapPage.val = '';
 			this.roadNo.val = '';
 			this.interest.val = [];
 			this.stop.val = false;
@@ -200,8 +212,8 @@ export default {
 		width: 100%;
 		display: grid;
 		grid-template-areas:
-			"form-item-name form-item-kmTotal form-item-roadNo form-item-tulip form-item-buttons"
-			"form-item-interest form-item-stop form-item-note form-item-tulip form-item-buttons";
+			"form-item-name form-item-kmTotal form-item-mapPage form-item-roadNo form-item-tulip form-item-buttons"
+			"form-item-interest form-item-interest form-item-stop form-item-note form-item-tulip form-item-buttons";
 	}
 
 	.form-item {
@@ -269,6 +281,10 @@ export default {
 
 	.form-item-kmTotal {
 		grid-area: form-item-kmTotal;
+	}
+
+	.form-item-mapPage {
+		grid-area: form-item-mapPage;
 	}
 
 	.form-item-roadNo {

@@ -28,7 +28,7 @@
       </div>
       <div class="map-page">
         <div class="map-page-label">Map Page</div>
-        <div class="map-page-value">{{ line.roadNo }}</div>
+        <div class="map-page-value">{{ line.mapPage }}</div>
       </div>
       <div class="distance">
         <div class="km-total">
