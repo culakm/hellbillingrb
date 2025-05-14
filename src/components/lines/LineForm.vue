@@ -7,7 +7,7 @@
 		</div>
 		<div class="form-item-kmTotal" :class="{ invalid: !kmTotal.isValid }">
 			<label for="kmTotal">kmTotal</label>
-			<input type="number" id="kmTotal" v-model.trim="kmTotal.val" @blur="clearValidity('kmTotal')" />
+			<input type="number" step="0.01" id="kmTotal" v-model.trim="kmTotal.val" @blur="clearValidity('kmTotal')" />
 			<p v-if="!kmTotal.isValid">kmTotal must not be empty!</p>
 		</div>
 		<div class="form-item-mapPage" :class="{ invalid: !mapPage.isValid }">

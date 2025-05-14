@@ -20,7 +20,7 @@ function reaclculateLineExtraValues(state) {
 			}
 
 			if (line.kmTotal !== null && previousKmTotal !== null) {
-				line.kmPart = line.kmTotal - previousKmTotal;
+				line.kmPart = parseFloat((line.kmTotal - previousKmTotal).toFixed(2));
 			}
 		}
 
@@ -28,6 +28,18 @@ function reaclculateLineExtraValues(state) {
 		line.interest.forEach(value => {
 			line[value] = true;
 		});
+
+		if (!line.close) {
+			line.close = false;
+		}
+
+		// Check if the difference between the next line's kmTotal and the current line's kmTotal is less than 5
+		const nextLine = lines[index + 1];
+		if (index < lines.length - 1 && line.kmTotal !== null && nextLine.kmTotal !== null) {
+			if (nextLine.kmTotal - line.kmTotal < 2) {
+				line.close = true;
+			}
+		}
 
 	});
 }

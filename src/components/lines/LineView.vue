@@ -41,7 +41,8 @@
       </div>
     </div>
     <div class="roadbook-item-road">
-      <div class="tulip"><img class="tulip-img" v-if="line.tulip" :src="tulipSrc(line.tulip)" alt="tulip"></div>
+      <div class="tulip" :class="{ 'show-before': line.close, 'color-tulip': !isTripViewPrint }"><img class="tulip-img"
+          v-if="line.tulip" :src="tulipSrc(line.tulip)" alt="tulip"></div>
       <div class="road-no">
         <div class="road-no-label">Road No.</div>
         <div class="road-no-value">{{ line.roadNo }}</div>
@@ -189,7 +190,9 @@ export default {
   }
 
 
-  .km-total {}
+  .km-total {
+    font-size: 1.3rem;
+  }
 
   .km-part {
     position: absolute;
@@ -266,6 +269,22 @@ export default {
 
   .roadbook-item-road>div.tulip {
     flex: 0 0 15%;
+    position: relative;
+  }
+
+
+  .tulip.show-before::before {
+    content: "!";
+    position: absolute;
+    left: 1.5rem;
+    top: 50%;
+    transform: translate(-100%, -50%);
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+
+  .tulip.show-before.color-tulip::before {
+    color: red;
   }
 
   .tulip-img {

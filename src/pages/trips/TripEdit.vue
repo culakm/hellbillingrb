@@ -17,11 +17,6 @@
 		</section>
 		<section>
 			<base-card>
-				<line-form @save-line="createLineLocal"></line-form>
-			</base-card>
-		</section>
-		<section>
-			<base-card>
 				<ul v-if="hasLines">
 					<draggable :list="trip.lines" :disabled="!draggableEnabled" item-key="order" class="list-group"
 						ghost-class="ghost" @start="dragging = true" @end="onEnd">
@@ -33,6 +28,11 @@
 						</template>
 					</draggable>
 				</ul>
+			</base-card>
+		</section>
+		<section>
+			<base-card>
+				<line-form @save-line="createLineLocal"></line-form>
 			</base-card>
 		</section>
 	</main>
