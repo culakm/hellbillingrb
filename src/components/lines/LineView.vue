@@ -76,8 +76,16 @@ export default {
     isTripViewPrint() {
       return this.$route.path.includes("trip/view/print");
     },
+    isTripView() {
+      return this.$route.path.includes("trip/view");
+    },
     passFunctionality() {
       return this.isTripViewPrint() || this.$route.path.includes("trip/edit");
+    }
+  },
+  mounted() {
+    if (this.line.mapPage && (this.isTripView)) {
+      this.line.mapPage = this.line.mapPage.replace(/,/g, ' ');
     }
   },
   methods: {
@@ -269,43 +277,57 @@ export default {
   .roadbook-item-road>div.road-no {
     flex: 0 0 15%;
     position: relative;
+    display: flex;
+    flex-direction: column
   }
 
-  .road-no-label {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 33%;
+  .roadbook-item-road>div.road-no .road-no-label {
+    flex: 0 0 25%;
+    align-self: flex-start;
     font-weight: normal;
-    box-sizing: border-box;
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
+  }
+
+  .roadbook-item-road>div.road-no .road-no-value {
+    flex: 1;
+    align-self: flex-start;
+    margin: 0.1rem 0.3rem;
+    max-width: 11rem;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: break-spaces;
+    word-break: break-word;
   }
 
   .roadbook-item-road>div.note {
     flex: 0 0 70%;
-    padding: 0.5rem;
+    padding: 0.2rem 0.3rem;
     font-weight: normal;
     justify-content: left;
+    align-items: flex-start;
   }
 
   .roadbook-item-place>div.map-page {
     flex: 0 0 15%;
     position: relative;
+    display: flex;
+    flex-direction: column;
+    /* Set flex container with column layout */
   }
 
-  .map-page-label {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 33%;
+  .roadbook-item-place>div.map-page .map-page-label {
+    flex: 0 0 25%;
+    align-self: flex-start;
     font-weight: normal;
-    box-sizing: border-box;
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
+  }
+
+  .roadbook-item-place>div.map-page .map-page-value {
+    flex: 1;
+    align-self: flex-start;
+    margin: 0.1rem 0.3rem;
+    max-width: 9rem;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: break-spaces;
+    word-break: break-word;
   }
 </style>
