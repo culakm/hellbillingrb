@@ -1,5 +1,5 @@
 <template>
-    <base-dialog @close="handleError" :show="!!error" title="An error is ocurred!">
+    <base-dialog @close="clearError" :show="!!error" title="An error is ocurred!">
         <p>{{ error }}</p>
     </base-dialog>
     <li>
@@ -20,50 +20,70 @@
 </template>
 
 <script>
-import { errorMixin } from '@/mixins/errorMixin';
-import { mapActions } from 'vuex';
+import { ref, computed } from 'vue';
+import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
+import { useError } from '@/composables/useError';
 
 export default {
     name: 'TripActions',
-    mixins: [errorMixin],
-    props: ['tripId', 'name', 'description'],
-    data() {
-        return {
-            isLoading: false,
-            error: null,
-        };
+    props: {
+        tripId: {
+            type: [String, Number],
+            required: true
+        },
+        name: {
+            type: String,
+            required: true
+        },
+        description: {
+            type: String,
+            required: false,
+            default: ''
+        }
     },
-    computed: {
-        tripViewLink() {
-            return `/trip/view/${this.tripId}`;
-        },
-        tripPrintLink() {
-            return `/trip/view/print/${this.tripId}`;
-        },
-        tripEditLink() {
-            return `/trip/edit/${this.tripId}`;
-        },
-    },
-    methods: {
-        ...mapActions('trips', ['deleteTrip']),
-        async deleteTripLocal() {
+    setup(props) {
+        const componentName = 'TripActions';
+        const store = useStore();
+        const router = useRouter();
+        const { error, setError, clearError } = useError(componentName);
+
+        const isLoading = ref(false);
+
+        const tripViewLink = computed(() => `/trip/view/${props.tripId}`);
+        const tripPrintLink = computed(() => `/trip/view/print/${props.tripId}`);
+        const tripEditLink = computed(() => `/trip/edit/${props.tripId}`);
+
+        async function deleteTripLocal() {
             const confirmed = confirm('Are you sure you want to delete this trip?');
             if (!confirmed) { return; }
-            this.isLoading = true;
+            isLoading.value = true;
             try {
-                await this.deleteTrip({ tripId: this.tripId });
-            } catch (error) {
-                this.$loadErrorMessage(this.$options.name, error);
+                await store.dispatch('trips/deleteTrip', { tripId: props.tripId });
+            } catch (err) {
+                setError(err.message || err);
             }
-            this.isLoading = false;
-            this.$router.replace('/trips');
+            isLoading.value = false;
+            router.replace('/trips');
         }
+
+        return {
+            componentName,
+            error,
+            clearError,
+            isLoading,
+            name: props.name,
+            description: props.description,
+            tripViewLink,
+            tripPrintLink,
+            tripEditLink,
+            deleteTripLocal
+        };
     }
 };
 </script>
 
 <style scoped>
-
     @media (max-width: 46rem) {
         .print-button {
             display: none;

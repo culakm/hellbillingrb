@@ -1,111 +1,127 @@
 <template>
-  <base-dialog @close="handleError" :show="!!error" title="An error is ocurred!">
-    <p>{{ error }}</p>
+  <base-dialog @close="clearError" :show="!!error" title="An error is ocurred!">
+      <p>{{ error }}</p>
   </base-dialog>
   <div class="roadbook-item" :class="{ passed: line.passed }" @click="passedLineLocal()">
-    <div class="roadbook-item-place">
-      <div class="order">{{ line.order }}</div>
-      <div class="point">
-        <div class="point-grid">
-          <div class="name" v-html="line.name"></div>
-          <div class="tags">
-            <div v-if="line.stop" class="stop">
-              <div class="svgicon" :class="{ 'color-stop': !isTripViewPrint }">
-                <img src="/img/interest_stop_transparent.svg" alt="stop">
+      <div class="roadbook-item-place">
+          <div class="order">{{ line.order }}</div>
+          <div class="point">
+              <div class="point-grid">
+                  <div class="name" v-html="line.name"></div>
+                  <div class="tags">
+                      <div v-if="line.stop" class="stop">
+                          <div class="svgicon" :class="{ 'color-stop': !isTripViewPrint }">
+                              <img src="/img/interest_stop_transparent.svg" alt="stop">
+                          </div>
+                      </div>
+                      <div class="interest">
+                          <div v-if="line.culture" class="svgicon" :class="{ 'color-culture': !isTripViewPrint }">
+                              <img src="/img/interest_c_transparent.svg" alt="culture">
+                          </div>
+                          <div v-if="line.history" class="svgicon" :class="{ 'color-history': !isTripViewPrint }">
+                              <img src="/img/interest_h_transparent.svg" alt="history">
+                          </div>
+                          <div v-if="line.sport" class="svgicon" :class="{ 'color-sport': !isTripViewPrint }">
+                              <img src="/img/interest_s_transparent.svg" alt="sport">
+                          </div>
+                      </div>
+                  </div>
               </div>
-            </div>
-            <div class="interest">
-              <div v-if="line.culture" class="svgicon" :class="{ 'color-culture': !isTripViewPrint }"><img
-                  src="/img/interest_c_transparent.svg" alt="culture"></div>
-              <div v-if="line.history" class="svgicon" :class="{ 'color-history': !isTripViewPrint }"><img
-                  src="/img/interest_h_transparent.svg" alt="history"></div>
-              <div v-if="line.sport" class="svgicon" :class="{ 'color-sport': !isTripViewPrint }"><img
-                  src="/img/interest_s_transparent.svg" alt="sport">
-              </div>
-            </div>
           </div>
-        </div>
+          <div class="map-page">
+              <div class="map-page-label">Map Page</div>
+              <div class="map-page-value">{{ line.mapPage }}</div>
+          </div>
+          <div class="distance">
+              <div class="km-total">
+                  {{ typeof line.kmTotal === 'number' && line.kmTotal >= 0 ? line.kmTotal + ' Km' : '--' }}
+              </div>
+              <div class="km-start-end">
+                  {{ line.order === 1 ? 'DSS' : (line.order === trip.linesCount ? 'ASS' : '') }}
+              </div>
+              <div class="km-part">{{ line.kmPart > 0 ? line.kmPart + ' Km' : '--' }}</div>
+          </div>
       </div>
-      <div class="map-page">
-        <div class="map-page-label">Map Page</div>
-        <div class="map-page-value">{{ line.mapPage }}</div>
+      <div class="roadbook-item-road">
+          <div class="tulip" :class="{ 'show-before': line.close, 'color-tulip': !isTripViewPrint }">
+              <img class="tulip-img" v-if="line.tulip" :src="tulipSrc(line.tulip)" alt="tulip">
+          </div>
+          <div class="road-no">
+              <div class="road-no-label">Road No.</div>
+              <div class="road-no-value">{{ line.roadNo }}</div>
+          </div>
+          <div class="note" v-html="line.note"></div>
       </div>
-      <div class="distance">
-        <div class="km-total">
-          {{ typeof line.kmTotal === 'number' && line.kmTotal >= 0 ? line.kmTotal + ' Km' : '--' }}
-        </div>
-        <div class="km-start-end">
-          {{ line.order === 1 ? 'DSS' : (line.order === this.trip.linesCount ? 'ASS' : '') }}
-        </div>
-        <div class="km-part">{{ line.kmPart > 0 ? line.kmPart + ' Km' : '--' }}</div>
-      </div>
-    </div>
-    <div class="roadbook-item-road">
-      <div class="tulip" :class="{ 'show-before': line.close, 'color-tulip': !isTripViewPrint }"><img class="tulip-img"
-          v-if="line.tulip" :src="tulipSrc(line.tulip)" alt="tulip"></div>
-      <div class="road-no">
-        <div class="road-no-label">Road No.</div>
-        <div class="road-no-value">{{ line.roadNo }}</div>
-      </div>
-      <div class="note" v-html="line.note"></div>
-    </div>
   </div>
 </template>
 
 <script>
-import { errorMixin } from '@/mixins/errorMixin';
-import { mapGetters, mapActions } from 'vuex';
+import { ref, computed, onMounted } from 'vue';
+import { useStore } from 'vuex';
+import { useRoute } from 'vue-router';
+import { useError } from '@/composables/useError';
 
 export default {
   name: 'LineView',
-  mixins: [errorMixin],
   props: {
-    line: {
-      type: Object,
-      required: true,
-      default: () => ({}),
-    },
+      line: {
+          type: Object,
+          required: true,
+          default: () => ({}),
+      },
   },
-  data() {
-    return {
-      isLoading: false,
-      error: null,
-    };
-  },
-  computed: {
-    ...mapGetters('trips', ['trip']),
-    isTripViewPrint() {
-      return this.$route.path.includes("trip/view/print");
-    },
-    isTripView() {
-      return this.$route.path.includes("trip/view");
-    },
-    passFunctionality() {
-      return this.isTripViewPrint() || this.$route.path.includes("trip/edit");
-    }
-  },
-  mounted() {
-    if (this.line.mapPage && (this.isTripView)) {
-      this.line.mapPage = this.line.mapPage.replace(/,/g, ' ');
-    }
-  },
-  methods: {
-    ...mapActions('trips', ['passedLine']),
-    async passedLineLocal() {
-      if (this.passFunctionality) { return; }
-      this.isLoading = true;
-      const passed = !this.line.passed;
-      try {
-        await this.passedLine({ lineId: this.line.lineId, passed: passed });
-      } catch (error) {
-        this.$loadErrorMessage(this.$options.name, error);
+  setup(props) {
+      const componentName = 'LineView';
+      const store = useStore();
+      const route = useRoute();
+      const { error, setError, clearError } = useError(componentName);
+
+      const isLoading = ref(false);
+
+      // Vuex getter for trip
+      const trip = computed(() => store.getters['trips/trip']);
+
+      const isTripViewPrint = computed(() => route.path.includes("trip/view/print"));
+      const isTripView = computed(() => route.path.includes("trip/view"));
+      const passFunctionality = computed(() => isTripViewPrint.value || route.path.includes("trip/edit"));
+
+      // Clean up mapPage on mount if needed
+      onMounted(() => {
+          if (props.line.mapPage && isTripView.value) {
+              props.line.mapPage = props.line.mapPage.replace(/,/g, ' ');
+          }
+      });
+
+      async function passedLineLocal() {
+          if (passFunctionality.value) { return; }
+          isLoading.value = true;
+          const passed = !props.line.passed;
+          try {
+              await store.dispatch('trips/passedLine', { lineId: props.line.lineId, passed });
+          } catch (err) {
+              setError(err.message || err);
+          }
+          isLoading.value = false;
       }
-      this.isLoading = false;
-    },
-    tulipSrc(tulip) {
-      return `/img/${tulip}.svg`;
-    }
-  },
+
+      function tulipSrc(tulip) {
+          return `/img/${tulip}.svg`;
+      }
+
+      return {
+          componentName,
+          error,
+          clearError,
+          isLoading,
+          trip,
+          isTripViewPrint,
+          isTripView,
+          passFunctionality,
+          passedLineLocal,
+          tulipSrc,
+          line: props.line
+      };
+  }
 };
 </script>
 

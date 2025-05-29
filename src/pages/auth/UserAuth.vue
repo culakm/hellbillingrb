@@ -1,6 +1,6 @@
 <template>
 	<main>
-		<base-dialog @close="handleError" :show="!!error" title="An error is ocurred!">
+		<base-dialog @close="clearError" :show="!!error" title="An error is ocurred!">
 			<p>{{ error }}</p>
 		</base-dialog>
 		<base-dialog :show="isLoading" fixed title="Authenticating...">
@@ -25,66 +25,79 @@
 </template>
 
 <script>
-import { errorMixin } from '@/mixins/errorMixin';
-import { mapActions } from 'vuex';
+import { ref } from 'vue';
+import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
+import { useError } from '@/composables/useError';
 
 export default {
 	name: 'UserAuth',
-	mixins: [errorMixin],
-	data() {
-		return {
-			email: {
-				val: '',
-				isValid: true
-			},
-			password: {
-				val: '',
-				isValid: true
-			},
-			formIsValid: true,
-			mode: 'login',
-			isLoading: false,
-			error: null
-		};
-	},
-	methods: {
-		...mapActions(['login']),
-		validateForm() {
-			this.formIsValid = true;
-			if (this.email.val === '' || !this.email.val.includes('@')) {
-				this.email.isValid = false;
-				this.formIsValid = false;
+	setup() {
+		const componentName = 'UserAuth';
+		const store = useStore();
+		const router = useRouter();
+		const { error, setError, clearError } = useError(componentName);
+
+		const email = ref({ val: '', isValid: true });
+		const password = ref({ val: '', isValid: true });
+		const formIsValid = ref(true);
+		const isLoading = ref(false);
+
+		function clearValidity(input) {
+			if (input === 'email') {
+				email.value.isValid = true;
 			}
-			if (this.password.val === '' || this.password.val.length < 6) {
-				this.password.isValid = false;
-				this.formIsValid = false;
+			if (input === 'password') {
+				password.value.isValid = true;
 			}
-		},
-		async submitForm() {
-			this.validateForm();
-			if (!this.formIsValid) {
+		}
+
+		function validateForm() {
+			formIsValid.value = true;
+			if (email.value.val === '' || !email.value.val.includes('@')) {
+				email.value.isValid = false;
+				formIsValid.value = false;
+			}
+			if (password.value.val === '' || password.value.val.length < 6) {
+				password.value.isValid = false;
+				formIsValid.value = false;
+			}
+		}
+
+		async function submitForm() {
+			validateForm();
+			if (!formIsValid.value) {
 				return;
 			}
 
-			this.isLoading = true;
+			isLoading.value = true;
 
 			const userData = {
-				email: this.email.val,
-				password: this.password.val
+				email: email.value.val,
+				password: password.value.val
 			};
 
 			try {
-				await this.login(userData);
-				this.$router.replace('/');
-			} catch (error) {
-				this.$loadErrorMessage(this.$options.name, error);
-				this.password.val = '';
+				await store.dispatch('login', userData);
+				router.replace('/');
+			} catch (err) {
+				setError(err.message || err);
+				password.value.val = '';
 			}
-			this.isLoading = false;
-		},
-		clearValidity(input) {
-			this[input].isValid = true;
-		},
+			isLoading.value = false;
+		}
+
+		return {
+			componentName,
+			error,
+			clearError,
+			email,
+			password,
+			formIsValid,
+			isLoading,
+			submitForm,
+			clearValidity
+		};
 	}
 };
 </script>

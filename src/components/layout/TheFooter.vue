@@ -13,16 +13,6 @@
 	</footer>
 </template>
 
-
-<script>
-
-import { mapGetters, mapActions } from 'vuex';
-
-export default {
-	name: 'TheFooter'
-};
-</script>
-
 <style scoped>
 	.main-footer {
 		background: #344a60;

@@ -101,41 +101,40 @@
 </template>
 
 <script>
-
-import { mapGetters, mapActions } from 'vuex';
+import { computed } from 'vue';
+import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
 
 export default {
-    name: 'TestPage',
-    data() {
-        return {
-            mobileNavOpened: false
-        };
-    },
-    computed: {
-        ...mapGetters([
-            'email',
-            'role'
-        ])
-    },
-    methods: {
-        ...mapActions({
-            logout: 'logout',
-        }),
-        logoutLocal() {
+    name: 'TestPageLinky',
+    setup() {
+        const componentName = 'TestPageLinky';
+        const store = useStore();
+        const router = useRouter();
+
+        const email = computed(() => store.getters.email);
+        const role = computed(() => store.getters.role);
+
+        async function logoutLocal() {
             try {
-                this.logout();
-                this.$router.replace('/');
+                await store.dispatch('logout');
+                router.replace('/');
             } catch (error) {
-                console.error(`Extra error, Component ${this.$options.name}, ERROR: ${error.message}`);
-                //this.$loadErrorMessage(this.$options.name, error);
+                console.error(`Extra error, Component ${componentName}, ERROR: ${error.message}`);
             }
-        },
+        }
+
+        return {
+            componentName,
+            email,
+            role,
+            logoutLocal
+        };
     }
 };
 </script>
 
 <style>
-
     li button.form-item-button {
         justify-self: center;
         align-self: center;

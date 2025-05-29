@@ -1,80 +1,92 @@
 <template>
-	<main>
-		<base-dialog @close="handleError" :show="!!error" title="An error is ocurred!">
-			<p>{{ error }}</p>
-		</base-dialog>
-		<section>
-			<base-card>
-				<h2>Edit User.</h2>
-				<div v-if="isLoading">
-					<base-spinner></base-spinner>
-				</div>
-				<div v-else-if="user">
-					<user-form @save-data="updateUserLocal" :user="user"></user-form>
-				</div>
-			</base-card>
-		</section>
-	</main>
+    <main>
+        <base-dialog @close="clearError" :show="!!error" title="An error is ocurred!">
+            <p>{{ error }}</p>
+        </base-dialog>
+        <section>
+            <base-card>
+                <h2>Edit User.</h2>
+                <div v-if="isLoading">
+                    <base-spinner></base-spinner>
+                </div>
+                <div v-else-if="user">
+                    <user-form @save-data="updateUserLocal" :user="user"></user-form>
+                </div>
+            </base-card>
+        </section>
+    </main>
 </template>
 
 <script>
-import { errorMixin } from '@/mixins/errorMixin';
+import { ref, onMounted } from 'vue';
+import { useStore } from 'vuex';
+import { useRoute, useRouter } from 'vue-router';
+import { useError } from '@/composables/useError';
+import UserForm from '../../components/users/UserForm.vue';
 import { cloudFunctions } from '../../firebase.js';
 import { httpsCallable } from 'firebase/functions';
-import UserForm from '../../components/users/UserForm.vue';
-import { mapActions } from 'vuex';
 
 export default {
-	name: 'UserEdit',
-	mixins: [errorMixin],
-	components: {
-		UserForm,
-	},
-	data() {
-		return {
-			isLoading: false,
-			error: null,
-			userId: null,
-			user: null,
-		};
-	},
-	async created() {
-		this.userId = this.$route.params.userId;
-		this.user = await this.userByIdStore(this.userId);
-	},
-	methods: {
-		...mapActions('users', ['userByIdStore']),
+    name: 'UserEdit',
+    components: {
+        UserForm,
+    },
+    setup() {
+        const componentName = 'UserEdit';
+        const store = useStore();
+        const route = useRoute();
+        const router = useRouter();
+        const { error, setError, clearError } = useError(componentName);
 
-		async updateUserLocal(userData) {
-			this.isLoading = true;
-			try {
-				const updateUser = httpsCallable(cloudFunctions, 'updateUser');
-				const result = await updateUser({ user: userData });
-				//this.$loadErrorMessage(this.$options.name, result.data.message);
-			} catch (error) {
-				this.$loadErrorMessage(this.$options.name, error);
-				this.isLoading = false;
-				return;
-			}
+        const isLoading = ref(false);
+        const userId = ref(null);
+        const user = ref(null);
 
-			this.isLoading = false;
-			this.$router.replace('/users');
-		}
-	},
+        // Fetch user data on mount
+        onMounted(async () => {
+            userId.value = route.params.userId;
+            user.value = await store.dispatch('users/userByIdStore', userId.value);
+        });
+
+        // Update user method
+        async function updateUserLocal(userData) {
+            isLoading.value = true;
+            try {
+                const updateUser = httpsCallable(cloudFunctions, 'updateUser');
+                await updateUser({ user: userData });
+                // Optionally handle result.data.message here
+            } catch (err) {
+                setError(err.message || err);
+                isLoading.value = false;
+                return;
+            }
+            isLoading.value = false;
+            router.replace('/users');
+        }
+
+        return {
+            componentName,
+            error,
+            clearError,
+            isLoading,
+            user,
+            updateUserLocal
+        };
+    }
 };
 </script>
 
 <style scoped>
-	.buttons {
-		margin-top: 35px;
-	}
+    .buttons {
+        margin-top: 35px;
+    }
 
-	.ghost {
-		opacity: 0.5;
-		background: #c8ebfb;
-	}
+    .ghost {
+        opacity: 0.5;
+        background: #c8ebfb;
+    }
 
-	.not-draggable {
-		cursor: no-drop;
-	}
+    .not-draggable {
+        cursor: no-drop;
+    }
 </style>

@@ -1,11 +1,11 @@
 export function loadErrorMessage(componentName, errorMessage) {
 	const error = `Component ${componentName}, ERROR: ${errorMessage}` || 'Something went wrong!';
 	console.error(error);
-	this.error = error;
+	return error;
 }
 
 export function handleError() {
-	this.error = null;
+	return null;
 }
 
 export function throwError(errorOut) {

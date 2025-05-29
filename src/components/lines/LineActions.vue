@@ -1,149 +1,144 @@
 <template>
-	<!-- <router-link :to="tripViewLink"> -->
-	<li class="line-item">
-		<base-dialog @close="handleError" :show="!!error" title="An error is ocurred!">
-			<p>{{ error }}</p>
-		</base-dialog>
-		<!-- toto rozhodovanie sa da urobit aj
-		<component :is="selectedComponent" @update-content="updateContent"></component>
-		ale co s tlacitkami, eventami a tak? je to zlozitejsie ako treba
-		-->
-		<div v-if="isLoading">
-			<base-spinner></base-spinner>
-		</div>
-		<template v-if="!isEdited">
-			<line-view :line="line"></line-view>
-			<div class="actions">
-				<base-button @click="setEditedLine()">Edit</base-button>
-				<base-button @click="deleteLineLocal">Delete</base-button>
-			</div>
-		</template>
-		<template v-else>
-			<line-form @save-line="editLineLocal" @cancel-edit="cancelEditLocal" :line="line"></line-form>
-		</template>
-
-	</li>
-	<!-- </router-link> -->
+    <li class="line-item">
+        <base-dialog @close="clearError" :show="!!error" title="An error is ocurred!">
+            <p>{{ error }}</p>
+        </base-dialog>
+        <div v-if="isLoading">
+            <base-spinner></base-spinner>
+        </div>
+        <template v-if="!isEdited">
+            <line-view :line="line"></line-view>
+            <div class="actions">
+                <base-button @click="setEditedLine()">Edit</base-button>
+                <base-button @click="deleteLineLocal">Delete</base-button>
+            </div>
+        </template>
+        <template v-else>
+            <line-form @save-line="editLineLocal" @cancel-edit="cancelEditLocal" :line="line"></line-form>
+        </template>
+    </li>
 </template>
+
 <script>
-import { errorMixin } from '@/mixins/errorMixin';
-import { mapActions } from 'vuex';
+import { ref } from 'vue';
+import { useStore } from 'vuex';
+import { useError } from '@/composables/useError';
 import LineView from './LineView.vue';
 import LineForm from './LineForm.vue';
 
 export default {
-	name: 'LineActions',
-	mixins: [errorMixin],
-	components: {
-		LineView,
-		LineForm,
-	},
-	props: {
-		tripId: {
-			type: String,
-			required: true,
-		},
-		line: {
-			type: Object,
-			required: true,
-			default: () => ({
-				interest: [],
-			}),
-		},
-	},
-	data() {
-		return {
-			isLoading: false,
-			error: null,
-			isEdited: false,
-			localLine: { ...this.line },
-		};
-	},
-	methods: {
-		...mapActions('trips', ['deleteLine', 'editLine']),
-		async editLineLocal(lineData) {
-			this.isLoading = true;
-			try {
-				lineData.tripId = this.tripId;
-				await this.editLine(lineData);
-			} catch (error) {
-				this.$loadErrorMessage(this.$options.name, error);
-			}
-			this.isLoading = false;
-			this.setEditedLine();
+    name: 'LineActions',
+    components: {
+        LineView,
+        LineForm,
+    },
+    props: {
+        tripId: {
+            type: String,
+            required: true,
+        },
+        line: {
+            type: Object,
+            required: true,
+            default: () => ({
+                interest: [],
+            }),
+        },
+    },
+    setup(props, { emit }) {
+        const componentName = 'LineActions';
+        const store = useStore();
+        const { error, setError, clearError } = useError(componentName);
 
-		},
-		async deleteLineLocal() {
-			this.isLoading = true;
-			try {
-				await this.deleteLine({ tripId: this.tripId, lineId: this.line.lineId });
-			} catch (error) {
-				this.$loadErrorMessage(this.$options.name, error);
-			}
-			this.isLoading = false;
-		},
-		async setEditedLine() {
-			this.isEdited = !this.isEdited;
-			this.$emit('line-is-edited');
-		},
-		async cancelEditLocal() {
-			this.isEdited = false;
-			this.$emit('line-is-edited');
-		},
-	},
+        const isLoading = ref(false);
+        const isEdited = ref(false);
+
+        async function editLineLocal(lineData) {
+            isLoading.value = true;
+            try {
+                lineData.tripId = props.tripId;
+                await store.dispatch('trips/editLine', lineData);
+            } catch (err) {
+                setError(err.message || err);
+            }
+            isLoading.value = false;
+            setEditedLine();
+        }
+
+        async function deleteLineLocal() {
+            isLoading.value = true;
+            try {
+                await store.dispatch('trips/deleteLine', { tripId: props.tripId, lineId: props.line.lineId });
+            } catch (err) {
+                setError(err.message || err);
+            }
+            isLoading.value = false;
+        }
+
+        function setEditedLine() {
+            isEdited.value = !isEdited.value;
+            emit('line-is-edited');
+        }
+
+        function cancelEditLocal() {
+            isEdited.value = false;
+            emit('line-is-edited');
+        }
+
+        return {
+            componentName,
+            error,
+            clearError,
+            isLoading,
+            isEdited,
+            line: props.line,
+            editLineLocal,
+            deleteLineLocal,
+            setEditedLine,
+            cancelEditLocal
+        };
+    }
 };
 </script>
 
 <style scoped>
+    .line-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
 
-	.line-item {
-		display: flex;
-		/* Make the li a flex container */
-		justify-content: space-between;
-		/* Distribute the items evenly */
-		align-items: center;
-		/* Align the items vertically */
-	}
+    li {
+        list-style-type: none;
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+        transition: background-color 0.3s ease;
+    }
 
-	li {
-		list-style-type: none;
-		/* Remove the default bullet point */
-		padding: 10px;
-		/* Add some padding */
-		margin-bottom: 10px;
-		/* Add some space between list items */
-		border: 1px solid #ddd;
-		/* Add a border */
-		border-radius: 5px;
-		/* Round the corners */
-		background-color: #f9f9f9;
-		/* Add a background color */
-		transition: background-color 0.3s ease;
-		/* Add a transition for the hover effect */
-	}
+    li:hover {
+        background-color: #e9e9e9;
+    }
 
-	li:hover {
-		background-color: #e9e9e9;
-		/* Change the background color when hovered over */
-	}
+    h3 {
+        font-size: 1.5rem;
+    }
 
-	h3 {
-		font-size: 1.5rem;
-	}
+    h3,
+    h4 {
+        margin: 0.5rem 0;
+    }
 
-	h3,
-	h4 {
-		margin: 0.5rem 0;
-	}
+    div {
+        margin: 0.5rem 0;
+    }
 
-	div {
-		margin: 0.5rem 0;
-	}
-
-	.actions {
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
-		justify-content: flex-end;
-	}
+    .actions {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        justify-content: flex-end;
+    }
 </style>

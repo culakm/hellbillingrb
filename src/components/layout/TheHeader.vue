@@ -1,90 +1,98 @@
 <template>
-	<header class="main-header">
-		<div>
-			<router-link to="/" class="main-header__brand"><img src="/kompas_transparent.png"
-					alt="Hellbilling Road Book"></router-link>
-		</div>
-		<nav class="main-nav">
-			<ul class="main-nav__items">
-				<li v-if="isAdmin" class="main-nav__item">
-					<router-link to="/test">Test page</router-link>
-				</li>
-				<li v-if="isAdmin" class="main-nav__item">
-					<router-link to="/users">Users</router-link>
-				</li>
-				<li v-if="isAuthenticated" class="main-nav__item">
-					<router-link to="/trips">Trips</router-link>
-				</li>
-				<li v-if="isAuthenticated">
-					<base-button @click="logoutLocal">Logout {{ email }}, role {{ role }}</base-button>
-				</li>
-				<li v-else class="main-nav__item main-nav__item--cta">
-					<router-link to="/auth">Login</router-link>
-				</li>
-			</ul>
-		</nav>
-		<button class="toggle-button" @click="toggleMobileNav">
-			<span class="toggle-button__bar"></span>
-			<span class="toggle-button__bar"></span>
-			<span class="toggle-button__bar"></span>
-		</button>
-	</header>
-	<nav class="mobile-nav" :class="{ open: mobileNavOpened }">
-		<ul class="mobile-nav__items" @click="toggleMobileNav">
-			<li v-if="isAuthenticated" class="main-nav__item">
-				<router-link to="/users">Users OK</router-link>
-			</li>
-			<li v-if="isAuthenticated" class="main-nav__item">
-				<router-link to="/trips">Trips OK</router-link>
-			</li>
-			<li v-if="isAuthenticated" class="main-nav__item main-nav__item--cta">
-				<base-button @click="logoutLocal">Logout {{ email }}, role {{ role }} hohoh</base-button>
-			</li>
-			<li v-else class="main-nav__item main-nav__item--cta">
-				<router-link to="/auth">Login</router-link>
-			</li>
-		</ul>
-	</nav>
-	<div class="backdrop" :class="{ open: mobileNavOpened }" @click="toggleMobileNav"></div>
+    <header class="main-header">
+        <div>
+            <router-link to="/" class="main-header__brand">
+                <img src="/kompas_transparent.png" alt="Hellbilling Road Book">
+            </router-link>
+        </div>
+        <nav class="main-nav">
+            <ul class="main-nav__items">
+                <li v-if="isAdmin" class="main-nav__item">
+                    <router-link to="/test">Test page</router-link>
+                </li>
+                <li v-if="isAdmin" class="main-nav__item">
+                    <router-link to="/users">Users</router-link>
+                </li>
+                <li v-if="isAuthenticated" class="main-nav__item">
+                    <router-link to="/trips">Trips</router-link>
+                </li>
+                <li v-if="isAuthenticated">
+                    <base-button @click="logoutLocal">Logout {{ email }}, role {{ role }}</base-button>
+                </li>
+                <li v-else class="main-nav__item main-nav__item--cta">
+                    <router-link to="/auth">Login</router-link>
+                </li>
+            </ul>
+        </nav>
+        <button class="toggle-button" @click="toggleMobileNav">
+            <span class="toggle-button__bar"></span>
+            <span class="toggle-button__bar"></span>
+            <span class="toggle-button__bar"></span>
+        </button>
+    </header>
+    <nav class="mobile-nav" :class="{ open: mobileNavOpened }">
+        <ul class="mobile-nav__items" @click="toggleMobileNav">
+            <li v-if="isAuthenticated" class="main-nav__item">
+                <router-link to="/users">Users OK</router-link>
+            </li>
+            <li v-if="isAuthenticated" class="main-nav__item">
+                <router-link to="/trips">Trips OK</router-link>
+            </li>
+            <li v-if="isAuthenticated" class="main-nav__item main-nav__item--cta">
+                <base-button @click="logoutLocal">Logout {{ email }}, role {{ role }} hohoh</base-button>
+            </li>
+            <li v-else class="main-nav__item main-nav__item--cta">
+                <router-link to="/auth">Login</router-link>
+            </li>
+        </ul>
+    </nav>
+    <div class="backdrop" :class="{ open: mobileNavOpened }" @click="toggleMobileNav"></div>
 </template>
 
-
 <script>
-
-import { mapGetters, mapActions } from 'vuex';
+import { ref, computed } from 'vue';
+import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
 
 export default {
-	name: 'TheHeader',
-	data() {
-		return {
-			mobileNavOpened: false
-		};
-	},
-	computed: {
-		...mapGetters([
-			'isAuthenticated',
-			'isAdmin',
-			'email',
-			'role'
-		])
-	},
-	methods: {
-		...mapActions({
-			logout: 'logout',
-		}),
-		logoutLocal() {
-			try {
-				this.logout();
-				this.$router.replace('/');
-			} catch (error) {
-				console.error(`Extra error, Component ${this.$options.name}, ERROR: ${error.message}`);
-			}
-		},
-		toggleMobileNav() {
-			console.log("toggleMobileNav");
-			this.mobileNavOpened = !this.mobileNavOpened;
-		}
-	}
+    name: 'TheHeader',
+    setup() {
+        const componentName = 'TheHeader';
+        const store = useStore();
+        const router = useRouter();
+
+        const mobileNavOpened = ref(false);
+
+        const isAuthenticated = computed(() => store.getters.isAuthenticated);
+        const isAdmin = computed(() => store.getters.isAdmin);
+        const email = computed(() => store.getters.email);
+        const role = computed(() => store.getters.role);
+
+        async function logoutLocal() {
+            try {
+                await store.dispatch('logout');
+                router.replace('/');
+            } catch (error) {
+                console.error(`Extra error, Component ${componentName}, ERROR: ${error.message}`);
+            }
+        }
+
+        function toggleMobileNav() {
+            console.log("toggleMobileNav");
+            mobileNavOpened.value = !mobileNavOpened.value;
+        }
+
+        return {
+            componentName,
+            mobileNavOpened,
+            isAuthenticated,
+            isAdmin,
+            email,
+            role,
+            logoutLocal,
+            toggleMobileNav
+        };
+    }
 };
 </script>
 

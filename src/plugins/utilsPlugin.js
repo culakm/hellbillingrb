@@ -2,10 +2,16 @@ import { loadErrorMessage, handleError, printNumber } from '../libs/utils.js';
 
 export default {
 	install(app) {
+		// GlobalProperties for legacy support (optional)
 		app.config.globalProperties.$loadErrorMessage = loadErrorMessage;
-		// Registering the utility functions globally
-		// V komponente sa to pouziva this.$printNumber(41);
 		app.config.globalProperties.$printNumber = printNumber;
 		app.config.globalProperties.$handleError = handleError;
+
+		// Provide for Composition API
+		app.provide('utils', {
+			loadErrorMessage,
+			handleError,
+			printNumber
+		});
 	}
 };

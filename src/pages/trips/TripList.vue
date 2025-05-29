@@ -1,6 +1,6 @@
 <template>
 	<main>
-		<base-dialog @close="handleError" :show="!!error" title="An error is ocurred!">
+		<base-dialog @close="clearError" :show="!!error" title="An error is ocurred!">
 			<p>{{ error }}</p>
 		</base-dialog>
 		<base-dialog :show="!!confirm" title="Really???">
@@ -25,43 +25,55 @@
 </template>
 
 <script>
-import { errorMixin } from '@/mixins/errorMixin';
-
-import { mapGetters, mapActions } from 'vuex';
+import { ref, computed, onMounted } from 'vue';
+import { useStore } from 'vuex';
+import { useError } from '@/composables/useError';
 import TripActions from '../../components/trips/TripActions.vue';
+
 export default {
 	name: 'TripList',
-	mixins: [errorMixin],
 	components: {
 		TripActions,
 	},
-	data() {
-		return {
-			isLoading: false,
-			error: null,
-			confirm: false,
-		};
-	},
-	computed: {
-		...mapGetters(['isAuthenticated']),
-		...mapGetters('trips', ['trips', 'hasTrips']),
-	},
-	created() {
-		this.loadTripsLocal();
-	},
-	methods: {
-		...mapActions('trips', ['loadTripsOrdered']),
-		async loadTripsLocal(refresh = false) {
-			this.isLoading = true;
-			try {
-				await this.loadTripsOrdered({ forcedRefresh: refresh });
-			} catch (error) {
-				this.$loadErrorMessage(this.$options.name, error);
-			}
-			this.isLoading = false;
-		}
-	},
+	setup() {
+		const componentName = 'TripList';
+		const store = useStore();
+		const { error, setError, clearError } = useError(componentName);
 
+		const isLoading = ref(false);
+		const confirm = ref(false);
+
+		// Vuex getters
+		const isAuthenticated = computed(() => store.getters.isAuthenticated);
+		const trips = computed(() => store.getters['trips/trips']);
+		const hasTrips = computed(() => store.getters['trips/hasTrips']);
+
+		onMounted(() => {
+			loadTripsLocal();
+		});
+
+		async function loadTripsLocal(refresh = false) {
+			isLoading.value = true;
+			try {
+				await store.dispatch('trips/loadTripsOrdered', { forcedRefresh: refresh });
+			} catch (err) {
+				setError(err.message || err);
+			}
+			isLoading.value = false;
+		}
+
+		return {
+			componentName,
+			error,
+			clearError,
+			isLoading,
+			confirm,
+			isAuthenticated,
+			trips,
+			hasTrips,
+			loadTripsLocal
+		};
+	}
 };
 </script>
 

@@ -25,9 +25,6 @@ export default {
 			default: false,
 		},
 		to: {
-			// base-button obsluhuje linku aj router-link takze moze preberat len stirng nie router-link object
-			// { name: 'coach-contact', params: { coachId: this.id } }
-			// `/coaches/${this.id}/contact`;
 			type: String,
 			required: false,
 			default: '/'

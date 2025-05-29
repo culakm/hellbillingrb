@@ -1,67 +1,71 @@
 <template>
-	<main v-if="isAdmin">
-		<base-dialog @close="handleError" :show="!!error" title="An error is ocurred!">
-			<p>{{ error }}</p>
-		</base-dialog>
-		<section>
-			<base-card>
-				<h2>Create User.</h2>
-				<div v-if="isLoading">
-					<base-spinner></base-spinner>
-				</div>
-				<user-form @save-data="createUserLocal"></user-form>
-			</base-card>
-		</section>
-	</main>
+    <main v-if="isAdmin">
+        <base-dialog @close="clearError" :show="!!error" title="An error is ocurred!">
+            <p>{{ error }}</p>
+        </base-dialog>
+        <section>
+            <base-card>
+                <h2>Create User.</h2>
+                <div v-if="isLoading">
+                    <base-spinner></base-spinner>
+                </div>
+                <user-form @save-data="createUserLocal"></user-form>
+            </base-card>
+        </section>
+    </main>
 </template>
 
 <script>
-import { errorMixin } from '@/mixins/errorMixin';
+import { ref, computed } from 'vue';
+import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
+import { useError } from '@/composables/useError';
 import { cloudFunctions } from '../../firebase.js';
 import { httpsCallable } from 'firebase/functions';
-import { mapGetters, mapActions } from 'vuex';
 import UserForm from '../../components/users/UserForm.vue';
 
-
 export default {
-	name: 'UserCreate',
-	mixins: [errorMixin],
-	components: {
-		UserForm,
-	},
-	data() {
-		return {
-			isLoading: false,
-			error: null,
-		};
-	},
-	computed: {
-		...mapGetters({
-			isAdmin: 'isAdmin'
-		})
-	},
-	methods: {
-		...mapActions('users', ['userByEmail']),
-		async createUserLocal(userData) {
-			this.isLoading = true;
-			try {
-				const userExists = await this.userByEmail(userData.email);
-				if (userExists) {
-					this.$loadErrorMessage(this.$options.name, `User with email ${userExists.email} already exists!`);
-					this.isLoading = false;
-					return;
-				}
-				const createUser = httpsCallable(cloudFunctions, 'createUser');
-				const result = await createUser({ user: userData });
-			} catch (error) {
-				this.$loadErrorMessage(this.$options.name, error);
-				this.isLoading = false;
-				return;
-			}
+    name: 'UserCreate',
+    components: {
+        UserForm,
+    },
+    setup() {
+        const componentName = 'UserCreate';
+        const store = useStore();
+        const router = useRouter();
+        const { error, setError, clearError } = useError(componentName);
 
-			this.isLoading = false;
-			this.$router.replace('/users');
-		}
-	},
+        const isLoading = ref(false);
+        const isAdmin = computed(() => store.getters.isAdmin);
+
+        async function createUserLocal(userData) {
+            isLoading.value = true;
+            try {
+                const userExists = await store.dispatch('users/userByEmail', userData.email);
+                if (userExists) {
+                    setError(`User with email ${userExists.email} already exists!`);
+                    isLoading.value = false;
+                    return;
+                }
+                const createUser = httpsCallable(cloudFunctions, 'createUser');
+                await createUser({ user: userData });
+            } catch (err) {
+                setError(err.message || err);
+                isLoading.value = false;
+                return;
+            }
+            isLoading.value = false;
+            router.replace('/users');
+        }
+
+        return {
+            componentName,
+            error,
+            clearError,
+            isLoading,
+            isAdmin,
+            createUserLocal
+        };
+    }
 };
 </script>

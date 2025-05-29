@@ -1,5 +1,5 @@
 <template>
-    <base-dialog @close="handleError" :show="!!error" title="An error is ocurred!">
+    <base-dialog @close="clearError" :show="!!error" title="An error is ocurred!">
         <p>{{ error }}</p>
     </base-dialog>
     <section>
@@ -22,53 +22,77 @@
 </template>
 
 <script>
-import { errorMixin } from '@/mixins/errorMixin';
+import { ref, computed } from 'vue';
+import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
+import { useError } from '@/composables/useError';
 import { cloudFunctions } from '../../firebase.js';
 import { httpsCallable } from 'firebase/functions';
-import { mapGetters, mapActions } from 'vuex';
 
 export default {
     name: 'UserActions',
-    mixins: [errorMixin],
-    props: ['user'],
-    data() {
-        return {
-            isLoading: false,
-            error: null,
-        };
+    props: {
+        user: {
+            type: Object,
+            required: true
+        }
     },
-    computed: {
-        ...mapGetters({ currentUserId: 'userId' }),
-        userEditLink() {
-            return `/user/edit/${this.user.userId}`;
-        },
-    },
-    methods: {
-        ...mapActions('users', ['deleteUser']),
-        async deleteUserLocal() {
-            if (this.currentUserId === this.user.userId) {
-                this.$loadErrorMessage(this.$options.name, 'You cannot delete yourself!');
+    setup(props) {
+        const componentName = 'UserActions';
+
+        // Vuex and router
+        const store = useStore();
+        const router = useRouter();
+
+        // Utils and error composables
+        const { setError, clearError, error } = useError(componentName);
+
+        // Local state
+        const isLoading = ref(false);
+
+        // Computed: get current userId from store
+        const currentUserId = computed(() => store.getters['userId']);
+
+        // Computed: edit link
+        const userEditLink = computed(() => `/user/edit/${props.user.userId}`);
+
+        // Delete user method
+        async function deleteUserLocal() {
+            if (currentUserId.value === props.user.userId) {
+                setError('You cannot delete yourself!');
                 return;
             }
 
-            const confirmed = confirm(`Are you sure you want to delete user: ${this.user.name}?`);
-            if (!confirmed) { return; }
+            const confirmed = confirm(`Are you sure you want to delete user: ${props.user.name}?`);
+            if (!confirmed) {
+                return;
+            }
 
-            this.isLoading = true;
+            isLoading.value = true;
 
             try {
-                const deleteUser = httpsCallable(cloudFunctions, 'deleteUser');
-                const result = await deleteUser({ userId: this.user.userId });
-            } catch (error) {
-                this.$loadErrorMessage(this.$options.name, 'You cannot delete yourself!');
-                this.isLoading = false;
+                const deleteUserFn = httpsCallable(cloudFunctions, 'deleteUser');
+                await deleteUserFn({ userId: props.user.userId });
+            } catch (err) {
+                setError('An error occurred while deleting the user.');
+                isLoading.value = false;
                 return;
             }
-            this.deleteUser({ userId: this.user.userId });
-            this.isLoading = false;
-            this.$router.replace('/users');
-        },
-    },
+
+            await store.dispatch('users/deleteUser', { userId: props.user.userId });
+            isLoading.value = false;
+            router.replace('/users');
+        }
+
+        return {
+            componentName,
+            isLoading,
+            error,
+            clearError,
+            userEditLink,
+            deleteUserLocal
+        };
+    }
 };
 </script>
 

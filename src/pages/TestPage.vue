@@ -9,29 +9,34 @@
 </template>
 
 <script>
+import { ref,onMounted } from 'vue';
+
 export default {
-    data() {
-        return {
-            tracking: false,
-            paused: false,
-            watchId: null,
-            distance: 0,
-            lastPosition: null
-        };
-    },
-    methods: {
-        startTracking() {
+    name: 'TestPage',
+    setup() {
+
+        const componentName = 'TestPage';
+        onMounted(() => {
+            console.log(`${componentName} mounted`);
+        });
+        const tracking = ref(false);
+        const paused = ref(false);
+        const watchId = ref(null);
+        const distance = ref(0);
+        const lastPosition = ref(null);
+
+        function startTracking() {
             if (!navigator.geolocation) {
                 alert('Geolocation is not supported by your browser');
                 return;
             }
-            this.tracking = true;
-            this.paused = false;
+            tracking.value = true;
+            paused.value = false;
             // If resuming, don't reset lastPosition or distance
-            if (!this.watchId) {
-                this.watchId = navigator.geolocation.watchPosition(
-                    this.updateDistance,
-                    this.handleError,
+            if (!watchId.value) {
+                watchId.value = navigator.geolocation.watchPosition(
+                    updateDistance,
+                    handleError,
                     {
                         enableHighAccuracy: true,
                         maximumAge: 1000,
@@ -39,37 +44,41 @@ export default {
                     }
                 );
             }
-        },
-        pauseTracking() {
-            this.tracking = false;
-            this.paused = true;
-            if (this.watchId !== null) {
-                navigator.geolocation.clearWatch(this.watchId);
-                this.watchId = null;
+        }
+
+        function pauseTracking() {
+            tracking.value = false;
+            paused.value = true;
+            if (watchId.value !== null) {
+                navigator.geolocation.clearWatch(watchId.value);
+                watchId.value = null;
             }
-        },
-        stopAndReset() {
-            this.tracking = false;
-            this.paused = false;
-            if (this.watchId !== null) {
-                navigator.geolocation.clearWatch(this.watchId);
-                this.watchId = null;
+        }
+
+        function stopAndReset() {
+            tracking.value = false;
+            paused.value = false;
+            if (watchId.value !== null) {
+                navigator.geolocation.clearWatch(watchId.value);
+                watchId.value = null;
             }
-            this.distance = 0;
-            this.lastPosition = null;
-        },
-        updateDistance(position) {
-            if (this.lastPosition) {
-                const distanceBetween = this.calculateDistance(
-                    this.lastPosition.coords,
+            distance.value = 0;
+            lastPosition.value = null;
+        }
+
+        function updateDistance(position) {
+            if (lastPosition.value) {
+                const distanceBetween = calculateDistance(
+                    lastPosition.value.coords,
                     position.coords
                 );
-                this.distance += distanceBetween;
-                console.log('Distance updated:', this.distance, 'meters at', new Date().toLocaleTimeString());
+                distance.value += distanceBetween;
+                console.log('Distance updated:', distance.value, 'meters at', new Date().toLocaleTimeString());
             }
-            this.lastPosition = position;
-        },
-        calculateDistance(coords1, coords2) {
+            lastPosition.value = position;
+        }
+
+        function calculateDistance(coords1, coords2) {
             const R = 6371000; // Earth radius in meters
             const toRad = x => (x * Math.PI) / 180;
 
@@ -86,12 +95,23 @@ export default {
                 Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon / 2) ** 2;
 
             return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        },
-        handleError(error) {
-            console.error('Geolocation error:', error);
-            alert('Error getting location: ' + error.message); //Timeout expired
-            this.stopAndReset();
         }
+
+        function handleError(error) {
+            console.error('Geolocation error:', error);
+            alert('Error getting location: ' + error.message); // Timeout expired
+            stopAndReset();
+        }
+
+        return {
+            componentName,
+            tracking,
+            paused,
+            distance,
+            startTracking,
+            pauseTracking,
+            stopAndReset
+        };
     }
 };
 </script>
