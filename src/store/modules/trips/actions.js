@@ -1,5 +1,5 @@
 import { db } from '../../../firebase.js';
-import { collection, doc, getDoc, addDoc, setDoc, updateDoc, deleteDoc, getDocs, writeBatch, query, orderBy, limit, startAfter } from "firebase/firestore";
+import { collection, doc, getDoc, addDoc, setDoc, updateDoc, deleteDoc, getDocs, writeBatch, query, orderBy, where, limit, startAfter } from "firebase/firestore";
 
 export default {
 	async getTripNewId() {
@@ -239,6 +239,33 @@ export default {
 			context.commit('loadTrips', trips);
 		} catch (error) {
 			const errorOut = `Error loading ordered trips: ${error.message}`;
+			console.error(errorOut);
+			throw new Error(errorOut);
+		}
+	},
+	async loadTripsOrderedByUserId({commit}, {userId}) {
+		try {
+			const trips = [];
+			const tripsCollectionRef = collection(db, "trips");
+			const direction = "asc";
+			const tripsQuery = query(tripsCollectionRef, orderBy("name", direction), where("userId", "==", userId));
+			const querySnapshot = await getDocs(tripsQuery);
+
+			querySnapshot.forEach((doc) => {
+				const tripData = doc.data();
+				const trip = {
+					tripId: doc.id,
+					userId: tripData.userId,
+					name: tripData.name,
+					description: tripData.description,
+					imageName: tripData.imageName,
+					linesCount: tripData.linesCount,
+				};
+				trips.push(trip);
+			});
+			commit('loadTrips', trips);
+		} catch (error) {
+			const errorOut = `Error loading ordered trips by user ID: ${error.message}`;
 			console.error(errorOut);
 			throw new Error(errorOut);
 		}

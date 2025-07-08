@@ -15,7 +15,7 @@
 					<base-spinner></base-spinner>
 				</div>
 				<ul v-else-if="hasTrips">
-					<trip-actions v-for="trip in filteredTrips" :key="trip.tripId" :trip-id="trip.tripId" :name="trip.name"
+					<trip-actions v-for="trip in trips" :key="trip.tripId" :trip-id="trip.tripId" :name="trip.name"
 						:description="trip.description"></trip-actions>
 				</ul>
 				<h3 v-else>No trips found</h3>
@@ -45,12 +45,13 @@ export default {
 
 		// Vuex getters
 		const isAuthenticated = computed(() => store.getters.isAuthenticated);
+		const isAdmin = computed(() => store.getters.isAdmin);
 		const trips = computed(() => store.getters['trips/trips']);
 		const hasTrips = computed(() => store.getters['trips/hasTrips']);
 
-		const filteredTrips = computed(() => {
-			return trips.value.filter(trip => trip.userId === store.getters.userId);
-		});
+		// const filteredTrips = computed(() => {
+		// 	return trips.value.filter(trip => trip.userId === store.getters.userId);
+		// });
 
 		onMounted(() => {
 			loadTripsLocal();
@@ -58,8 +59,13 @@ export default {
 
 		async function loadTripsLocal(refresh = false) {
 			isLoading.value = true;
+			const userId = store.getters.userId;
 			try {
-				await store.dispatch('trips/loadTripsOrdered', { forcedRefresh: refresh });
+				if (isAdmin.value) {
+					await store.dispatch('trips/loadTripsOrdered');
+				} else {
+					await store.dispatch('trips/loadTripsOrderedByUserId', { userId: userId});
+				}
 			} catch (err) {
 				setError(err.message || err);
 			}
@@ -76,7 +82,7 @@ export default {
 			trips,
 			hasTrips,
 			loadTripsLocal,
-			filteredTrips
+			// filteredTrips
 		};
 	}
 };
