@@ -115,30 +115,31 @@ export default {
 
         function validateForm() {
             formIsValid.value = true;
-            if (name.value.val === '') {
-                name.value.isValid = false;
-                formIsValid.value = false;
-            }
-            if (kmTotal.value.val === null || kmTotal.value.val === '') {
-                kmTotal.value.isValid = false;
-                formIsValid.value = false;
-            }
-            if (tulip.value.val === '') {
-                tulip.value.isValid = false;
-                formIsValid.value = false;
-            }
-            if (roadNo.value.val === '' || roadNo.value.val === null) {
-                roadNo.value.isValid = false;
-                formIsValid.value = false;
-            }
-            if (note.value.val === '') {
-                note.value.isValid = false;
-                formIsValid.value = false;
-            }
-            if (mapPage.value.val === '' || mapPage.value.val === null) {
-                mapPage.value.isValid = false;
-                formIsValid.value = false;
-            }
+
+            // if (name.value.val === '') {
+            //     name.value.isValid = false;
+            //     formIsValid.value = false;
+            // }
+            // if (kmTotal.value.val === null || kmTotal.value.val === '') {
+            //     kmTotal.value.isValid = false;
+            //     formIsValid.value = false;
+            // }
+            // if (tulip.value.val === '') {
+            //     tulip.value.isValid = false;
+            //     formIsValid.value = false;
+            // }
+            // if (roadNo.value.val === '' || roadNo.value.val === null) {
+            //     roadNo.value.isValid = false;
+            //     formIsValid.value = false;
+            // }
+            // if (note.value.val === '') {
+            //     note.value.isValid = false;
+            //     formIsValid.value = false;
+            // }
+            // if (mapPage.value.val === '' || mapPage.value.val === null) {
+            //     mapPage.value.isValid = false;
+            //     formIsValid.value = false;
+            // }
         }
 
         function submitForm() {
