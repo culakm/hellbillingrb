@@ -109,6 +109,8 @@ export default {
 		try {
 			const tripId = payload.tripId;
 			const tripData = {
+				userId: payload.userId,
+				tripId: tripId,
 				name: payload.name,
 				description: payload.description,
 				imageName: payload.imageName,
@@ -198,6 +200,7 @@ export default {
 				const tripData = doc.data();
 				const trip = {
 					tripId: doc.id,
+					userId: tripData.userId,
 					name: tripData.name,
 					description: tripData.description,
 					imageName: tripData.imageName,
@@ -224,6 +227,7 @@ export default {
 				const tripData = doc.data();
 				const trip = {
 					tripId: doc.id,
+					userId: tripData.userId,
 					name: tripData.name,
 					description: tripData.description,
 					imageName: tripData.imageName,
@@ -247,6 +251,7 @@ export default {
 				const tripData = docSnap.data();
 				const trip = {
 					tripId: docSnap.id,
+					userId: tripData.userId,
 					name: tripData.name,
 					description: tripData.description,
 					imageName: tripData.imageName,

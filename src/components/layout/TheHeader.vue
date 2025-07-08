@@ -78,7 +78,6 @@ export default {
         }
 
         function toggleMobileNav() {
-            console.log("toggleMobileNav");
             mobileNavOpened.value = !mobileNavOpened.value;
         }
 

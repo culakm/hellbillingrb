@@ -15,7 +15,7 @@
 					<base-spinner></base-spinner>
 				</div>
 				<ul v-else-if="hasTrips">
-					<trip-actions v-for="trip in trips" :key="trip.tripId" :trip-id="trip.tripId" :name="trip.name"
+					<trip-actions v-for="trip in filteredTrips" :key="trip.tripId" :trip-id="trip.tripId" :name="trip.name"
 						:description="trip.description"></trip-actions>
 				</ul>
 				<h3 v-else>No trips found</h3>
@@ -48,6 +48,10 @@ export default {
 		const trips = computed(() => store.getters['trips/trips']);
 		const hasTrips = computed(() => store.getters['trips/hasTrips']);
 
+		const filteredTrips = computed(() => {
+			return trips.value.filter(trip => trip.userId === store.getters.userId);
+		});
+
 		onMounted(() => {
 			loadTripsLocal();
 		});
@@ -71,7 +75,8 @@ export default {
 			isAuthenticated,
 			trips,
 			hasTrips,
-			loadTripsLocal
+			loadTripsLocal,
+			filteredTrips
 		};
 	}
 };

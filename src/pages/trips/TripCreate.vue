@@ -36,6 +36,8 @@ export default {
         const isLoading = ref(false);
 
         async function createTripLocal(tripData) {
+
+            tripData.userId = store.getters.userId;
             isLoading.value = true;
             try {
                 await store.dispatch('trips/createTrip', tripData);
