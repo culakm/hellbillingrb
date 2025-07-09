@@ -11,10 +11,12 @@ import UserList from './pages/users/UserList.vue';
 import UserCreate from './pages/users/UserCreate.vue';
 import UserEdit from './pages/users/UserEdit.vue';
 
+import CardsShow from './pages/cards/CardsShow.vue';
+
 import indexPage from './pages/IndexPage.vue';
 
 // dynamicky importovany component, ostatne su naloadovane vzdy
-const testPage = () => import('./pages/TestPage.vue');
+const testPage = () => import('./pages/test/TestPage.vue');
 
 import NotFound from './pages/NotFound.vue';
 import store from './store/index.js';
@@ -30,6 +32,8 @@ const router = createRouter({
 		{ name: 'trip-edit', path: '/trip/edit/:tripId', component: TripEdit, props: false, meta: { requiresAuth: true } },
 		{ name: 'trip-view', path: '/trip/view/:tripId', component: TripView, props: false, meta: { requiresAuth: true } },
 		{ name: 'trip-view-print', path: '/trip/view/print/:tripId', component: TripViewPrint, props: false, meta: { requiresAuth: true } },
+
+		{ name: 'cards', path: '/cards', component: CardsShow, meta: { requiresAuth: true } },
 
 		{ name: 'users', path: '/users', component: UserList, meta: { requiresAuth: true } },
 		{ name: 'user-add', path: '/user/add', component: UserCreate, meta: { requiresAuth: true } },

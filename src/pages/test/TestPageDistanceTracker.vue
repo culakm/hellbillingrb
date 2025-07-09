@@ -12,10 +12,10 @@
 import { ref,onMounted } from 'vue';
 
 export default {
-    name: 'TestPage',
+    name: 'TestPageDistanceTracker',
     setup() {
 
-        const componentName = 'TestPage';
+        const componentName = 'TestPageDistanceTracker';
         onMounted(() => {
             console.log(`${componentName} mounted`);
         });
