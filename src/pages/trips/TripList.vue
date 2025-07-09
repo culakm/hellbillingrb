@@ -10,12 +10,17 @@
 			<base-card>
 				<div v-if="isAuthenticated" class="controls">
 					<base-button link to="/trip/add">Add New Trip</base-button>
+					<div v-if="isAdmin">
+					<input id="interest-history" name="interest" type="checkbox" value="history" v-model="allTripsFlag"/>
+					<label for="interest-history">Zobraziť tripy všetkých uživateľov</label>
 				</div>
+				</div>
+
 				<div v-if="isLoading">
 					<base-spinner></base-spinner>
 				</div>
 				<ul v-else-if="hasTrips">
-					<trip-actions v-for="trip in trips" :key="trip.tripId" :trip-id="trip.tripId" :name="trip.name"
+					<trip-actions v-for="trip in filteredTrips" :key="trip.tripId" :trip-id="trip.tripId" :name="trip.name"
 						:description="trip.description"></trip-actions>
 				</ul>
 				<h3 v-else>No trips found</h3>
@@ -48,10 +53,18 @@ export default {
 		const isAdmin = computed(() => store.getters.isAdmin);
 		const trips = computed(() => store.getters['trips/trips']);
 		const hasTrips = computed(() => store.getters['trips/hasTrips']);
+		const allTripsFlag = ref(false);
 
-		// const filteredTrips = computed(() => {
-		// 	return trips.value.filter(trip => trip.userId === store.getters.userId);
-		// });
+		const filteredTrips = computed(() => {
+			if (isAdmin.value && allTripsFlag.value) {
+				return trips.value; // Admin sees all trips
+			}
+			else {
+				return trips.value.filter(trip => trip.userId === store.getters.userId);
+			}
+
+		});
+
 
 		onMounted(() => {
 			loadTripsLocal();
@@ -79,10 +92,12 @@ export default {
 			isLoading,
 			confirm,
 			isAuthenticated,
+			isAdmin,
 			trips,
 			hasTrips,
 			loadTripsLocal,
-			// filteredTrips
+			allTripsFlag,
+			filteredTrips
 		};
 	}
 };
@@ -97,6 +112,6 @@ export default {
 
 	.controls {
 		display: flex;
-		justify-content: space-between;
+		justify-content: left;
 	}
 </style>
