@@ -10,15 +10,25 @@
 <script>
 import { ref, computed, onMounted } from 'vue';
 import { useStore } from 'vuex';
+import { db } from '../../firebase.js';
+import { collection, doc, getDoc, addDoc, setDoc, updateDoc, deleteDoc, getDocs, writeBatch, query, orderBy, where, limit, startAfter } from "firebase/firestore";
 
 
 export default {
     name: 'TestPage',
     setup() {
-
         const componentName = 'TestPage';
-        onMounted(() => {
-            console.log(`${componentName} mounted`);
+        onMounted(async () => {
+            console.log("Attempting Firestore read to trigger App Check token generation...");
+            try {
+                const querySnapshot = await getDocs(collection(db, "trips")); // Or any other collection
+                querySnapshot.forEach((doc) => {
+                    console.log(doc.id, " => ", doc.data());
+                });
+                console.log("Firestore read successful!");
+            } catch (error) {
+                console.error("Error during Firestore read:", error);
+            }
         });
 
         const testMessage = ref('This is a test message');

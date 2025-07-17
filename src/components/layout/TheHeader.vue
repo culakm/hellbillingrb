@@ -11,7 +11,7 @@
                     <router-link to="/test">Test page</router-link>
                 </li>
 				<li v-if="isAdmin" class="main-nav__item">
-                    <router-link to="/cards" target="_blank" rel="noopener noreferrer">Cards</router-link>
+                    <router-link to="/cards" rel="noopener noreferrer">Cards</router-link>
                 </li>
                 <li v-if="isAdmin" class="main-nav__item">
                     <router-link to="/users">Users</router-link>

@@ -28,7 +28,7 @@ export default {
         const didAutoLogoutLocal = computed(() => didAutoLogout.value);
 
         // Compute if current route is trip/view/print
-        const isTripViewPrint = computed(() => route.path.includes("trip/view/print") || route.path.includes("cards"));
+        const isTripViewPrint = computed(() => route.path.includes("trip/view/print"));
 
         // Vuex actions
         const tryLogin = () => store.dispatch('tryLogin');
