@@ -1,0 +1,19 @@
+{
+  "name": "trips/TsfkzDjL3u44sNwsfBth/drasnice2.jpg",
+  "bucket": "hellbillingrb.firebasestorage.app",
+  "metageneration": 1,
+  "generation": 1740131242293,
+  "contentType": "image/jpeg",
+  "storageClass": "STANDARD",
+  "contentDisposition": "inline",
+  "downloadTokens": [
+    "bda5d7bb-6cda-406a-8cb8-176780a729fa"
+  ],
+  "etag": "7NpzHciFz9JpGOvk0YGhkd+IjDU",
+  "customMetadata": {},
+  "timeCreated": "2025-02-21T09:47:22.293Z",
+  "updated": "2025-02-21T09:47:22.293Z",
+  "size": 25072,
+  "md5Hash": "lsDfqj9OEnkMMdZuElcd4Q==",
+  "crc32c": "1941063971"
+}
