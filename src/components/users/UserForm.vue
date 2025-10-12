@@ -45,7 +45,7 @@
 </template>
 
 <script>
-import { ref, computed, watch, onMounted } from 'vue';
+import { ref, toRef, computed, watch, onMounted } from 'vue';
 
 export default {
     name: 'UserForm',
@@ -182,7 +182,7 @@ export default {
             clearValidity,
             validateForm,
             submitForm,
-            user: props.user
+			user: toRef(props, 'user'),
         };
     }
 };

@@ -10,11 +10,11 @@
 			<form @submit.prevent="submitForm">
 				<div class="form-control" :class="{ invalid: !email.isValid }">
 					<label for="email">E-Mail</label>
-					<input type="email" id="email" v-model.trim="email.val" @blur="clearValidity('email')" />
+					<input type="email" id="email" autocomplete="username" v-model.trim="email.val" @blur="clearValidity('email')" />
 				</div>
 				<div class="form-control" :class="{ invalid: !password.isValid }">
 					<label for="password">Password</label>
-					<input type="password" id="password" v-model.trim="password.val"
+					<input type="password" id="password" autocomplete="current-password" v-model.trim="password.val"
 						@blur="clearValidity('password')" />
 				</div>
 				<p v-if="!formIsValid" class="invalid">Please fix errors, password min. 6 characters</p>

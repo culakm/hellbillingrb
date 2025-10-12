@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import { ref, onMounted, watch } from 'vue';
+import { ref, toRef, onMounted, watch } from 'vue';
 import { useStore } from 'vuex';
 import { useError } from '@/composables/useError';
 
@@ -54,7 +54,7 @@ export default {
             error,
             clearError,
             imageUrl,
-            trip: props.trip
+			trip: toRef(props, 'trip'),
         };
     }
 };

@@ -18,20 +18,15 @@ function reaclculateLineExtraValues(state) {
 					break;
 				}
 			}
-
 			if (line.kmTotal !== null && previousKmTotal !== null) {
 				line.kmPart = parseFloat((line.kmTotal - previousKmTotal).toFixed(2));
 			}
 		}
 
 		// interests
-		line.interest.forEach(value => {
-			line[value] = true;
-		});
-
-		if (!line.close) {
-			line.close = false;
-		}
+		line.interest.forEach(value => {line[value] = true;});
+		// Close
+		if (!line.close) {line.close = false;}
 
 		// Check if the difference between the next line's kmTotal and the current line's kmTotal is less than 5
 		const nextLine = lines[index + 1];

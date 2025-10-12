@@ -20,8 +20,8 @@
 </template>
 
 <script>
-import { ref, computed } from 'vue';
-import { useStore } from 'vuex';
+import { ref, toRef, computed } from 'vue';
+import { useTripsStore } from '@/stores/trips';
 import { useRouter } from 'vue-router';
 import { useError } from '@/composables/useError';
 
@@ -44,7 +44,7 @@ export default {
     },
     setup(props) {
         const componentName = 'TripActions';
-        const store = useStore();
+		const tripsStore = useTripsStore();
         const router = useRouter();
         const { error, setError, clearError } = useError(componentName);
 
@@ -59,7 +59,7 @@ export default {
             if (!confirmed) { return; }
             isLoading.value = true;
             try {
-                await store.dispatch('trips/deleteTrip', { tripId: props.tripId });
+				await tripsStore.deleteTrip(props.tripId);
             } catch (err) {
                 setError(err.message || err);
             }
@@ -72,8 +72,10 @@ export default {
             error,
             clearError,
             isLoading,
-            name: props.name,
-            description: props.description,
+            // name: props.name,
+			line: toRef(props, 'name'),
+            // description: props.description,
+			line: toRef(props, 'description'),
             tripViewLink,
             tripPrintLink,
             tripEditLink,

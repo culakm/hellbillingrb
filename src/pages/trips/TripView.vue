@@ -12,9 +12,9 @@
             <fullscreen v-model="fullscreen">
                 <div class="scrollable-content">
                     <section>
-                        <trip-full v-if="trip" :trip="trip"></trip-full>
-                        <div v-if="hasLines" class="roadbook">
-                            <line-view v-for="line in trip.lines" :key="line.lineId" :line="line"></line-view>
+                        <trip-full v-if="tripsStore.activeTrip" :trip="tripsStore.activeTrip"></trip-full>
+                        <div v-if="tripsStore.activeTripHasLines" class="roadbook">
+                            <line-view v-for="line in tripsStore.activeTripLines" :key="line.lineId" :line="line"></line-view>
                         </div>
                     </section>
                 </div>
@@ -24,8 +24,8 @@
 </template>
 
 <script>
-import { ref, computed, onMounted } from 'vue';
-import { useStore } from 'vuex';
+import { ref, onMounted } from 'vue';
+import { useTripsStore } from '@/stores/trips';
 import { useRoute, useRouter } from 'vue-router';
 import { useError } from '@/composables/useError';
 import TripFull from '../../components/trips/TripFull.vue';
@@ -39,29 +39,22 @@ export default {
     },
     setup() {
         const componentName = 'TripView';
-        const store = useStore();
+		const tripsStore = useTripsStore();
         const route = useRoute();
         const router = useRouter();
         const { error, setError, clearError } = useError(componentName);
 
         const fullscreen = ref(false);
         const isLoading = ref(false);
-        const tripId = ref(null);
 
-        // Vuex getters
-        const trip = computed(() => store.getters['trips/trip']);
-        const hasLines = computed(() => store.getters['trips/hasLines']);
-
-        // Fetch trip data on mount
         onMounted(() => {
-            tripId.value = route.params.tripId;
-            tripByIdLocal();
+            tripByIdLocal(route.params.tripId);
         });
 
-        async function tripByIdLocal() {
+        async function tripByIdLocal(tripId) {
             isLoading.value = true;
             try {
-                await store.dispatch('trips/tripById', tripId.value);
+				await tripsStore.setActiveTrip(tripId);
             } catch (err) {
                 setError(err.message || err);
             }
@@ -77,13 +70,11 @@ export default {
         }
 
         return {
-            componentName,
             error,
             clearError,
             fullscreen,
             isLoading,
-            trip,
-            hasLines,
+			tripsStore,
             goHome,
             toggle
         };

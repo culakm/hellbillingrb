@@ -20,8 +20,9 @@
 </template>
 
 <script>
-import { ref } from 'vue';
+import { ref, toRef } from 'vue';
 import { useStore } from 'vuex';
+import { useLinesStore } from '@/stores/lines';
 import { useError } from '@/composables/useError';
 import LineView from './LineView.vue';
 import LineForm from './LineForm.vue';
@@ -48,6 +49,7 @@ export default {
     setup(props, { emit }) {
         const componentName = 'LineActions';
         const store = useStore();
+		const linesStore = useLinesStore();
         const { error, setError, clearError } = useError(componentName);
 
         const isLoading = ref(false);
@@ -57,7 +59,7 @@ export default {
             isLoading.value = true;
             try {
                 lineData.tripId = props.tripId;
-                await store.dispatch('trips/editLine', lineData);
+				await linesStore.editLine(lineData);
             } catch (err) {
                 setError(err.message || err);
             }
@@ -68,7 +70,7 @@ export default {
         async function deleteLineLocal() {
             isLoading.value = true;
             try {
-                await store.dispatch('trips/deleteLine', { tripId: props.tripId, lineId: props.line.lineId });
+				await linesStore.deleteLine(props.tripId, props.line.lineId);
             } catch (err) {
                 setError(err.message || err);
             }
@@ -91,7 +93,7 @@ export default {
             clearError,
             isLoading,
             isEdited,
-            line: props.line,
+			line: toRef(props, 'line'),
             editLineLocal,
             deleteLineLocal,
             setEditedLine,

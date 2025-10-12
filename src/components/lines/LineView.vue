@@ -2,7 +2,7 @@
   <base-dialog @close="clearError" :show="!!error" title="An error is ocurred!">
       <p>{{ error }}</p>
   </base-dialog>
-  <div class="roadbook-item" :class="{ passed: line.passed }" @click="passedLineLocal()">
+  <div class="roadbook-item" :class="{ passed: line.passed === true && passFunctionality === false }" @click="passedLineLocal()">
       <div class="roadbook-item-place">
           <div class="order">{{ line.order }}</div>
           <div class="point">
@@ -37,7 +37,7 @@
                   {{ typeof line.kmTotal === 'number' && line.kmTotal >= 0 ? line.kmTotal + ' Km' : '--' }}
               </div>
               <div class="km-start-end">
-                  {{ line.order === 1 ? 'DSS' : (line.order === trip.linesCount ? 'ASS' : '') }}
+                  {{ line.order === 1 ? 'DSS' : (line.order === tripsStore.activeTripLinesCount ? 'ASS' : '') }}
               </div>
               <div class="km-part">{{ line.kmPart > 0 ? line.kmPart + ' Km' : '--' }}</div>
           </div>
@@ -56,8 +56,9 @@
 </template>
 
 <script>
-import { ref, computed, onMounted } from 'vue';
-import { useStore } from 'vuex';
+import { ref, toRef, computed, onMounted } from 'vue';
+import { useTripsStore } from '@/stores/trips';
+import { useLinesStore } from '@/stores/lines';
 import { useRoute } from 'vue-router';
 import { useError } from '@/composables/useError';
 
@@ -68,20 +69,19 @@ export default {
           type: Object,
           required: true,
           default: () => ({}),
-      },
+      }
   },
   setup(props) {
       const componentName = 'LineView';
-      const store = useStore();
+	  const tripsStore = useTripsStore();
+	  const linesStore = useLinesStore();
+
       const route = useRoute();
       const { error, setError, clearError } = useError(componentName);
 
       const isLoading = ref(false);
 
-      // Vuex getter for trip
-      const trip = computed(() => store.getters['trips/trip']);
-
-      const isTripViewPrint = computed(() => route.path.includes("trip/view/print"));
+	  const isTripViewPrint = computed(() => route.path.includes("trip/view/print"));
       const isTripView = computed(() => route.path.includes("trip/view"));
       const passFunctionality = computed(() => isTripViewPrint.value || route.path.includes("trip/edit"));
 
@@ -93,33 +93,34 @@ export default {
       });
 
       async function passedLineLocal() {
-          if (passFunctionality.value) { return; }
-          isLoading.value = true;
-          const passed = !props.line.passed;
-          try {
-              await store.dispatch('trips/passedLine', { lineId: props.line.lineId, passed });
-          } catch (err) {
-              setError(err.message || err);
-          }
-          isLoading.value = false;
+			if (passFunctionality.value) { return; }
+			isLoading.value = true;
+			const passed = !props.line.passed;
+			try {
+				await linesStore.passedLine(props.line.lineId, passed);
+				props.line.passed = passed;
+			} catch (err) {
+				setError(err.message || err);
+			}
+			isLoading.value = false;
       }
 
       function tulipSrc(tulip) {
-          return `/img/${tulip}.svg`;
+			return `/img/${tulip}.svg`;
       }
 
       return {
-          componentName,
-          error,
-          clearError,
-          isLoading,
-          trip,
-          isTripViewPrint,
-          isTripView,
-          passFunctionality,
-          passedLineLocal,
-          tulipSrc,
-          line: props.line
+			componentName,
+			error,
+			clearError,
+			isLoading,
+			tripsStore,
+			isTripViewPrint,
+			isTripView,
+			passFunctionality,
+			passedLineLocal,
+			tulipSrc,
+			line: toRef(props, 'line'),
       };
   }
 };
@@ -364,5 +365,9 @@ export default {
     overflow-wrap: break-word;
     white-space: break-spaces;
     word-break: break-word;
+  }
+
+  .passed {
+	background-color: #d3d3d3;
   }
 </style>

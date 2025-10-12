@@ -18,6 +18,7 @@
 <script>
 import { ref } from 'vue';
 import { useStore } from 'vuex';
+import { useTripsStore } from '@/stores/trips';
 import { useRouter } from 'vue-router';
 import { useError } from '@/composables/useError';
 import TripForm from '../../components/trips/TripForm.vue';
@@ -30,6 +31,7 @@ export default {
     setup() {
         const componentName = 'TripCreate';
         const store = useStore();
+		const tripsStore = useTripsStore();
         const router = useRouter();
         const { error, setError, clearError } = useError(componentName);
 
@@ -40,7 +42,7 @@ export default {
             tripData.userId = store.getters.userId;
             isLoading.value = true;
             try {
-                await store.dispatch('trips/createTrip', tripData);
+				await tripsStore.createTrip(tripData);
             } catch (err) {
                 setError(err.message || err);
                 isLoading.value = false;

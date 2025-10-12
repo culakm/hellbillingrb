@@ -15,11 +15,11 @@
         </div>
         <div v-else :id="printHeader ? 'element-to-pdf' : null" :class="{ 'print-area': printHeader }">
             <div class="roadbook-header pagebreak-after">
-                <trip-full v-if="trip" :trip="trip"></trip-full>
+                <trip-full v-if="tripsStore.activeTrip" :trip="tripsStore.activeTrip"></trip-full>
             </div>
-            <div v-if="hasLines" :id="printHeader ? null : 'element-to-pdf'" class="roadbook"
+            <div v-if="tripsStore.activeTripHasLines" :id="printHeader ? null : 'element-to-pdf'" class="roadbook"
                 :class="{ 'print-area': !printHeader }">
-                <template v-for="(line, index) in trip.lines" :key="line.lineId">
+                <template v-for="(line, index) in tripsStore.activeTripLines" :key="line.lineId">
                     <div class="roadbook-item-wrap"
                         :class="{ 'pagebreak-after': isEvery7th(index), 'offset': isEvery7thPlus1(index) }">
                         <line-view :line="line"></line-view>
@@ -32,7 +32,7 @@
 
 <script>
 import { ref, computed, onMounted } from 'vue';
-import { useStore } from 'vuex';
+import { useTripsStore } from '@/stores/trips';
 import { useRoute } from 'vue-router';
 import { useError } from '@/composables/useError';
 import TripFull from '../../components/trips/TripFull.vue';
@@ -47,50 +47,33 @@ export default {
     },
     setup() {
         const componentName = 'TripViewPrint';
-        const store = useStore();
+		const tripsStore = useTripsStore();
         const route = useRoute();
         const { error, setError, clearError } = useError(componentName);
 
         const isLoading = ref(false);
-        const tripId = ref(null);
         const printHeader = ref(true);
 
-        // Vuex getters
-        const trip = computed(() => store.getters['trips/trip']);
-        const hasLines = computed(() => store.getters['trips/hasLines']);
-
-        // Computed for template logic
         const isEvery7th = (index) => (index + 1) % 7 === 0;
         const isEvery7thPlus1 = (index) => index > 0 && (index + 1) % 7 === 1;
         const tripNamePrint = computed(() =>
-            trip.value && trip.value.name
-                ? trip.value.name.replace(/ /g, '_').toLowerCase()
+            tripsStore.activeTrip.value && tripsStore.activeTrip.value.name
+                ? tripsStore.activeTrip.value.name.replace(/ /g, '_').toLowerCase()
                 : 'trip'
         );
 
-        // Fetch trip data on mount
         onMounted(async () => {
-            tripId.value = route.params.tripId;
-            await tripByIdLocal();
-            setLinesPassedFalse();
+            await tripByIdLocal(route.params.tripId);
         });
 
-        async function tripByIdLocal() {
+        async function tripByIdLocal(tripId) {
             isLoading.value = true;
             try {
-                await store.dispatch('trips/tripById', tripId.value);
+				await tripsStore.setActiveTrip(tripId);
             } catch (err) {
                 setError(err.message || err);
             }
             isLoading.value = false;
-        }
-
-        function setLinesPassedFalse() {
-            if (trip.value && trip.value.lines) {
-                trip.value.lines.forEach(line => {
-                    line.passed = false;
-                });
-            }
         }
 
         function exportToPDF() {
@@ -116,8 +99,7 @@ export default {
             clearError,
             isLoading,
             printHeader,
-            trip,
-            hasLines,
+            tripsStore,
             isEvery7th,
             isEvery7thPlus1,
             exportToPDF

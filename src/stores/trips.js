@@ -1,205 +1,202 @@
-import { ref, computed } from 'vue';
+import { ref, computed, watchEffect } from 'vue';
+import { useStore } from 'vuex';
 import { defineStore } from 'pinia';
 import { db } from '../firebase.js';
-import { collection, getDoc, getDocs, setDoc, query, orderBy, doc, writeBatch } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, setDoc, updateDoc, query, where, orderBy, writeBatch } from 'firebase/firestore';
 import { useLinesStore } from '@/stores/lines';
 
 export const useTripsStore = defineStore('trips', () => {
-	// Access lines store for line operations
-	const linesStore = useLinesStore();
+    const linesStore = useLinesStore();
+    const store = useStore();
 
-	// State
-	const trips = ref([]);
-	const trip = ref(null);
+    // State
+    const trips = ref([]);
+    const activeTrip = ref(null);
 
-	// Reset state
-	function $reset() {
-		trips.value = [];
-		trip.value = null;
-	}
+    // Reset state
+    function $reset() {
+        trips.value = [];
+        activeTrip.value = null;
+    }
 
-	// Getters
-	const hasTrips = computed(() => trips.value.length > 0);
-	const tripsCount = computed(() => trips.value.length);
+    // Getters
+    const hasTrips = computed(() => trips.value.length > 0);
+    const tripsCount = computed(() => trips.value.length);
+	const activeTripLines = computed(() => {
+        if (!activeTrip.value || !activeTrip.value.tripId) return [];
+        return linesStore.getLinesForTrip(activeTrip.value.tripId);
+    });
 
-	// Utility: Find a trip by ID, prefer current trip cache
-	function getTripById(tripId) {
-		if (trip.value?.tripId === tripId) return trip.value;
-		return trips.value.find(t => t.tripId === tripId) || null;
-	}
+	const activeTripHasLines = computed(() => {
+		return activeTripLines && activeTripLines.value.length > 0;
+	});
+	const activeTripLinesCount = computed(() => {
+		return activeTripLines ? activeTripLines.value.length : 0;
+	});
 
-	// Actions
+    // Actions
+    async function getNewTripId() {
+        try {
+            const newDocRef = doc(collection(db, 'trips'));
+            return newDocRef.id;
+        } catch (error) {
+            const errorOut = `Error generating new trip ID: ${error.message}`;
+            console.error(errorOut);
+            throw new Error(errorOut);
+        }
+    }
 
-	// Set the active trip by tripId
-	function setActiveTrip(tripId) {
-		trip.value = getTripById(tripId);
-	}
+	async function setActiveTrip(tripId) {
+        activeTrip.value = await getTripById(tripId);
+        if (activeTrip.value) {
+            await linesStore.loadLines(tripId);
+            activeTrip.value.linesCount = linesStore.linesCount;
+            activeTrip.value.hasLines = linesStore.linesCount > 0;
+        }
+    }
 
-	// Clear active trip
-	function clearActiveTrip() {
-		trip.value = null;
-	}
+    async function getTripById(tripId) {
+        if (activeTrip.value?.tripId === tripId) {
+            return activeTrip.value;
+        }
+        if (!trips.value || trips.value.length === 0) {
+            const isAdmin = store.getters.isAdmin;
+            const userId = store.getters.userId;
+            if (isAdmin) {
+                await loadTrips();
+            } else if (userId) {
+                await loadTrips(userId);
+            }
+        }
+        const localTrip = trips.value.find(t => t.tripId === tripId) || null;
+        if (!localTrip) {
+            const errorOut = `Error : Trip not found`;
+            console.error(errorOut);
+            throw new Error(errorOut);
+        }
+        return localTrip;
+    }
 
-	// Generate a new trip ID
-	async function getNewTripId() {
-		try {
-			const newDocRef = doc(collection(db, 'trips'));
-			return newDocRef.id;
-		} catch (error) {
-			const errorOut = `Error generating new trip ID: ${error.message}`;
-			console.error(errorOut);
-			throw new Error(errorOut);
-		}
-	}
+    function clearActiveTrip() {
+        activeTrip.value = null;
+    }
 
-	// Create a new trip and add it to local store
-	async function createTrip(name) {
-		try {
-			const tripId = await getNewTripId();
-			const tripData = {
-				tripId,
-				name,
-				description: 'default description',
-				userId: null,
-				imageName: '',
-				linesCount: 0
-			};
-			await setDoc(doc(db, 'trips', tripId), tripData);
-			trips.value.push(tripData);
-		} catch (error) {
-			const errorOut = `Error creating trip: ${error.message}`;
-			console.error(errorOut);
-			throw new Error(errorOut);
-		}
-	}
+    async function updateTripImage(tripId, imageName) {
+        try {
+            const tripRef = doc(db, "trips", tripId);
+            await setDoc(tripRef, { imageName }, { merge: true });
+            activeTrip.imageName = imageName;
+        } catch (error) {
+            const errorOut = `Error updating trip image: ${error.message}`;
+            console.error(errorOut);
+            throw new Error(errorOut);
+        }
+    }
 
-	// Load all trips from Firestore
-	async function loadTrips() {
-		try {
-			const tripsCollectionRef = collection(db, 'trips');
-			const tripsQuery = query(tripsCollectionRef, orderBy('name', 'asc'));
-			const querySnapshot = await getDocs(tripsQuery);
-			const loadedTrips = querySnapshot.docs.map(docSnap => ({
-				tripId: docSnap.id,
-				...docSnap.data()
-			}));
-			trips.value = loadedTrips;
-		} catch (error) {
-			const errorOut = `Error loading trips: ${error.message}`;
-			console.error(errorOut);
-			throw new Error(errorOut);
-		}
-	}
+    async function deleteTripImage(tripId) {
+        try {
+            const tripRef = doc(db, "trips", tripId);
+            await updateDoc(tripRef, { imageName: '' });
+            activeTrip.imageName = '';
+            return tripId;
+        } catch (error) {
+            const errorOut = `Error deleting trip image: ${error.message}`;
+            console.error(errorOut);
+            throw new Error(errorOut);
+        }
+    }
 
-	// Fetch a specific trip by ID and update local state
-	async function fetchTripById(tripId) {
-		try {
-			const docRef = doc(db, 'trips', tripId);
-			const docSnap = await getDoc(docRef);
-			if (!docSnap.exists()) {
-				throw new Error(`Trip with ID ${tripId} does not exist.`);
-			}
+    async function loadTrips(userId = null) {
+        try {
+            const tripsCollectionRef = collection(db, 'trips');
+            let tripsQuery;
+            if (userId) {
+                tripsQuery = query(tripsCollectionRef, orderBy('name', 'asc'), where("userId", "==", userId));
+            } else {
+                tripsQuery = query(tripsCollectionRef, orderBy('name', 'asc'));
+            }
+            const querySnapshot = await getDocs(tripsQuery);
+            const loadedTrips = querySnapshot.docs.map(docSnap => ({
+                tripId: docSnap.id,
+                ...docSnap.data()
+            }));
+            trips.value = loadedTrips;
+        } catch (error) {
+            const errorOut = `Error loading trips: ${error.message}`;
+            console.error(errorOut);
+            throw new Error(errorOut);
+        }
+    }
 
-			const tripData = docSnap.data();
-			// Load lines using linesStore
-			const linesCollectionRef = collection(docRef, 'lines');
-			const linesSnapshot = await getDocs(linesCollectionRef);
-			const lines = linesSnapshot.docs.map(lineDoc => ({
-				lineId: lineDoc.id,
-				...lineDoc.data()
-			}));
+    async function createTrip(tripData) {
+        try {
+            await setDoc(doc(db, 'trips', tripData.tripId), tripData);
+            trips.value.push(tripData);
+        } catch (error) {
+            const errorOut = `Error creating trip: ${error.message}`;
+            console.error(errorOut);
+            throw new Error(errorOut);
+        }
+    }
 
-			const loadedTrip = {
-				tripId: docSnap.id,
-				...tripData,
-				lines
-			};
+    async function updateTrip(tripData) {
+        try {
+            await setDoc(doc(db, "trips", tripData.tripId), tripData);
+            activeTrip.value = { ...activeTrip.value, ...tripData };
+        } catch (error) {
+            const errorOut = `Error updating trip: ${error.message}`;
+            console.error(errorOut);
+            throw new Error(errorOut);
+        }
+    }
 
-			const index = trips.value.findIndex(t => t.tripId === tripId);
-			if (index !== -1) {
-				trips.value[index] = loadedTrip;
-			} else {
-				trips.value.push(loadedTrip);
-			}
+    async function deleteTrip(tripId) {
+        try {
+            const tripDocRef = doc(db, 'trips', tripId);
+            const docSnap = await getDoc(tripDocRef);
+            if (!docSnap.exists()) {
+                throw new Error(`Trip document ${tripId} does not exist`);
+            }
+            const linesCollectionRef = collection(db, 'trips', tripId, 'lines');
+            const linesSnapshot = await getDocs(linesCollectionRef);
+            const batch = writeBatch(db);
+            linesSnapshot.docs.forEach(lineDoc => batch.delete(lineDoc.ref));
+            batch.delete(tripDocRef);
+            await batch.commit();
+            const index = trips.value.findIndex(t => t.tripId === tripId);
+            if (index !== -1) trips.value.splice(index, 1);
+            if (activeTrip.value?.tripId === tripId) activeTrip.value = null;
+        } catch (error) {
+            const errorOut = `Error deleting trip: ${error.message}`;
+            console.error(errorOut);
+            throw new Error(errorOut);
+        }
+    }
 
-			trip.value = loadedTrip;
-			return loadedTrip;
-		} catch (error) {
-			const errorOut = `Error fetching trip by ID: ${error.message}`;
-			console.error(errorOut);
-			throw new Error(errorOut);
-		}
-	}
+    return {
+        // State
+        trips,
+        activeTrip,
 
-	// Delete a trip and its lines from Firestore and update state
-	async function deleteTrip(tripId) {
-		try {
-			const tripDocRef = doc(db, 'trips', tripId);
-			const docSnap = await getDoc(tripDocRef);
-			if (!docSnap.exists()) {
-				throw new Error(`Trip document ${tripId} does not exist`);
-			}
-			const linesCollectionRef = collection(db, 'trips', tripId, 'lines');
-			const linesSnapshot = await getDocs(linesCollectionRef);
-			const batch = writeBatch(db);
-			linesSnapshot.docs.forEach(lineDoc => batch.delete(lineDoc.ref));
-			batch.delete(tripDocRef);
-			await batch.commit();
+        // Reset
+        $reset,
 
-			const index = trips.value.findIndex(trip => trip.tripId === tripId);
-			if (index !== -1) trips.value.splice(index, 1);
-			if (trip.value?.tripId === tripId) trip.value = null;
-		} catch (error) {
-			const errorOut = `Error deleting trip: ${error.message}`;
-			console.error(errorOut);
-			throw new Error(errorOut);
-		}
-	}
+        // Getters
+        hasTrips,
+        tripsCount,
+        activeTripLines,
+		activeTripHasLines,
+		activeTripLinesCount,
 
-	// Delete a line from a trip and update local state
-	async function deleteLine(tripId, lineId) {
-		await linesStore.deleteLine(tripId, lineId);
-		const tripObj = getTripById(tripId);
-		if (tripObj) {
-			const index = tripObj.lines.findIndex(line => line.lineId === lineId);
-			if (index !== -1) {
-				tripObj.lines.splice(index, 1);
-				tripObj.linesCount = tripObj.lines.length;
-			}
-		}
-	}
-
-	// Load lines for a given trip and update local state
-	async function loadLines(tripId) {
-		await linesStore.loadLines(tripId);
-		const tripObj = getTripById(tripId);
-		if (tripObj) {
-			tripObj.lines = [...linesStore.lines];
-			tripObj.linesCount = tripObj.lines.length;
-		}
-	}
-
-	return {
-		// State
-		trips,
-		trip,
-
-		// Reset
-		$reset,
-
-		// Getters
-		hasTrips,
-		tripsCount,
-
-		// Actions
-		getNewTripId,
-		createTrip,
-		loadTrips,
-		fetchTripById,
-		deleteTrip,
-		deleteLine,
-		loadLines,
-		setActiveTrip,
-		clearActiveTrip
-	};
+        // Actions
+        getNewTripId,
+        setActiveTrip,
+        clearActiveTrip,
+        updateTripImage,
+        deleteTripImage,
+        loadTrips,
+        createTrip,
+        updateTrip,
+        deleteTrip
+    };
 });

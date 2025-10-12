@@ -8,18 +8,18 @@
                 <div v-if="isLoading">
                     <base-spinner></base-spinner>
                 </div>
-                <div v-else-if="trip">
-                    <h2>{{ trip.name }}</h2>
-                    <p>linesCount: {{ trip.linesCount }}</p>
-                    <trip-form @save-data="updateTripLocal" :trip="trip"></trip-form>
+                <div v-else-if="tripsStore.activeTrip">
+                    <h2>{{ tripsStore.activeTrip.name }}</h2>
+                    <p>linesCount: {{ tripsStore.activeTrip.linesCount }}</p>
+                    <trip-form @save-data="updateTripLocal" :trip="tripsStore.activeTrip"></trip-form>
                 </div>
             </base-card>
         </section>
         <section>
-            <base-card>
-                <ul v-if="hasLines">
+            <base-card v-if="tripsStore.activeTripHasLines">
+                <ul>
                     <draggable
-                        :list="trip.lines"
+                        :list="tripsStore.activeTripLines"
                         :disabled="!draggableEnabled"
                         item-key="order"
                         class="list-group"
@@ -32,7 +32,7 @@
                                 <line-actions
                                     :key="element.lineId"
                                     :line="element"
-                                    :trip-id="trip.tripId"
+                                    :trip-id="tripsStore.activeTrip.tripId"
                                     @line-is-edited="lineIsEdited"
                                 ></line-actions>
                             </div>
@@ -50,8 +50,10 @@
 </template>
 
 <script>
-import { ref, computed, onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useStore } from 'vuex';
+import { useTripsStore } from '@/stores/trips';
+import { useLinesStore } from '@/stores/lines';
 import { useRoute } from 'vue-router';
 import { useError } from '@/composables/useError';
 import draggable from "vuedraggable";
@@ -70,28 +72,23 @@ export default {
     setup() {
         const componentName = 'TripEdit';
         const store = useStore();
+		const tripsStore = useTripsStore();
+		const linesStore = useLinesStore();
         const route = useRoute();
         const { error, setError, clearError } = useError(componentName);
 
         const isLoading = ref(false);
         const draggableEnabled = ref(true);
         const dragging = ref(false);
-        const tripId = ref(null);
 
-        // Vuex getters
-        const trip = computed(() => store.getters['trips/trip']);
-        const hasLines = computed(() => store.getters['trips/hasLines']);
-
-        // Fetch trip on mount
         onMounted(() => {
-            tripId.value = route.params.tripId;
-            tripByIdLocal();
+			tripByIdLocal(route.params.tripId);
         });
 
-        async function tripByIdLocal() {
+        async function tripByIdLocal(tripId) {
             isLoading.value = true;
             try {
-                await store.dispatch('trips/tripById', tripId.value);
+				await tripsStore.setActiveTrip(tripId);
             } catch (err) {
                 setError(err.message || err);
             }
@@ -100,9 +97,9 @@ export default {
 
         async function updateTripLocal(tripData) {
             isLoading.value = true;
-            tripData.linesCount = trip.value.linesCount;
+			tripData.userId = store.getters.userId;
             try {
-                await store.dispatch('trips/updateTrip', tripData);
+				await tripsStore.updateTrip(tripData);
             } catch (err) {
                 setError(err.message || err);
             }
@@ -111,11 +108,11 @@ export default {
 
         async function createLineLocal(lineData) {
             isLoading.value = true;
-            const lastOrder = trip.value.lines.length;
+            const lastOrder = tripsStore.activeTripLines.length;
             lineData.order = lastOrder + 1;
-            lineData.tripId = trip.value.tripId;
+            lineData.tripId = tripsStore.activeTrip.tripId;
             try {
-                await store.dispatch('trips/createLine', lineData);
+				await linesStore.createLine(lineData);
             } catch (err) {
                 setError(err.message || err);
             }
@@ -128,10 +125,10 @@ export default {
 
         async function onEnd(evt) {
             dragging.value = false;
-            trip.value.lines.forEach((line, index) => {
+            tripsStore.activeTripLines.forEach((line, index) => {
                 line.order = index + 1;
             });
-            await store.dispatch('trips/updateLines', { lines: trip.value.lines, tripId: trip.value.tripId });
+			await linesStore.updateLines(tripsStore.activeTripLines, tripsStore.activeTrip.tripId);
         }
 
         return {
@@ -139,10 +136,9 @@ export default {
             error,
             clearError,
             isLoading,
+			tripsStore,
             draggableEnabled,
             dragging,
-            trip,
-            hasLines,
             tripByIdLocal,
             updateTripLocal,
             createLineLocal,

@@ -1,68 +1,196 @@
 import { ref, computed } from 'vue';
 import { defineStore } from 'pinia';
 import { db } from '../firebase.js';
-import { collection, doc, getDocs, deleteDoc } from 'firebase/firestore';
+import { collection, doc, getDocs, updateDoc, setDoc, deleteDoc, query, orderBy } from 'firebase/firestore';
 
 export const useLinesStore = defineStore('lines', () => {
-	// State
-	const lines = ref([]);
-	const tripId = ref(undefined);
+    // State
+    const lines = ref([]);
+    const tripId = ref(undefined);
 
-	// Reset state
-	function $reset() {
-		lines.value = [];
-		tripId.value = undefined;
-	}
+    // Reset state
+    function $reset() {
+        lines.value = [];
+        tripId.value = undefined;
+    }
 
-	// Getters
-	const linesCount = computed(() => lines.value.length);
+    // Getters
+    const linesCount = computed(() => lines.value.length);
 
 	// Actions
-
-	// Delete a line in Firestore
-	async function deleteLine(localTripId, localLineId) {
-		console.log(`Deleting line ${localLineId} from trip ${localTripId}`);
+	async function getNewLineId(tripId) {
 		try {
-			await deleteDoc(doc(db, 'trips', localTripId, 'lines', localLineId));
+			if (!tripId) {
+				throw new Error('Trip ID is required to generate a new line ID.');
+			}
+			const newDocRef = doc(collection(db, 'trips', tripId, 'lines'));
+			return newDocRef.id;
 		} catch (error) {
-			const errorOut = `Error deleting line: ${error.message}`;
+			const errorOut = `Error generating new line ID for trip ID ${tripId}: ${error.message}`;
 			console.error(errorOut);
 			throw new Error(errorOut);
 		}
 	}
 
-	// Load lines from Firestore for a given trip
-	async function loadLines(localTripId) {
+    function getLinesForTrip(requestedTripId) {
+        if (tripId.value === requestedTripId) {
+            return lines.value;
+        }
+        return [];
+    }
+
+    // Actions
+    async function loadLines(localTripId) {
+        try {
+            const docRef = doc(db, 'trips', localTripId);
+            const linesCollectionRef = collection(docRef, 'lines');
+            const linesQuery = query(linesCollectionRef, orderBy('order'));
+            const querySnapshot = await getDocs(linesQuery);
+            const loadedLines = querySnapshot.docs.map(doc => ({
+                lineId: doc.id,
+                ...doc.data()
+            }));
+            lines.value = loadedLines;
+            tripId.value = localTripId;
+			sortLines();
+            recalculateLineExtraValues();
+        } catch (error) {
+            const errorOut = `Error fetching lines for trip ID ${localTripId}: ${error.message}`;
+            console.error(errorOut);
+            throw new Error(errorOut);
+        }
+    }
+
+	async function updateLines(lines, tripId) {
 		try {
-			const docRef = doc(db, 'trips', localTripId);
-			const linesCollectionRef = collection(docRef, 'lines');
-			const linesSnapshot = await getDocs(linesCollectionRef);
-			const loadedLines = linesSnapshot.docs.map(doc => ({
-				lineId: doc.id,
-				...doc.data()
-			}));
-			lines.value = loadedLines;
-			tripId.value = localTripId;
+			const linesCollectionRef = collection(db, `trips/${tripId}/lines`);
+			lines.forEach(async line => {
+				const lineRef = doc(linesCollectionRef, line.lineId);
+				await updateDoc(lineRef, line);
+			});
+			lines.value = lines;
+			sortLines();
+            recalculateLineExtraValues();
 		} catch (error) {
-			const errorOut = `Error fetching lines for trip ID ${localTripId}: ${error.message}`;
+			const errorOut = `Error updating lines: ${error.message}`;
 			console.error(errorOut);
 			throw new Error(errorOut);
 		}
 	}
+    async function createLine(lineData) {
+        try {
+			const lineId = await getNewLineId(lineData.tripId);
+			lineData.lineId = lineId;
+			await setDoc(doc(db, `trips/${lineData.tripId}/lines`, lineId), lineData);
+            if (tripId.value === lineData.tripId) {
+                lines.value.push(lineData);
+                sortLines();
+                recalculateLineExtraValues();
+            }
+        } catch (error) {
+            const errorOut = `Error creating line: ${error.message}`;
+            console.error(errorOut);
+            throw new Error(errorOut);
+        }
+    }
 
-	return {
-		// State
-		tripId,
-		lines,
+	async function editLine(lineData) {
+		try {
+			await setDoc(doc(db, `trips/${lineData.tripId}/lines/`, lineData.lineId), lineData);
+			const index = lines.value.findIndex(line => line.lineId === lineData.lineId);
+			if (index !== -1) {
+				lines.value.splice(index, 1, { ...lines.value[index], ...lineData });
+			}
+			sortLines();
+			recalculateLineExtraValues();
+		} catch (error) {
+			const errorOut = `Error editing line: ${error.message}`;
+			console.error(errorOut);
+			throw new Error(errorOut);
+		}
+	}
+    async function deleteLine(localTripId, localLineId) {
+        try {
+            await deleteDoc(doc(db, 'trips', localTripId, 'lines', localLineId));
+            if (tripId.value === localTripId) {
+                lines.value = lines.value.filter(line => line.lineId !== localLineId);
+				sortLines();
+                recalculateLineExtraValues();
+            }
+        } catch (error) {
+            const errorOut = `Error deleting line: ${error.message}`;
+            console.error(errorOut);
+            throw new Error(errorOut);
+        }
+    }
 
-		// Reset
-		$reset,
+    async function passedLine(localLineId, localPassed) {
+        try {
+            const lineRef = doc(db, "trips", tripId.value, "lines", localLineId);
+            await updateDoc(lineRef, { passed: localPassed });
+            const line = lines.value.find(line => line.lineId === localLineId);
+            if (line) line.passed = localPassed;
+        } catch (error) {
+            const errorOut = `Error updating passed line status: ${error.message}`;
+            console.error(errorOut);
+            throw new Error(errorOut);
+        }
+    }
 
-		// Getters
-		linesCount,
+    function sortLines() {
+		lines.value.sort((a, b) => a.order - b.order);
+    }
 
-		// Actions
-		loadLines,
-		deleteLine,
-	};
+    function recalculateLineExtraValues() {
+        lines.value.forEach((line, index) => {
+            line.kmPart = null;
+            if (index === 0) {
+                line.kmPart = 0;
+            } else {
+                let previousKmTotal = null;
+                for (let i = index - 1; i >= 0; i--) {
+                    if (lines.value[i].kmTotal !== null) {
+                        previousKmTotal = lines.value[i].kmTotal;
+                        break;
+                    }
+                }
+                if (line.kmTotal !== null && previousKmTotal !== null) {
+                    line.kmPart = parseFloat((line.kmTotal - previousKmTotal).toFixed(2));
+                }
+            }
+            line.interest.forEach(value => {
+                line[value] = true;
+            });
+            if (line.close) {
+                line.close = false;
+            }
+            const nextLine = lines.value[index + 1];
+            if (index < lines.value.length - 1 && line.kmTotal !== null && nextLine?.kmTotal !== null) {
+                if (nextLine.kmTotal - line.kmTotal < 2) {
+                    line.close = true;
+                }
+            }
+        });
+    }
+
+    return {
+        // State
+        tripId,
+        lines,
+
+        // Reset
+        $reset,
+
+        // Getters
+        linesCount,
+
+        // Actions
+		getLinesForTrip,
+        loadLines,
+		updateLines,
+        createLine,
+		editLine,
+        deleteLine,
+        passedLine
+    };
 });

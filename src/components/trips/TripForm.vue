@@ -51,8 +51,9 @@
 </template>
 
 <script>
-import { ref, computed, onMounted } from 'vue';
+import { ref, toRef, computed, onMounted } from 'vue';
 import { useStore } from 'vuex';
+import { useTripsStore } from '@/stores/trips';
 import { useError } from '@/composables/useError';
 
 export default {
@@ -68,13 +69,14 @@ export default {
     setup(props, { emit }) {
         const componentName = 'TripForm';
         const store = useStore();
+		const tripsStore = useTripsStore();
         const { error, setError, clearError } = useError(componentName);
 
         // Form fields
         const name = ref({ val: '', isValid: true });
         const description = ref({ val: '', isValid: true });
         const imageName = ref({ val: '', isValid: true });
-        const tripId = ref('');
+
         const isLoading = ref(false);
         const formIsValid = ref(true);
         const imageUrl = ref('');
@@ -82,26 +84,26 @@ export default {
         const imagePreview = ref(null);
         const imageNameOriginal = ref('');
 
+		// Computed for image source
+		const imageSrc = computed(() => imagePreview.value ? imagePreview.value : imageUrl.value);
+		const tripId = ref(props.trip.tripId || null);
+
         // Upload progress (getter/setter via computed)
         const uploadProgressLocal = computed({
             get: () => store.getters['tripsStorage/uploadProgress'],
             set: (val) => store.commit('tripsStorage/setUploadProgress', val)
         });
 
-        // Computed for image source
-        const imageSrc = computed(() => imagePreview.value ? imagePreview.value : imageUrl.value);
-
         // View/Print links
-        const tripViewLink = computed(() => `/trip/view/${tripId.value}`);
-        const tripPrintLink = computed(() => `/trip/view/print/${tripId.value}`);
+        const tripViewLink = computed(() => (tripId.value ? `/trip/view/${tripId.value}` : ''));
+        const tripPrintLink = computed(() => (tripId.value ? `/trip/view/print/${tripId.value}` : ''));
 
         // Initialize form fields
         onMounted(async () => {
-            if (props.trip.tripId) {
-                tripId.value = props.trip.tripId;
-            } else {
-                await setTripId();
-            }
+            if (!tripId.value) {
+				tripId.value = await tripsStore.getNewTripId();
+			}
+
             name.value.val = props.trip.name || '';
             description.value.val = props.trip.description || '';
             imageName.value.val = props.trip.imageName || '';
@@ -110,15 +112,6 @@ export default {
                 imageNameOriginal.value = imageName.value.val;
             }
         });
-
-        // Store actions
-        async function setTripId() {
-            try {
-                tripId.value = await store.dispatch('trips/getTripNewId');
-            } catch (err) {
-                setError(err.message || err);
-            }
-        }
 
         async function fetchImageUrlLocal() {
             const tripData = {
@@ -140,7 +133,7 @@ export default {
             try {
                 await Promise.all([
                     store.dispatch('tripsStorage/deleteStorageObject', tripData),
-                    store.dispatch('trips/deleteTripImage', tripData)
+					tripsStore.deleteTripImage(tripId)
                 ]);
             } catch (err) {
                 setError(err.message || err);
@@ -165,10 +158,10 @@ export default {
             const file = imageData.value;
             isLoading.value = true;
             try {
-                const fileName = `trips/${tripId.value}/${imageData.value.name}`;
+                const fileName = `trips/${tripId}/${imageData.value.name}`;
                 const [downloadURL] = await Promise.all([
                     store.dispatch('tripsStorage/uploadStorageObject', { file, path: fileName }),
-                    store.dispatch('trips/updateTripImage', { tripId: tripId.value, imageName: imageData.value.name })
+					tripsStore.updateTripImage(tripId, imageData.value.name)
                 ]);
                 imageUrl.value = downloadURL;
             } catch (err) {
@@ -229,7 +222,6 @@ export default {
             name,
             description,
             imageName,
-            tripId,
             isLoading,
             formIsValid,
             imageUrl,
@@ -240,8 +232,7 @@ export default {
             imageSrc,
             tripViewLink,
             tripPrintLink,
-            trip: props.trip,
-            setTripId,
+			trip: toRef(props, 'trip'),
             fetchImageUrlLocal,
             deleteImageLocal,
             previewImage,
