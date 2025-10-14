@@ -86,7 +86,7 @@ export default {
 
 		// Computed for image source
 		const imageSrc = computed(() => imagePreview.value ? imagePreview.value : imageUrl.value);
-		let tripId = props.trip.tripId || null;
+		const tripId = ref(props.trip.tripId || null);
 
         // Upload progress (getter/setter via computed)
         const uploadProgressLocal = computed({
@@ -95,13 +95,13 @@ export default {
         });
 
         // View/Print links
-        const tripViewLink = computed(() => (tripId ? `/trip/view/${tripId}` : ''));
-        const tripPrintLink = computed(() => (tripId ? `/trip/view/print/${tripId}` : ''));
+        const tripViewLink = computed(() => (tripId.value ? `/trip/view/${tripId.value}` : ''));
+        const tripPrintLink = computed(() => (tripId.value ? `/trip/view/print/${tripId.value}` : ''));
 
         // Initialize form fields
         onMounted(async () => {
-            if (!tripId) {
-				tripId = await tripsStore.getNewTripId();
+            if (!tripId.value) {
+				tripId.value = await tripsStore.getNewTripId();
 			}
 
             name.value.val = props.trip.name || '';
@@ -115,7 +115,7 @@ export default {
 
         async function fetchImageUrlLocal() {
             const tripData = {
-                tripId: tripId,
+                tripId: tripId.value,
                 imageName: props.trip.imageName,
             };
             try {
@@ -127,13 +127,13 @@ export default {
 
         async function deleteImageLocal() {
             const tripData = {
-                tripId: tripId,
+                tripId: tripId.value,
                 imageName: props.trip.imageName,
             };
             try {
                 await Promise.all([
                     store.dispatch('tripsStorage/deleteStorageObject', tripData),
-					tripsStore.deleteTripImage(tripId)
+					tripsStore.deleteTripImage(tripId.value)
                 ]);
             } catch (err) {
                 setError(err.message || err);
@@ -158,10 +158,10 @@ export default {
             const file = imageData.value;
             isLoading.value = true;
             try {
-                const fileName = `trips/${tripId}/${imageData.value.name}`;
+                const fileName = `trips/${tripId.value}/${imageData.value.name}`;
                 const [downloadURL] = await Promise.all([
                     store.dispatch('tripsStorage/uploadStorageObject', { file, path: fileName }),
-					tripsStore.updateTripImage(tripId, imageData.value.name)
+					tripsStore.updateTripImage(tripId.value, imageData.value.name)
                 ]);
                 imageUrl.value = downloadURL;
             } catch (err) {
@@ -207,7 +207,7 @@ export default {
             }
 
             const tripData = {
-                tripId: tripId,
+                tripId: tripId.value,
                 name: name.value.val,
                 description: description.value.val,
                 imageName: imageName.value.val,
@@ -226,6 +226,8 @@ export default {
             formIsValid,
             imageUrl,
             imageData,
+            imagePreview,
+            imageNameOriginal,
             uploadProgressLocal,
             imageSrc,
             tripViewLink,
