@@ -24,10 +24,9 @@
 <script>
 import { ref, computed } from 'vue';
 import { useStore } from 'vuex';
+import { useUsersStore } from '@/stores/users';
 import { useRouter } from 'vue-router';
 import { useError } from '@/composables/useError';
-import { cloudFunctions } from '../../firebase.js';
-import { httpsCallable } from 'firebase/functions';
 
 export default {
     name: 'UserActions',
@@ -42,44 +41,35 @@ export default {
 
         // Vuex and router
         const store = useStore();
+		const usersStore = useUsersStore();
         const router = useRouter();
-
-        // Utils and error composables
         const { setError, clearError, error } = useError(componentName);
 
-        // Local state
         const isLoading = ref(false);
+        const authUserId = store.getters['userId'];
 
-        // Computed: get current userId from store
-        const currentUserId = computed(() => store.getters['userId']);
+		const user = props.user;
+        const userEditLink = `/user/edit/${user.userId}`;
 
-        // Computed: edit link
-        const userEditLink = computed(() => `/user/edit/${props.user.userId}`);
-
-        // Delete user method
         async function deleteUserLocal() {
-            if (currentUserId.value === props.user.userId) {
-                setError('You cannot delete yourself!');
+            if (authUserId === user.userId) {
+                alert('You cannot delete yourself!');
                 return;
             }
 
-            const confirmed = confirm(`Are you sure you want to delete user: ${props.user.name}?`);
+            const confirmed = confirm(`Are you sure you want to delete user: ${user.name}?`);
             if (!confirmed) {
                 return;
             }
 
             isLoading.value = true;
-
             try {
-                const deleteUserFn = httpsCallable(cloudFunctions, 'deleteUser');
-                await deleteUserFn({ userId: props.user.userId });
+                await usersStore.deleteUser(user.userId);
             } catch (err) {
                 setError('An error occurred while deleting the user.');
                 isLoading.value = false;
                 return;
             }
-
-            await store.dispatch('users/deleteUser', { userId: props.user.userId });
             isLoading.value = false;
             router.replace('/users');
         }

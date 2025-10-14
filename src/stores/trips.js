@@ -1,4 +1,4 @@
-import { ref, computed, watchEffect } from 'vue';
+import { ref, computed } from 'vue';
 import { useStore } from 'vuex';
 import { defineStore } from 'pinia';
 import { db } from '../firebase.js';

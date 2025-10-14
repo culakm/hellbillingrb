@@ -18,10 +18,9 @@
 <script>
 import { ref, computed } from 'vue';
 import { useStore } from 'vuex';
+import { useUsersStore } from '@/stores/users';
 import { useRouter } from 'vue-router';
 import { useError } from '@/composables/useError';
-import { cloudFunctions } from '../../firebase.js';
-import { httpsCallable } from 'firebase/functions';
 import UserForm from '../../components/users/UserForm.vue';
 
 export default {
@@ -32,6 +31,7 @@ export default {
     setup() {
         const componentName = 'UserCreate';
         const store = useStore();
+		const usersStore = useUsersStore();
         const router = useRouter();
         const { error, setError, clearError } = useError(componentName);
 
@@ -41,14 +41,13 @@ export default {
         async function createUserLocal(userData) {
             isLoading.value = true;
             try {
-                const userExists = await store.dispatch('users/userByEmail', userData.email);
+				const userExists = await usersStore.userByEmail(userData.email);
                 if (userExists) {
                     setError(`User with email ${userExists.email} already exists!`);
                     isLoading.value = false;
                     return;
                 }
-                const createUser = httpsCallable(cloudFunctions, 'createUser');
-                await createUser({ user: userData });
+                await usersStore.createUser(userData);
             } catch (err) {
                 setError(err.message || err);
                 isLoading.value = false;

@@ -2,23 +2,23 @@
     <form @submit.prevent="submitForm">
         <div class="form-control" :class="{ invalid: !name.isValid }">
             <label for="name">Name</label>
-            <input type="text" id="name" v-model.trim="name.val" @blur="clearValidity('name')" />
+            <input type="text" autocomplete="off" id="name" v-model.trim="name.val" @blur="clearValidity('name')" />
             <p v-if="!name.isValid">name must not be empty!</p>
         </div>
         <div class="form-control" :class="{ invalid: !email.isValid }">
             <label for="email">Email</label>
-            <input type="text" id="email" v-model.trim="email.val" @blur="clearValidity('email')" />
+            <input type="text" autocomplete="off" id="email" v-model.trim="email.val" @blur="clearValidity('email')" />
             <p v-if="!email.isValid">email must not be empty!</p>
         </div>
         <div class="form-control" :class="{ invalid: !password1.isValid }">
             <label for="password1">Password</label>
-            <input type="password" autocomplete="new-password" id="password1" v-model.trim="password1.val"
+            <input type="password" autocomplete="off" id="password1" v-model.trim="password1.val"
                 @blur="clearValidity('password1')" />
             <p v-if="!password1.isValid">password must not be empty!</p>
         </div>
         <div class="form-control" :class="{ invalid: !password2.isValid }">
             <label for="password2">Confirm Password</label>
-            <input type="password" id="password2" v-model.trim="password2.val" @blur="clearValidity('password2')" />
+            <input type="password" autocomplete="off" id="password2" v-model.trim="password2.val" @blur="clearValidity('password2')" />
             <p v-if="!password2.isValid">password must not be empty!</p>
             <p v-if="!passwordMatch">Passwords must match!</p>
         </div>
@@ -45,7 +45,7 @@
 </template>
 
 <script>
-import { ref, toRef, computed, watch, onMounted } from 'vue';
+import { ref, toRef, onMounted } from 'vue';
 
 export default {
     name: 'UserForm',
@@ -68,17 +68,17 @@ export default {
         const description = ref({ val: '', isValid: true });
         const role = ref({ val: 'user', isValid: true });
 
-        const userId = ref('');
+        let userId = '';
         const formIsValid = ref(true);
         const passwordMatch = ref(true);
 
         // Detect edit mode
-        const isEdit = computed(() => !!props.user.userId);
+        const isEdit = !!props.user.userId;
 
         // Initialize form fields if editing
-        onMounted(() => {
+        onMounted(async () => {
             if (props.user.userId) {
-                userId.value = props.user.userId;
+                userId = props.user.userId;
             }
             name.value.val = props.user.name || '';
             description.value.val = props.user.description || '';
@@ -122,7 +122,7 @@ export default {
                 email.value.isValid = false;
                 formIsValid.value = false;
             }
-            if (!isEdit.value) {
+            if (!isEdit) {
                 if (password1.value.val === '') {
                     password1.value.isValid = false;
                     formIsValid.value = false;
@@ -156,15 +156,15 @@ export default {
             validateForm();
             if (!formIsValid.value) return;
 
-            const formData = {
-                userId: userId.value,
-                name: name.value.val,
-                email: email.value.val,
-                password: password1.value.val,
-                description: description.value.val,
-                role: role.value.val,
-            };
-            emit('save-data', formData);
+			const userData = {
+				userId: userId,
+				name: name.value?.val,
+				email: email.value?.val,
+				password: password1.value?.val,
+				description: description.value?.val,
+				role: role.value?.val,
+			};
+			emit('save-data', userData);
         }
 
         return {
@@ -175,10 +175,8 @@ export default {
             password2,
             description,
             role,
-            userId,
             formIsValid,
             passwordMatch,
-            isEdit,
             clearValidity,
             validateForm,
             submitForm,

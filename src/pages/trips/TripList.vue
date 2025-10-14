@@ -76,7 +76,7 @@ export default {
 					await tripsStore.loadTrips(userId);
 				}
 			} catch (err) {
-				setError(err.message || err);
+				setError(err.message || 'Failed to load trips');
 			}
 			isLoading.value = false;
 		}

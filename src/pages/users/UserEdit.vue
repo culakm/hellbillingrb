@@ -19,12 +19,10 @@
 
 <script>
 import { ref, onMounted } from 'vue';
-import { useStore } from 'vuex';
+import { useUsersStore } from '@/stores/users';
 import { useRoute, useRouter } from 'vue-router';
 import { useError } from '@/composables/useError';
 import UserForm from '../../components/users/UserForm.vue';
-import { cloudFunctions } from '../../firebase.js';
-import { httpsCallable } from 'firebase/functions';
 
 export default {
     name: 'UserEdit',
@@ -33,28 +31,24 @@ export default {
     },
     setup() {
         const componentName = 'UserEdit';
-        const store = useStore();
+		const usersStore = useUsersStore();
         const route = useRoute();
         const router = useRouter();
         const { error, setError, clearError } = useError(componentName);
 
         const isLoading = ref(false);
-        const userId = ref(null);
         const user = ref(null);
 
         // Fetch user data on mount
         onMounted(async () => {
-            userId.value = route.params.userId;
-            user.value = await store.dispatch('users/userByIdStore', userId.value);
+			user.value = await usersStore.userById(route.params.userId);
         });
 
         // Update user method
         async function updateUserLocal(userData) {
             isLoading.value = true;
             try {
-                const updateUser = httpsCallable(cloudFunctions, 'updateUser');
-                await updateUser({ user: userData });
-                // Optionally handle result.data.message here
+				await usersStore.updateUser(userData);
             } catch (err) {
                 setError(err.message || err);
                 isLoading.value = false;
