@@ -1,5 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router';
-const UserAuth = () => import('./pages/auth/UserAuth.vue');
+// import store from './store/index.js';
+import { useAuthStore } from '@/stores/auth';
+
+import indexPage from './pages/IndexPage.vue';
 
 import TripList from './pages/trips/TripList.vue';
 import TripCreate from './pages/trips/TripCreate.vue';
@@ -13,13 +16,15 @@ import UserEdit from './pages/users/UserEdit.vue';
 
 import CardsShow from './pages/cards/CardsShow.vue';
 
-import indexPage from './pages/IndexPage.vue';
+import NotFound from './pages/NotFound.vue';
+
 
 // dynamicky importovany component, ostatne su naloadovane vzdy
+const UserAuth = () => import('./pages/auth/UserAuth.vue');
 const testPage = () => import('./pages/test/TestPage.vue');
 
-import NotFound from './pages/NotFound.vue';
-import store from './store/index.js';
+
+
 
 const router = createRouter({
 	history: createWebHistory(),
@@ -46,9 +51,10 @@ const router = createRouter({
 });
 
 router.beforeEach((to, _, next) => {
-	if (to.meta.requiresAuth && !store.getters.isAuthenticated) {
+	const authStore = useAuthStore();
+	if (to.meta.requiresAuth && !authStore.isAuthenticated) {
 		next('/auth');
-	} else if (to.meta.requiresUnauth && store.getters.isAuthenticated) {
+	} else if (to.meta.requiresUnauth && authStore.isAuthenticated) {
 		next('/');
 	} else {
 		next();

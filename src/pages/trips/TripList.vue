@@ -8,9 +8,9 @@
 		</base-dialog>
 		<section>
 			<base-card>
-				<div v-if="isAuthenticated" class="controls">
+				<div v-if="authStore.isAuthenticated" class="controls">
 					<base-button link to="/trip/add">Add New Trip</base-button>
-					<div v-if="isAdmin">
+					<div v-if="authStore.isAdmin">
 					<input id="all-trips-flag" name="allTripsFlag" type="checkbox" v-model="allTripsFlag"/>
 					<label for="all-trips-flag">Zobraziť tripy všetkých uživateľov</label>
 					<p>Trips Count: {{ filteredTrips.length }}</p>
@@ -30,7 +30,7 @@
 
 <script>
 import { ref, computed, watch, onMounted } from 'vue';
-import { useStore } from 'vuex';
+import { useAuthStore } from '@/stores/auth';
 import { useTripsStore } from '@/stores/trips';
 import { useError } from '@/composables/useError';
 import TripActions from '../../components/trips/TripActions.vue';
@@ -42,7 +42,7 @@ export default {
 	},
 	setup() {
 		const componentName = 'TripList';
-		const store = useStore();
+		const authStore = useAuthStore();
 		const tripsStore = useTripsStore();
 		const { error, setError, clearError } = useError(componentName);
 
@@ -50,13 +50,9 @@ export default {
 		const allTripsFlag = ref(false);
 		const confirm = ref(false);
 
-		// Vuex getters
-		const isAuthenticated = computed(() => store.getters.isAuthenticated);
-		const isAdmin = computed(() => store.getters.isAdmin);
-
 		onMounted(async () => {
 			const savedFlag = localStorage.getItem('allTripsFlag');
-			if (isAdmin && savedFlag !== null) {
+			if (authStore.isAdmin && savedFlag !== null) {
 				allTripsFlag.value = savedFlag === 'true';
 			}
 			loadTripsLocal();
@@ -68,10 +64,10 @@ export default {
 
 		async function loadTripsLocal() {
 			isLoading.value = true;
-			const userId = store.getters.userId;
+			const userId = authStore.userId;
 			try {
-				if (isAdmin.value) {
-					await tripsStore.loadTrips();
+				if (authStore.isAdmin) {
+					await tripsStore.loadTrips()
 				} else {
 					await tripsStore.loadTrips(userId);
 				}
@@ -82,11 +78,11 @@ export default {
 		}
 
 		const filteredTrips = computed(() => {
-			if (isAdmin.value && allTripsFlag.value) {
+			if (authStore.isAdmin && allTripsFlag.value) {
 				return tripsStore.trips;
 			}
 			else {
-				return tripsStore.trips.filter(trip => trip.userId === store.getters.userId);
+				return tripsStore.trips.filter(trip => trip.userId === authStore.userId);
 			}
 
 		});
@@ -96,8 +92,7 @@ export default {
 			clearError,
 			isLoading,
 			confirm,
-			isAuthenticated,
-			isAdmin,
+			authStore,
 			tripsStore,
 			allTripsFlag,
 			filteredTrips

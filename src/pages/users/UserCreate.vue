@@ -1,5 +1,5 @@
 <template>
-    <main v-if="isAdmin">
+    <main v-if="authStore.isAdmin">
         <base-dialog @close="clearError" :show="!!error" title="An error is ocurred!">
             <p>{{ error }}</p>
         </base-dialog>
@@ -16,8 +16,8 @@
 </template>
 
 <script>
-import { ref, computed } from 'vue';
-import { useStore } from 'vuex';
+import { ref } from 'vue';
+import { useAuthStore } from '@/stores/auth';
 import { useUsersStore } from '@/stores/users';
 import { useRouter } from 'vue-router';
 import { useError } from '@/composables/useError';
@@ -30,13 +30,12 @@ export default {
     },
     setup() {
         const componentName = 'UserCreate';
-        const store = useStore();
+		const authStore = useAuthStore();
 		const usersStore = useUsersStore();
         const router = useRouter();
         const { error, setError, clearError } = useError(componentName);
 
         const isLoading = ref(false);
-        const isAdmin = computed(() => store.getters.isAdmin);
 
         async function createUserLocal(userData) {
             isLoading.value = true;
@@ -62,7 +61,7 @@ export default {
             error,
             clearError,
             isLoading,
-            isAdmin,
+            authStore,
             createUserLocal
         };
     }

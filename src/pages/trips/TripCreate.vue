@@ -17,7 +17,7 @@
 
 <script>
 import { ref } from 'vue';
-import { useStore } from 'vuex';
+import { useAuthStore } from '@/stores/auth';
 import { useTripsStore } from '@/stores/trips';
 import { useRouter } from 'vue-router';
 import { useError } from '@/composables/useError';
@@ -30,7 +30,7 @@ export default {
     },
     setup() {
         const componentName = 'TripCreate';
-        const store = useStore();
+        const authStore = useAuthStore();
 		const tripsStore = useTripsStore();
         const router = useRouter();
         const { error, setError, clearError } = useError(componentName);
@@ -39,7 +39,7 @@ export default {
 
         async function createTripLocal(tripData) {
 
-            tripData.userId = store.getters.userId;
+            tripData.userId = authStore.userId;
             isLoading.value = true;
             try {
 				await tripsStore.createTrip(tripData);

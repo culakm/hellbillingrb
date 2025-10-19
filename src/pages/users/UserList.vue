@@ -1,11 +1,11 @@
 <template>
-    <main v-if="isAdmin">
+    <main v-if="authStore.isAdmin">
         <base-dialog @close="clearError" :show="!!error" title="An error is ocurred!">
             <p>{{ error }}</p>
         </base-dialog>
         <section>
             <base-card>
-                <div v-if="isAuthenticated" class="controls">
+                <div v-if="authStore.isAuthenticated" class="controls">
                     <base-button link to="/user/add">Add New user</base-button>
                 </div>
                 <div v-if="isLoading">
@@ -21,8 +21,8 @@
 </template>
 
 <script>
-import { ref, computed, onMounted } from 'vue';
-import { useStore } from 'vuex';
+import { ref, onMounted } from 'vue';
+import { useAuthStore } from '@/stores/auth';
 import { useUsersStore } from '@/stores/users';
 import { useError } from '@/composables/useError';
 import UserActions from '../../components/users/UserActions.vue';
@@ -34,15 +34,11 @@ export default {
     },
     setup() {
         const componentName = 'UserList';
-        const store = useStore();
+        const authStore = useAuthStore();
 		const usersStore = useUsersStore();
         const { error, setError, clearError } = useError(componentName);
 
         const isLoading = ref(false);
-
-        // Vuex getters
-        const isAuthenticated = computed(() => store.getters.isAuthenticated);
-        const isAdmin = computed(() => store.getters.isAdmin);
 
 		onMounted(async () => {
 			if (!usersStore.users || !usersStore.hasUsers) {
@@ -65,8 +61,7 @@ export default {
             error,
             clearError,
             isLoading,
-            isAuthenticated,
-            isAdmin,
+			authStore,
 			usersStore
         };
     }

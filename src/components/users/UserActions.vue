@@ -23,7 +23,7 @@
 
 <script>
 import { ref, computed } from 'vue';
-import { useStore } from 'vuex';
+import { useAuthStore } from '@/stores/auth';
 import { useUsersStore } from '@/stores/users';
 import { useRouter } from 'vue-router';
 import { useError } from '@/composables/useError';
@@ -40,19 +40,18 @@ export default {
         const componentName = 'UserActions';
 
         // Vuex and router
-        const store = useStore();
+        const authStore = useAuthStore();
 		const usersStore = useUsersStore();
         const router = useRouter();
         const { setError, clearError, error } = useError(componentName);
 
         const isLoading = ref(false);
-        const authUserId = store.getters['userId'];
 
 		const user = props.user;
         const userEditLink = `/user/edit/${user.userId}`;
 
         async function deleteUserLocal() {
-            if (authUserId === user.userId) {
+            if (authStore.userId === user.userId) {
                 alert('You cannot delete yourself!');
                 return;
             }

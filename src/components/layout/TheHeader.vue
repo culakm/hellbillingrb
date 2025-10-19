@@ -7,20 +7,20 @@
         </div>
         <nav class="main-nav">
             <ul class="main-nav__items">
-                <li v-if="isAdmin" class="main-nav__item">
+                <li v-if="authStore.isAdmin" class="main-nav__item">
                     <router-link to="/test">Test page</router-link>
                 </li>
-				<li v-if="isAdmin" class="main-nav__item">
+				<li v-if="authStore.isAdmin" class="main-nav__item">
                     <router-link to="/cards" rel="noopener noreferrer">Cards</router-link>
                 </li>
-                <li v-if="isAdmin" class="main-nav__item">
+                <li v-if="authStore.isAdmin" class="main-nav__item">
                     <router-link to="/users">Users</router-link>
                 </li>
-                <li v-if="isAuthenticated" class="main-nav__item">
+                <li v-if="authStore.isAuthenticated" class="main-nav__item">
                     <router-link to="/trips">Trips</router-link>
                 </li>
-                <li v-if="isAuthenticated">
-                    <base-button @click="logoutLocal">Logout {{ email }}, role {{ role }}</base-button>
+                <li v-if="authStore.isAuthenticated">
+                    <base-button @click="logoutLocal">Logout {{ authStore.email }}, role {{ authStore.role }}</base-button>
                 </li>
                 <li v-else class="main-nav__item main-nav__item--cta">
                     <router-link to="/auth">Login</router-link>
@@ -35,14 +35,14 @@
     </header>
     <nav class="mobile-nav" :class="{ open: mobileNavOpened }">
         <ul class="mobile-nav__items" @click="toggleMobileNav">
-            <li v-if="isAuthenticated" class="main-nav__item">
+            <li v-if="authStore.isAuthenticated" class="main-nav__item">
                 <router-link to="/users">Users OK</router-link>
             </li>
-            <li v-if="isAuthenticated" class="main-nav__item">
+            <li v-if="authStore.isAuthenticated" class="main-nav__item">
                 <router-link to="/trips">Trips OK</router-link>
             </li>
-            <li v-if="isAuthenticated" class="main-nav__item main-nav__item--cta">
-                <base-button @click="logoutLocal">Logout {{ email }}, role {{ role }} hohoh</base-button>
+            <li v-if="authStore.isAuthenticated" class="main-nav__item main-nav__item--cta">
+                <base-button @click="logoutLocal">Logout {{ authStore.email }}, role {{ authStore.role }}</base-button>
             </li>
             <li v-else class="main-nav__item main-nav__item--cta">
                 <router-link to="/auth">Login</router-link>
@@ -53,27 +53,23 @@
 </template>
 
 <script>
-import { ref, computed } from 'vue';
-import { useStore } from 'vuex';
+import { ref } from 'vue';
+import { useAuthStore } from '@/stores/auth';
 import { useRouter } from 'vue-router';
 
 export default {
     name: 'TheHeader',
     setup() {
         const componentName = 'TheHeader';
-        const store = useStore();
+		const authStore = useAuthStore();
+
         const router = useRouter();
 
         const mobileNavOpened = ref(false);
 
-        const isAuthenticated = computed(() => store.getters.isAuthenticated);
-        const isAdmin = computed(() => store.getters.isAdmin);
-        const email = computed(() => store.getters.email);
-        const role = computed(() => store.getters.role);
-
         async function logoutLocal() {
             try {
-                await store.dispatch('logout');
+				authStore.logout();
                 router.replace('/');
             } catch (error) {
                 console.error(`Extra error, Component ${componentName}, ERROR: ${error.message}`);
@@ -87,10 +83,7 @@ export default {
         return {
             componentName,
             mobileNavOpened,
-            isAuthenticated,
-            isAdmin,
-            email,
-            role,
+            authStore,
             logoutLocal,
             toggleMobileNav
         };

@@ -1,6 +1,11 @@
 <template>
     <div>
-        <h1>Test page pinia</h1>
+        <h1>Test page piniaaa</h1>
+		<p> moje auth stores user: {{ authStore.user }}</p>
+
+
+
+
 		<p>meno tripu</p>
 		<input type="text" v-model="newTripName" />
 		<button @click="createTripLocal(newTripName)">Pridat trip</button>
@@ -46,6 +51,7 @@
 
 <script>
 import { ref,onMounted,computed, watchEffect } from 'vue';
+import { useAuthStore } from '@/stores/auth';
 import { useTripsStore } from '@/stores/trips';
 import TripActions from '../../components/trips/TripActions.vue';
 
@@ -56,12 +62,16 @@ export default {
 	},
     setup() {
         const componentName = 'TestPage';
+		const authStore = useAuthStore();
         const tripsStore = useTripsStore();
+
 		const filteredTripsFlag = ref(false);
 
 		const newTripName = ref('');
 
 		onMounted(async () => {
+			console.log('TestPage mounted, loading trips...');
+			console.log(' USER v store je: ', authStore.user);
 			tripsStore.loadTrips();
 		});
 
@@ -81,6 +91,7 @@ export default {
         return {
 			newTripName,
 			createTripLocal,
+			authStore,
             tripsStore,
 			filteredTripsFlag,
 			changefilteredTripsFlag,

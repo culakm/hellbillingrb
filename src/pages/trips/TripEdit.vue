@@ -51,7 +51,7 @@
 
 <script>
 import { ref, onMounted } from 'vue';
-import { useStore } from 'vuex';
+import { useAuthStore } from '@/stores/auth';
 import { useTripsStore } from '@/stores/trips';
 import { useLinesStore } from '@/stores/lines';
 import { useRoute } from 'vue-router';
@@ -71,7 +71,7 @@ export default {
     },
     setup() {
         const componentName = 'TripEdit';
-        const store = useStore();
+        const authStore = useAuthStore();
 		const tripsStore = useTripsStore();
 		const linesStore = useLinesStore();
         const route = useRoute();
@@ -97,7 +97,7 @@ export default {
 
         async function updateTripLocal(tripData) {
             isLoading.value = true;
-			tripData.userId = store.getters.userId;
+			tripData.userId = authStore.userId;
             try {
 				await tripsStore.updateTrip(tripData);
             } catch (err) {
