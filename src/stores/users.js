@@ -1,7 +1,7 @@
 import { ref, computed } from 'vue';
 import { defineStore } from 'pinia';
 import { db } from '../firebase.js';
-import { collection, doc, getDoc, setDoc, getDocs, query, orderBy, where } from "firebase/firestore";
+import { collection, getDocs, query, orderBy, where } from "firebase/firestore";
 import { cloudFunctions } from '../firebase.js';
 import { httpsCallable } from 'firebase/functions';
 

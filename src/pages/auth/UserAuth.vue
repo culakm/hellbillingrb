@@ -26,7 +26,6 @@
 
 <script>
 import { ref } from 'vue';
-// import { useStore } from 'vuex';
 import { useAuthStore } from '@/stores/auth';
 import { useRouter } from 'vue-router';
 import { useError } from '@/composables/useError';
@@ -35,7 +34,6 @@ export default {
 	name: 'UserAuth',
 	setup() {
 		const componentName = 'UserAuth';
-		// const store = useStore();
 		const authStore = useAuthStore();
 		const router = useRouter();
 		const { error, setError, clearError } = useError(componentName);

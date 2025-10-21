@@ -21,7 +21,6 @@
 
 <script>
 import { ref, toRef } from 'vue';
-import { useStore } from 'vuex';
 import { useLinesStore } from '@/stores/lines';
 import { useError } from '@/composables/useError';
 import LineView from './LineView.vue';
@@ -48,7 +47,6 @@ export default {
     },
     setup(props, { emit }) {
         const componentName = 'LineActions';
-        const store = useStore();
 		const linesStore = useLinesStore();
         const { error, setError, clearError } = useError(componentName);
 

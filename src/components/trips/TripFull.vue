@@ -12,7 +12,7 @@
 
 <script>
 import { ref, toRef, onMounted, watch } from 'vue';
-import { useStore } from 'vuex';
+import { useFirebaseStorage } from '@/composables/useFirebaseStorage';
 import { useError } from '@/composables/useError';
 
 export default {
@@ -26,26 +26,24 @@ export default {
     },
     setup(props) {
         const componentName = 'TripFull';
-        const store = useStore();
         const { error, setError, clearError } = useError(componentName);
 
         const imageUrl = ref('');
 
-        // Fetch image URL if imageName exists
         const fetchImageUrlLocal = async () => {
             if (!props.trip.imageName) return;
-            const tripData = {
-                tripId: props.trip.tripId,
-                imageName: props.trip.imageName,
-            };
+			console.log('Trip data:', props.trip);
+			console.log('props.trip.imageName', props.trip.imageName);
+
+			console.log('props.trip.tripId:', props.trip.tripId);
             try {
-                imageUrl.value = await store.dispatch('tripsStorage/fetchImageUrl', tripData);
+				const { fetchImageUrl } = useFirebaseStorage();
+                imageUrl.value = await fetchImageUrl(props.trip.imageName, props.trip.tripId);
             } catch (err) {
                 setError(err.message || err);
             }
         };
 
-        // Fetch image on mount and when trip.imageName changes
         onMounted(fetchImageUrlLocal);
         watch(() => props.trip.imageName, fetchImageUrlLocal);
 

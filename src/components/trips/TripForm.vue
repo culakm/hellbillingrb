@@ -52,7 +52,7 @@
 
 <script>
 import { ref, toRef, computed, onMounted } from 'vue';
-import { useStore } from 'vuex';
+import { useFirebaseStorage } from '@/composables/useFirebaseStorage';
 import { useTripsStore } from '@/stores/trips';
 import { useError } from '@/composables/useError';
 
@@ -68,7 +68,6 @@ export default {
     },
     setup(props, { emit }) {
         const componentName = 'TripForm';
-        const store = useStore();
 		const tripsStore = useTripsStore();
         const { error, setError, clearError } = useError(componentName);
 
@@ -89,10 +88,20 @@ export default {
 		let tripId = props.trip.tripId || null;
 
         // Upload progress (getter/setter via computed)
-        const uploadProgressLocal = computed({
-            get: () => store.getters['tripsStorage/uploadProgress'],
-            set: (val) => store.commit('tripsStorage/setUploadProgress', val)
-        });
+        // const uploadProgressLocal = computed({
+        //     // get: () => store.getters['tripsStorage/uploadProgress'],
+        //     get: () => store.getters['tripsStorage/uploadProgress'],
+
+        //     // set: (val) => store.commit('tripsStorage/setUploadProgress', val)
+        //     set: (val) => store.commit('tripsStorage/setUploadProgress', val)
+
+        // });
+
+		const { uploadProgress } = useFirebaseStorage()
+		const uploadProgressLocal = computed({
+			get: () => uploadProgress.value,
+			set: (val) => (uploadProgress.value = val)
+		})
 
         // View/Print links
         const tripViewLink = computed(() => (tripId ? `/trip/view/${tripId}` : ''));
@@ -114,26 +123,20 @@ export default {
         });
 
         async function fetchImageUrlLocal() {
-            const tripData = {
-                tripId: tripId,
-                imageName: props.trip.imageName,
-            };
             try {
-                imageUrl.value = await store.dispatch('tripsStorage/fetchImageUrl', tripData);
+				const { fetchImageUrl } = useFirebaseStorage();
+                imageUrl.value = await fetchImageUrl(props.trip.imageName, tripId);
             } catch (err) {
                 setError(err.message || err);
             }
         }
 
         async function deleteImageLocal() {
-            const tripData = {
-                tripId: tripId,
-                imageName: props.trip.imageName,
-            };
             try {
+				const { deleteStorageObject } = useFirebaseStorage();
                 await Promise.all([
-                    store.dispatch('tripsStorage/deleteStorageObject', tripData),
-					tripsStore.deleteTripImage(tripId)
+					tripsStore.deleteTripImage(tripId, props.trip.imageName),
+                	imageUrl.value = await deleteStorageObject(tripId, props.trip.imageName)
                 ]);
             } catch (err) {
                 setError(err.message || err);
@@ -159,8 +162,10 @@ export default {
             isLoading.value = true;
             try {
                 const fileName = `trips/${tripId}/${imageData.value.name}`;
+				const { uploadStorageObject } = useFirebaseStorage();
                 const [downloadURL] = await Promise.all([
-                    store.dispatch('tripsStorage/uploadStorageObject', { file, path: fileName }),
+                    // store.dispatch('tripsStorage/uploadStorageObject', { file, path: fileName }),
+					await uploadStorageObject(file, fileName),
 					tripsStore.updateTripImage(tripId, imageData.value.name)
                 ]);
                 imageUrl.value = downloadURL;

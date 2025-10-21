@@ -1,10 +1,12 @@
-import { storage } from '../../../firebase.js';
-import { ref as storageRef, uploadBytesResumable, getDownloadURL, deleteObject } from 'firebase/storage';
+import { ref } from 'vue';
+import { storage } from '../firebase.js';
+import { ref as storageRef, uploadBytesResumable,  getDownloadURL, deleteObject } from 'firebase/storage';
 
-export default {
-	async fetchImageUrl(context, payload) {
-		const tripId = payload.tripId;
-		const imageName = payload.imageName;
+
+export function useFirebaseStorage() {
+	const uploadProgress = ref(0)
+
+	async function fetchImageUrl(imageName, tripId) {
 		const fileName = `trips/${tripId}/${imageName}`;
 		const fileRef = storageRef(storage, fileName);
 		try {
@@ -14,8 +16,8 @@ export default {
 			console.error(errorOut);
 			throw new Error(errorOut);
 		}
-	},
-	async deleteStorageObject(context, { tripId, imageName }) {
+	}
+	async function deleteStorageObject(tripId, imageName) {
 		const fileName = `trips/${tripId}/${imageName}`;
 		const fileRef = storageRef(storage, fileName);
 		try {
@@ -25,9 +27,9 @@ export default {
 			console.error(errorOut);
 			throw new Error(errorOut);
 		}
-	},
+	}
 
-	async uploadStorageObject({ commit }, { file, path }) {
+	async function uploadStorageObject(file, path) {
 		try {
 			const fileRef = storageRef(storage, path);
 			const uploadTask = uploadBytesResumable(fileRef, file);
@@ -39,13 +41,13 @@ export default {
 				const now = Date.now();
 				if (now - lastProgressUpdate >= PROGRESS_THROTTLE) {
 					const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-					commit('setUploadProgress', progress);
+					uploadProgress.value = progress;
 					lastProgressUpdate = now;
 				}
 			});
 
 			await uploadTask;
-			commit('setUploadProgress', 100);
+			uploadProgress.value = 100;
 			return await getDownloadURL(uploadTask.snapshot.ref);
 		} catch (error) {
 			const errorOut = `Failed to upload file: ${file.name}: ${error.message}`;
@@ -54,4 +56,6 @@ export default {
 		}
 	}
 
-};
+
+  return { fetchImageUrl, uploadStorageObject, deleteStorageObject, uploadProgress }
+}

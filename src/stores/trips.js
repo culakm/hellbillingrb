@@ -1,13 +1,13 @@
 import { ref, computed } from 'vue';
-import { useStore } from 'vuex';
 import { defineStore } from 'pinia';
 import { db } from '../firebase.js';
 import { collection, doc, getDoc, getDocs, setDoc, updateDoc, query, where, orderBy, writeBatch } from 'firebase/firestore';
+import { useAuthStore } from '@/stores/auth';
 import { useLinesStore } from '@/stores/lines';
 
 export const useTripsStore = defineStore('trips', () => {
+	const authStore = useAuthStore();
     const linesStore = useLinesStore();
-    const store = useStore();
 
     // State
     const trips = ref([]);
@@ -60,12 +60,10 @@ export const useTripsStore = defineStore('trips', () => {
             return activeTrip.value;
         }
         if (!trips.value || trips.value.length === 0) {
-            const isAdmin = store.getters.isAdmin;
-            const userId = store.getters.userId;
-            if (isAdmin) {
+            if (authStore.isAdmin) {
                 await loadTrips();
-            } else if (userId) {
-                await loadTrips(userId);
+            } else if (authStore.userId) {
+                await loadTrips(authStore.userId);
             }
         }
         const localTrip = trips.value.find(t => t.tripId === tripId) || null;
