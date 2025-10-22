@@ -2,16 +2,16 @@
     <div>
         <h1>Test page</h1>
         <p>testMessage: {{ testMessage }}</p>
-        <p v-if="isAuthenticated">You are authenticated!</p>
+        <p v-if="authStore.isAuthenticated">You are authenticated!</p>
         <button @click="testFunction">Change values</button>
     </div>
 </template>
 
 <script>
-import { ref, computed, onMounted } from 'vue';
-import { useStore } from 'vuex';
+import { ref, onMounted } from 'vue';
+import { useAuthStore } from '@/stores/auth';
 import { db } from '../../firebase.js';
-import { collection, doc, getDoc, addDoc, setDoc, updateDoc, deleteDoc, getDocs, writeBatch, query, orderBy, where, limit, startAfter } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 
 
 export default {
@@ -33,17 +33,15 @@ export default {
 
         const testMessage = ref('This is a test message');
 
-        const store = useStore();
-        const isAuthenticated = computed(() => store.getters.isAuthenticated);
+		const authStore = useAuthStore();
         function testFunction() {
-            // This function is just for testing purposes
             testMessage.value = 'The value has been changed!';
             console.log('testFunction called, message changed');
         }
 
         return {
             testMessage,
-            isAuthenticated,
+			authStore,
             testFunction
         };
     }
