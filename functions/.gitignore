@@ -1,0 +1,3 @@
+node_modules/
+*.local
+scripts/cli_scripts/service-account.json

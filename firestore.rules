@@ -1,0 +1,41 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAuthenticated() {
+      return request.auth.uid != null;
+    }
+
+    function isAdmin() {
+      return request.auth.token.role == 'admin';
+    }
+
+    /*
+    function isNonEmptyString(fieldName) {
+        return request.resource.data[fieldName] is string &&
+        request.resource.data[fieldName].size() > 0;
+     }
+
+     function isValidCourse() {
+
+        // request.resource.data - data ktore sa odosielaju
+        // resource.data - data ktore su uz ulozene
+        return request.resource.data.seqNo is number &&
+        request.resource.data.seqNo >= 0 &&
+        isNonEmptyString("url");
+     }
+    */
+
+    match /users/{userId} {
+      allow read, write: if isAuthenticated() && isAdmin();
+    }
+
+		match /trips/{tripId} {
+    	allow read,write: if isAuthenticated();
+    }
+    match /trips/{tripId}/lines/{lineId} {
+    	allow read,write: if isAuthenticated();
+    }
+  }
+}
