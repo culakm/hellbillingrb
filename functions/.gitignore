@@ -1,3 +1,4 @@
 node_modules/
 *.local
-scripts/cli_scripts/service-account.json
+# toto je ak by sme pouzivali nejaky service account
+scripts/services/cli_scripts/service-account.json

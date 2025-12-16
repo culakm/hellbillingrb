@@ -7,9 +7,6 @@
         </div>
         <nav class="main-nav">
             <ul class="main-nav__items">
-				<li class="main-nav__item">
-                    <h3 style="color: #ffa700;">Hraj dal</h3>
-                </li>
                 <li v-if="authStore.isAdmin" class="main-nav__item">
                     <router-link to="/test">Test page</router-link>
                 </li>

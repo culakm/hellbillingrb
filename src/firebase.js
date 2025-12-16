@@ -17,11 +17,11 @@ const isDevelopment = import.meta.env.MODE === 'development';
 
 const app = initializeApp(firebaseConfig);
 
-if (isDevelopment) {
-	self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
-	// self.FIREBASE_APPCHECK_DEBUG_TOKEN = import.meta.env.VITE_FIREBASE_APPCHECK_DEBUG_TOKEN;
-	console.log('App Check debug mode enabled.'); // Optional: for confirmation
-}
+// if (isDevelopment) {
+// 	self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+// 	// self.FIREBASE_APPCHECK_DEBUG_TOKEN = import.meta.env.VITE_FIREBASE_APPCHECK_DEBUG_TOKEN;
+// 	console.log('App Check debug mode enabled.'); // Optional: for confirmation
+// }
 
 initializeAppCheck(app, {
 	provider: new ReCaptchaV3Provider(import.meta.env.VITE_RECAPTCHA_SITE_KEY),

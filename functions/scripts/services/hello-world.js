@@ -5,8 +5,8 @@ async function helloWorldHandler({ data, auth }) {
 	console.log('helloWorldHandler starts on server');
 	try {
 		console.log('Data from client: ', data);
-		const mojInput = data.mojInput;
-		return { message: `Vstup do funkcie z clienta je: "${mojInput}", a toto cele je vratene zo servera!` };
+		const inputParameter = data.inputParameter;
+		return { message: `Vstup do funkcie z clienta je: "${inputParameter}", a toto cele je vratene zo servera!` };
 	}
 	catch (error) {
 		const errorMessage = `Error getting helloWorld, ${error}`;

@@ -32,10 +32,6 @@ export default {
 
         const fetchImageUrlLocal = async () => {
             if (!props.trip.imageName) return;
-			console.log('Trip data:', props.trip);
-			console.log('props.trip.imageName', props.trip.imageName);
-
-			console.log('props.trip.tripId:', props.trip.tripId);
             try {
 				const { fetchImageUrl } = useFirebaseStorage();
                 imageUrl.value = await fetchImageUrl(props.trip.imageName, props.trip.tripId);
