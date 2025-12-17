@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { initializeAppCheck, ReCaptchaV3Provider, } from 'firebase/app-check';
+import { initializeAppCheck, ReCaptchaEnterpriseProvider } from 'firebase/app-check';
 import { connectAuthEmulator, getAuth } from 'firebase/auth';
 import { connectFirestoreEmulator, getFirestore } from 'firebase/firestore';
 import { getStorage, connectStorageEmulator } from 'firebase/storage';
@@ -17,14 +17,19 @@ const isDevelopment = import.meta.env.MODE === 'development';
 
 const app = initializeApp(firebaseConfig);
 
-// if (isDevelopment) {
-// 	self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
-// 	// self.FIREBASE_APPCHECK_DEBUG_TOKEN = import.meta.env.VITE_FIREBASE_APPCHECK_DEBUG_TOKEN;
-// 	console.log('App Check debug mode enabled.'); // Optional: for confirmation
-// }
+if (isDevelopment) {
+	console.log('Firebase App Check debug mode enabled. PROJECT ID IS : ' + import.meta.env.VITE_FIREBASE_PROJECT_ID);
+	if (import.meta.env.VITE_FIREBASE_PROJECT_ID !== 'hellbilling') {
+		console.log('Using foreign "hellbilling" debug token : ' + import.meta.env.VITE_FIREBASE_APPCHECK_DEBUG_TOKEN_HB);
+		self.FIREBASE_APPCHECK_DEBUG_TOKEN = import.meta.env.VITE_FIREBASE_APPCHECK_DEBUG_TOKEN_HB;
+	} else {
+		console.log('Using my own hellbilling debug token : ' + import.meta.env.VITE_FIREBASE_APPCHECK_DEBUG_TOKEN);
+		self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+	}
+}
 
 initializeAppCheck(app, {
-	provider: new ReCaptchaV3Provider(import.meta.env.VITE_RECAPTCHA_SITE_KEY),
+	provider: new ReCaptchaEnterpriseProvider(import.meta.env.VITE_RECAPTCHA_SITE_KEY),
 	isTokenAutoRefreshEnabled: true
 });
 
