@@ -87,7 +87,13 @@ setup() {
 	}
 
 	function exportToPDF() {
-		words = eval(inputData.value);
+		// words = eval(inputData.value);
+		try {
+			words = JSON.parse(inputData.value);
+		} catch (e) {
+			alert('Invalid input format. Please provide valid JSON.');
+			return;
+		}
 
 		if (!words || words.length === 0) {
 			alert('No data to export');
