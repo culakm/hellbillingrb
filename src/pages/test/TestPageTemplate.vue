@@ -4,6 +4,7 @@
         <p>testMessage: {{ testMessage }}</p>
         <p v-if="authStore.isAuthenticated">You are authenticated!</p>
         <button @click="testFunction">Change values</button>
+        <button @click="testCloudFunction">Run cloud function</button>
     </div>
 </template>
 
@@ -12,6 +13,8 @@ import { ref, onMounted } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import { db } from '../../firebase.js';
 import { collection, getDocs } from "firebase/firestore";
+import { cloudFunctions } from '../../firebase.js';
+import { httpsCallable } from 'firebase/functions';
 
 
 export default {
@@ -39,7 +42,22 @@ export default {
             console.log('testFunction called, message changed');
         }
 
+		async function testCloudFunction() {
+			let output = 'ak je output pako alebo nic, nieco je zle';
+			const helloWorld = httpsCallable(cloudFunctions, 'helloWorld');
+			try {
+				const result = await helloWorld({ inputParameter: 'poslane do funkcie' });
+				output = result.data.message;
+				console.log('vystup z funkcie: ' + result.data.message);
+			} catch (error) {
+				console.error('Error calling cloud function:', error);
+			}
+			console.log(output);
+		}
+
+
         return {
+			testCloudFunction,
             testMessage,
 			authStore,
             testFunction

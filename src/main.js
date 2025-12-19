@@ -10,6 +10,10 @@ import BaseBadge from './components/ui/BaseBadge.vue';
 import BaseSpinner from './components/ui/BaseSpinner.vue';
 const BaseDialog = defineAsyncComponent(() => import('./components/ui/BaseDialog.vue'));
 
+import { Quasar } from 'quasar';
+import '@quasar/extras/material-icons/material-icons.css';
+import 'quasar/src/css/index.sass';
+
 const pinia = createPinia()
 const app = createApp(App);
 
@@ -17,6 +21,7 @@ app.use(pinia);
 app.use(router);
 app.use(VueFullscreen);
 app.use(utilsPlugin);
+app.use(Quasar, { plugins: {} });
 
 app.component('base-card', BaseCard);
 app.component('base-button', BaseButton);
