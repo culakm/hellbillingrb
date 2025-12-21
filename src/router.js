@@ -18,6 +18,8 @@ import CardsShow from './pages/cards/CardsShow.vue';
 
 import NotFound from './pages/NotFound.vue';
 
+// QUASAR COMPONENTS
+import TripList1qmc from './pages/trips1qmc/TripList.vue';
 
 // dynamicky importovany component, ostatne su naloadovane vzdy
 const UserAuth = () => import('./pages/auth/UserAuth.vue');
@@ -46,7 +48,10 @@ const router = createRouter({
 
 		{ name: 'auth', path: '/auth', component: UserAuth, meta: { requiresUnauth: true } },
 
-		{ path: '/:notFound(.*)', component: NotFound }
+		{ path: '/:notFound(.*)', component: NotFound },
+
+		// QUASAR ROUTES
+		{ name: 'trips1qmc', path: '/trips1qmc', component: TripList1qmc, meta: { requiresAuth: true } },
 	]
 });
 

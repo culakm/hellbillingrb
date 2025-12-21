@@ -1,10 +1,15 @@
 <template>
-    <header class="main-header">
+	<div style="width:100px;height:40px;z-index:1000;position:fixed;top:30px;left:30px;display:flex;align-items:center;justify-content:center;background-color: darkolivegreen;">
+		<input type="checkbox" v-model="quasarStore.quasarOn" @change="quasarStore.saveToLocalStorage()" />
+		<label>Q:{{ quasarStore.quasarOn }}</label>
+	</div>
+	<header class="main-header">
         <div>
             <router-link to="/" class="main-header__brand">
                 <img src="/kompas_transparent.png" alt="Hellbilling Road Book">
             </router-link>
         </div>
+
         <nav class="main-nav">
             <ul class="main-nav__items">
                 <li v-if="authStore.isAdmin" class="main-nav__item">
@@ -53,7 +58,8 @@
 </template>
 
 <script>
-import { ref } from 'vue';
+import { ref,onMounted } from 'vue';
+import { useQuasarStore } from '@/stores/quasar';
 import { useAuthStore } from '@/stores/auth';
 import { useRouter } from 'vue-router';
 
@@ -66,6 +72,7 @@ export default {
         const router = useRouter();
 
         const mobileNavOpened = ref(false);
+		const quasarStore = useQuasarStore();
 
         async function logoutLocal() {
             try {
@@ -81,6 +88,7 @@ export default {
         }
 
         return {
+			quasarStore,
             componentName,
             mobileNavOpened,
             authStore,

@@ -17,7 +17,6 @@
 
 <script>
 import { ref } from 'vue';
-import { QBtn } from 'quasar'
 
 export default {
     name: 'TestPage',
