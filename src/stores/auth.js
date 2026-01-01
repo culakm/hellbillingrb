@@ -1,14 +1,13 @@
 let timer;
 import { ref, computed } from 'vue';
 import { defineStore } from 'pinia';
-import { auth } from '../firebase.js';
+import { auth } from '@/firebase.js';
 import { onAuthStateChanged, getIdTokenResult, signInWithEmailAndPassword, signOut } from "firebase/auth";
 
 
 export const useAuthStore = defineStore('auth', () => {
 
     // State
-    const user = ref('karol default');
 	const userId = ref(null);
 	const token = ref(null);
 	const email = ref(null);
@@ -148,7 +147,6 @@ export const useAuthStore = defineStore('auth', () => {
 
     return {
         // State
-		user,
 		userId,
 		token,
 		email,

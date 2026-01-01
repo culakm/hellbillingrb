@@ -52,10 +52,10 @@ const checkEmulators = async () => {
 // if (import.meta.env.VITE_FIREBASE_RUN_EMULATOR === 'true') {
 if (isDevelopment && await checkEmulators()) {
 	console.log('🔧 Using Firebase Emulators');
-	connectFirestoreEmulator(db, 'localhost', 8080);
-	connectAuthEmulator(auth, 'http://localhost:9099');
-	connectStorageEmulator(storage, 'localhost', 9199);
-	connectFunctionsEmulator(cloudFunctions, 'localhost', 5001);
+	connectFirestoreEmulator(db, 'localhost', 8081);
+	connectAuthEmulator(auth, 'http://localhost:9100');
+	connectStorageEmulator(storage, 'localhost', 9200);
+	connectFunctionsEmulator(cloudFunctions, 'localhost', 5002);
 } else {
 	console.log('🔥 Using Production Firebase');
 }

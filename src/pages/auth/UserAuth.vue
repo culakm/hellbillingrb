@@ -1,33 +1,29 @@
 <template>
-	<main>
-		<base-dialog @close="clearError" :show="!!error" title="An error is ocurred!">
-			<p>{{ error }}</p>
-		</base-dialog>
-		<base-dialog :show="isLoading" fixed title="Authenticating...">
-			<base-spinner></base-spinner>
-		</base-dialog>
-		<base-card>
-			<form @submit.prevent="submitForm">
-				<div class="form-control" :class="{ invalid: !email.isValid }">
-					<label for="email">E-Mail</label>
-					<input type="email" id="email" autocomplete="username" v-model.trim="email.val" @blur="clearValidity('email')" />
-				</div>
-				<div class="form-control" :class="{ invalid: !password.isValid }">
-					<label for="password">Password</label>
-					<input type="password" id="password" autocomplete="current-password" v-model.trim="password.val"
-						@blur="clearValidity('password')" />
-				</div>
-				<p v-if="!formIsValid" class="invalid">Please fix errors, password min. 6 characters</p>
-				<base-button submit>Login</base-button>
-			</form>
-		</base-card>
-	</main>
+	<q-page class="flex flex-center bg-grey-2">
+		<Container>
+			<q-card class="q-pa-xl shadow-2">
+				<form @submit.prevent="submitForm">
+					<q-card-section class="text-center q-mb-md">
+						<div class="text-h5 text-primary q-mb-sm">Login</div>
+					</q-card-section>
+					<q-card-section>
+						<q-input outlined v-model="email.val" label="Email" stack-label type="email" autocomplete="username" @blur="clearValidity('email')" class="q-mb-md"/>
+						<q-input outlined v-model="password.val" label="Password" stack-label type="password" autocomplete="current-password" @blur="clearValidity('email')" class="q-mb-md" />
+					</q-card-section>
+					<q-card-actions>
+						<q-btn color="primary" type="submit" class="full-width" label="Login"/>
+					</q-card-actions>
+				</form>
+			</q-card>
+		</Container>
+	</q-page>
 </template>
 
 <script>
 import { ref } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import { useRouter } from 'vue-router';
+import { useQuasar } from 'quasar';
 import { useError } from '@/composables/useError';
 
 export default {
@@ -36,6 +32,7 @@ export default {
 		const componentName = 'UserAuth';
 		const authStore = useAuthStore();
 		const router = useRouter();
+		const $q = useQuasar();
 		const { error, setError, clearError } = useError(componentName);
 
 		const email = ref({ val: '', isValid: true });
@@ -43,14 +40,24 @@ export default {
 		const formIsValid = ref(true);
 		const isLoading = ref(false);
 
-		function clearValidity(input) {
+		// function clearValidity(input) {
+		// 	if (input === 'email') {
+		// 		email.value.isValid = true;
+		// 	}
+		// 	if (input === 'password') {
+		// 		password.value.isValid = true;
+		// 	}
+		// }
+
+		const clearValidity = (input) => {
 			if (input === 'email') {
 				email.value.isValid = true;
 			}
 			if (input === 'password') {
 				password.value.isValid = true;
 			}
-		}
+		};
+
 
 		function validateForm() {
 			formIsValid.value = true;
@@ -67,10 +74,14 @@ export default {
 		async function submitForm() {
 			validateForm();
 			if (!formIsValid.value) {
+				$q.dialog({
+					title: 'Error',
+					message: 'Please fix errors, password min. 6 characters'
+				});
 				return;
 			}
 
-			isLoading.value = true;
+			$q.loading.show();
 
 			const userData = {
 				email: email.value.val,
@@ -82,19 +93,18 @@ export default {
 				router.replace('/');
 			} catch (err) {
 				setError(err.message || err);
+				$q.dialog({
+					title: 'Error',
+					message: err.message || err
+				});
 				password.value.val = '';
 			}
-			isLoading.value = false;
+			$q.loading.hide();
 		}
 
 		return {
-			componentName,
-			error,
-			clearError,
 			email,
 			password,
-			formIsValid,
-			isLoading,
 			submitForm,
 			clearValidity
 		};
@@ -103,48 +113,12 @@ export default {
 </script>
 
 <style scoped>
-	form {
-		margin: 1rem;
-		padding: 1rem;
-	}
-
-	.form-control {
-		margin: 0.5rem 0;
-	}
-
-	label {
-		font-weight: bold;
-		margin-bottom: 0.5rem;
-		display: block;
-	}
-
-	input,
-	textarea {
-		display: block;
-		width: 100%;
-		font: inherit;
-		border: 1px solid #ccc;
-		padding: 0.15rem;
-	}
-
-	input:focus,
-	textarea:focus {
-		border-color: #3d008d;
-		background-color: #faf6ff;
-		outline: none;
-	}
-
-	.invalid label {
-		color: red;
-	}
-
-	.invalid input,
-	.invalid textarea {
-		border: 1px solid red;
-	}
-
-	.invalid,
-	p {
-		color: red;
-	}
+.q-page {
+	min-height: 100vh;
+}
+.q-card {
+	width: 350px;
+	max-width: 90vw;
+	margin: auto;
+}
 </style>
