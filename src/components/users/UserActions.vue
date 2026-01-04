@@ -1,112 +1,75 @@
 <template>
-    <base-dialog @close="clearError" :show="!!error" title="An error is ocurred!">
-        <p>{{ error }}</p>
-    </base-dialog>
-    <section>
-        <li>
-            <div v-if="isLoading">
-                <base-spinner></base-spinner>
-            </div>
-            <div class="header">
-                <h3>{{ user.name }}</h3>
-                <p>email: {{ user.email }}</p>
-                <p>role: {{ user.role }}</p>
-                <p>desc: {{ user.description }}</p>
-            </div>
-            <div class="actions">
-                <base-button link :to="userEditLink">Edit</base-button>
-                <base-button @click="deleteUserLocal">Delete</base-button>
-            </div>
-        </li>
-    </section>
+	<q-item class="q-py-sm">
+		<q-item-section>
+			<div class="text-subtitle1">Name: {{ user.name }}</div>
+			<div class="text-subtitle1">Role: {{ user.role }}</div>
+			<div class="text-caption text-grey-7">Email: {{ user.email }}</div>
+			<div class="text-body2">Description: {{ user.description }}</div>
+		</q-item-section>
+		<q-item-section side>
+			<q-btn dense flat icon="edit" color="primary" :to="userEditLink" />
+			<q-btn dense flat icon="delete" color="negative" @click="deleteUserLocal" />
+		</q-item-section>
+	</q-item>
 </template>
 
-<script>
-import { ref, computed } from 'vue';
-import { useAuthStore } from '@/stores/auth';
-import { useUsersStore } from '@/stores/users';
-import { useRouter } from 'vue-router';
-import { useError } from '@/composables/useError';
+<script setup>
+import { useAuthStore } from "@/stores/auth";
+import { useUsersStore } from "@/stores/users";
+import { useRouter } from "vue-router";
+import { useQuasar } from "quasar";
 
-export default {
-    name: 'UserActions',
-    props: {
-        user: {
-            type: Object,
-            required: true
-        }
-    },
-    setup(props) {
-        const componentName = 'UserActions';
+const props = defineProps({
+	user: {
+		type: Object,
+		required: true,
+	},
+});
 
-        // Vuex and router
-        const authStore = useAuthStore();
-		const usersStore = useUsersStore();
-        const router = useRouter();
-        const { setError, clearError, error } = useError(componentName);
+const authStore = useAuthStore();
+const usersStore = useUsersStore();
+const router = useRouter();
+const $q = useQuasar();
 
-        const isLoading = ref(false);
+const user = props.user;
+const userEditLink = `/user/edit/${user.userId}`;
 
-		const user = props.user;
-        const userEditLink = `/user/edit/${user.userId}`;
+const deleteUserLocal = async () => {
+	if (authStore.userId === user.userId) {
+		$q.dialog({
+			title: "Error",
+			message: "You cannot delete yourself!",
+		});
+		return;
+	}
 
-        async function deleteUserLocal() {
-            if (authStore.userId === user.userId) {
-                alert('You cannot delete yourself!');
-                return;
-            }
-
-            const confirmed = confirm(`Are you sure you want to delete user: ${user.name}?`);
-            if (!confirmed) {
-                return;
-            }
-
-            isLoading.value = true;
-            try {
-                await usersStore.deleteUser(user.userId);
-            } catch (err) {
-                setError('An error occurred while deleting the user.');
-                isLoading.value = false;
-                return;
-            }
-            isLoading.value = false;
-            router.replace('/users');
-        }
-
-        return {
-            componentName,
-            isLoading,
-            error,
-            clearError,
-            userEditLink,
-            deleteUserLocal
-        };
-    }
+	$q.dialog({
+		title: "Confirm",
+		message: `Are you sure you want to delete user: ${user.name}?`,
+		cancel: true,
+		persistent: true,
+	})
+		.onOk(async () => {
+			$q.loading.show();
+			try {
+				await usersStore.deleteUser(user.userId);
+				$q.loading.hide();
+				$q.dialog({
+					title: "Success",
+					message: "User deleted successfully.",
+				}).onOk(() => {
+					router.replace("/users");
+				});
+			} catch (err) {
+				$q.loading.hide();
+				$q.dialog({
+					title: "Error",
+					message: err.message || err,
+				});
+			}
+		})
+		.onCancel(() => {
+			return;
+		});
 };
 </script>
-
-<style scoped>
-    li {
-        margin: 1rem 0;
-        border: 1px solid #424242;
-        border-radius: 12px;
-        padding: 1rem;
-    }
-
-    .header {
-        display: flex;
-        align-items: center;
-    }
-
-    .header h3,
-    .header p {
-        margin-right: 10px;
-        /* Adjust spacing between h3 and p */
-    }
-
-    .actions {
-        display: flex;
-        justify-content: flex-start;
-        /* Adjust spacing between the header and actions */
-    }
-</style>

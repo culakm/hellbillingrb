@@ -1,124 +1,64 @@
 <template>
-	<q-page class="flex flex-center bg-grey-2">
+	<q-page class="q-pa-md bg-grey-2">
 		<Container>
 			<q-card class="q-pa-xl shadow-2">
-				<form @submit.prevent="submitForm">
+				<q-form @submit.prevent="submitForm" ref="formRef">
 					<q-card-section class="text-center q-mb-md">
 						<div class="text-h5 text-primary q-mb-sm">Login</div>
 					</q-card-section>
 					<q-card-section>
-						<q-input outlined v-model="email.val" label="Email" stack-label type="email" autocomplete="username" @blur="clearValidity('email')" class="q-mb-md"/>
-						<q-input outlined v-model="password.val" label="Password" stack-label type="password" autocomplete="current-password" @blur="clearValidity('email')" class="q-mb-md" />
+						<q-input outlined type="email" label="Email" v-model="email" stack-label class="q-mb-md" autocomplete="username" :rules="emailRules" lazy-rules />
+						<q-input outlined type="password" label="Password" v-model="password" stack-label class="q-mb-md" autocomplete="current-password" :rules="passwordRules" lazy-rules />
 					</q-card-section>
 					<q-card-actions>
-						<q-btn color="primary" type="submit" class="full-width" label="Login"/>
+						<q-btn color="primary" type="submit" class="full-width" label="Login" />
 					</q-card-actions>
-				</form>
+				</q-form>
 			</q-card>
 		</Container>
 	</q-page>
 </template>
 
-<script>
-import { ref } from 'vue';
-import { useAuthStore } from '@/stores/auth';
-import { useRouter } from 'vue-router';
-import { useQuasar } from 'quasar';
-import { useError } from '@/composables/useError';
+<script setup>
+import { ref } from "vue";
+import { useAuthStore } from "@/stores/auth";
+import { useRouter } from "vue-router";
+import { useQuasar } from "quasar";
+import { emailRules, passwordRules } from "@/composables/useFormValidationRules";
 
-export default {
-	name: 'UserAuth',
-	setup() {
-		const componentName = 'UserAuth';
-		const authStore = useAuthStore();
-		const router = useRouter();
-		const $q = useQuasar();
-		const { error, setError, clearError } = useError(componentName);
+const authStore = useAuthStore();
+const router = useRouter();
+const $q = useQuasar();
+const formRef = ref(null);
+const email = ref("");
+const password = ref("");
 
-		const email = ref({ val: '', isValid: true });
-		const password = ref({ val: '', isValid: true });
-		const formIsValid = ref(true);
-		const isLoading = ref(false);
-
-		// function clearValidity(input) {
-		// 	if (input === 'email') {
-		// 		email.value.isValid = true;
-		// 	}
-		// 	if (input === 'password') {
-		// 		password.value.isValid = true;
-		// 	}
-		// }
-
-		const clearValidity = (input) => {
-			if (input === 'email') {
-				email.value.isValid = true;
-			}
-			if (input === 'password') {
-				password.value.isValid = true;
-			}
-		};
-
-
-		function validateForm() {
-			formIsValid.value = true;
-			if (email.value.val === '' || !email.value.val.includes('@')) {
-				email.value.isValid = false;
-				formIsValid.value = false;
-			}
-			if (password.value.val === '' || password.value.val.length < 6) {
-				password.value.isValid = false;
-				formIsValid.value = false;
-			}
-		}
-
-		async function submitForm() {
-			validateForm();
-			if (!formIsValid.value) {
-				$q.dialog({
-					title: 'Error',
-					message: 'Please fix errors, password min. 6 characters'
-				});
-				return;
-			}
-
-			$q.loading.show();
-
-			const userData = {
-				email: email.value.val,
-				password: password.value.val
-			};
-
-			try {
-				await authStore.login(userData);
-				router.replace('/');
-			} catch (err) {
-				setError(err.message || err);
-				$q.dialog({
-					title: 'Error',
-					message: err.message || err
-				});
-				password.value.val = '';
-			}
-			$q.loading.hide();
-		}
-
-		return {
-			email,
-			password,
-			submitForm,
-			clearValidity
-		};
+const submitForm = async () => {
+	const ok = await formRef.value.validate();
+	if (!ok) {
+		$q.dialog({
+			title: "Error",
+			message: "Form is not valid",
+		});
+		return;
 	}
+
+	const userData = {
+		email: email.value,
+		password: password.value,
+	};
+
+	$q.loading.show();
+	try {
+		await authStore.login(userData);
+		router.replace("/");
+	} catch (err) {
+		$q.dialog({
+			title: "Error",
+			message: err.message || err,
+		});
+		password.value = "";
+	}
+	$q.loading.hide();
 };
 </script>
-
-<style scoped>
-.q-page {
-	min-height: 100vh;
-}
-.q-card {
-	width: 350px;
-	max-width: 90vw;
-	margin: auto;
-}
-</style>

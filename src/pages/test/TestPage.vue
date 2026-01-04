@@ -1,68 +1,93 @@
 <template>
-	<div style="background-color: #e8f0fe; width: 50px; height: 50px;">PAko</div>
-	<q-page class="flex flex-center bg-grey-2">
-		<Container>
-			<q-card class="q-pa-xl shadow-2">
-				<form @submit.prevent="saveData">
-					<q-card-section class="text-center q-mb-md">
-						<div class="text-h5 text-primary q-mb-sm">Login</div>
-					</q-card-section>
-					<q-card-section>
-						<q-input filled v-model="email" label="Label" class="q-mb-md" autocomplete="username"
-						 ></q-input>
-						<!-- <q-input filled v-model="email" label="Email" class="q-mb-md" bg-color="green" autocomplete="username"></q-input> -->
-						<!-- <q-input filled v-model="password" label="Password" type="password" color="teal" class="q-mb-md" autocomplete="current-password" ></q-input> -->
-					</q-card-section>
-					<q-card-actions align="center">
-						<q-btn color="primary" type="submit" class="full-width" label="Login"/>
-					</q-card-actions>
-				</form>
-			</q-card>
-		</Container>
+	<q-page v-touch-pan.up.right.prevent.mouse="handlePan" class="flex flex-center">
+		<div class="row items-center">
+			<div class="col text-center">Test Page</div>
+			<div class="col text-center">
+				<q-btn round icon="sync" color="red" @click="saveData" :loading="loading" />
+			</div>
+			<div class="col text-center">
+				<q-input filled v-model="data.name" input-class="text-center text-h5" color="teal" placeholder="Counter" />
+			</div>
+		</div>
+		<div class="row full-width items-center">
+			<div class="col text-center">
+				<q-btn round icon="remove" color="black" @click="handleRemove" />
+			</div>
+			<div class="col text-center text-h3">
+				{{ data.counter }}
+			</div>
+			<div class="col text-center">
+				<q-btn icon="add" v-touch-repeat:300:300:200:50.mouse.enter.space="handleAdd" color="red" @click="handleAdd" />
+			</div>
+		</div>
+		<div class="row full-width items-center">
+			<div class="col text-center">
+				<q-btn round icon="refresh" color="black" @click="handleRefresh" />
+			</div>
+		</div>
 	</q-page>
 </template>
 
 <script>
-import { ref } from 'vue';
-import { useQuasar } from 'quasar';
+import { reactive, ref } from "vue";
 
 export default {
-    name: 'TestPage',
-    setup() {
-
-		const $q = useQuasar();
-		const email = ref('');
-		const password = ref('');
-
+	name: "TestPage",
+	setup() {
+		const loading = ref(false);
+		// const counter = ref(0);
+		// const name = ref('Test text');
+		const data = reactive({
+			counter: 0,
+			name: "Test text",
+		});
 		const saveData = async () => {
-			$q.loading.show();
-			await new Promise(resolve => setTimeout(resolve, 2000));
-			$q.loading.hide();
-			$q.dialog({
-				title: 'Alert',
-				message: 'Some message 2'
-			});
-		}
+			loading.value = true;
+			// Simulate API call
+			await new Promise((resolve) => setTimeout(resolve, 2000));
+			loading.value = false;
+			console.log("Data saved!");
+		};
 
-        return {
-			email,
-			password,
+		// const handleAdd= () => { counter.value++; };
+		// const handleRemove= () => { counter.value--; };
+		// const handleRefresh= () => { counter.value = 0; };
+		const handleAdd = () => {
+			data.counter++;
+		};
+		const handleRemove = () => {
+			data.counter--;
+		};
+		const handleRefresh = () => {
+			data.counter = 0;
+		};
+		const handlePan = (event) => {
+			if (event.delta.y < 0) {
+				handleAdd();
+			}
+			if (event.delta.y > 0) {
+				handleRemove();
+			}
+		};
+
+		return {
+			// counter,
+			// name,
+			data,
+			handleAdd,
+			handleRemove,
+			handleRefresh,
+			handlePan,
+			loading,
 			saveData,
-        };
-    }
+		};
+	},
 };
 </script>
 
 <style scoped>
 .q-page {
-	min-height: 100vh;
-}
-.q-card {
-	width: 350px;
-	max-width: 90vw;
-	margin: auto;
-}
-input:-internal-autofill-selected {
-	background-color: red !important;
+	max-width: 700px;
+	margin: 0 auto;
 }
 </style>

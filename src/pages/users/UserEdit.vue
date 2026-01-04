@@ -1,86 +1,46 @@
 <template>
-    <main>
-        <base-dialog @close="clearError" :show="!!error" title="An error is ocurred!">
-            <p>{{ error }}</p>
-        </base-dialog>
-        <section>
-            <base-card>
-                <h2>Edit User.</h2>
-                <div v-if="isLoading">
-                    <base-spinner></base-spinner>
-                </div>
-                <div v-else-if="user">
-                    <user-form @save-data="updateUserLocal" :user="user"></user-form>
-                </div>
-            </base-card>
-        </section>
-    </main>
+	<q-page class="q-pa-md bg-grey-2">
+		<Container>
+			<user-form v-if="user" @save-data="updateUserLocal" :user="user"></user-form>
+		</Container>
+	</q-page>
 </template>
 
-<script>
-import { ref, onMounted } from 'vue';
-import { useUsersStore } from '@/stores/users';
-import { useRoute, useRouter } from 'vue-router';
-import { useError } from '@/composables/useError';
-import UserForm from '../../components/users/UserForm.vue';
+<script setup>
+import { ref, onMounted } from "vue";
+import { useUsersStore } from "@/stores/users";
+import { useRoute, useRouter } from "vue-router";
+import { useQuasar } from "quasar";
+import UserForm from "@/components/users/UserForm.vue";
 
-export default {
-    name: 'UserEdit',
-    components: {
-        UserForm,
-    },
-    setup() {
-        const componentName = 'UserEdit';
-		const usersStore = useUsersStore();
-        const route = useRoute();
-        const router = useRouter();
-        const { error, setError, clearError } = useError(componentName);
+const usersStore = useUsersStore();
+const route = useRoute();
+const router = useRouter();
+const $q = useQuasar();
 
-        const isLoading = ref(false);
-        const user = ref(null);
+const user = ref(null);
 
-        // Fetch user data on mount
-        onMounted(async () => {
-			user.value = await usersStore.userById(route.params.userId);
-        });
+onMounted(async () => {
+	user.value = await usersStore.userById(route.params.userId);
+});
 
-        // Update user method
-        async function updateUserLocal(userData) {
-            isLoading.value = true;
-            try {
-				await usersStore.updateUser(userData);
-            } catch (err) {
-                setError(err.message || err);
-                isLoading.value = false;
-                return;
-            }
-            isLoading.value = false;
-            router.replace('/users');
-        }
-
-        return {
-            componentName,
-            error,
-            clearError,
-            isLoading,
-            user,
-            updateUserLocal
-        };
-    }
+const updateUserLocal = async (userData) => {
+	$q.loading.show();
+	try {
+		await usersStore.updateUser(userData);
+		$q.loading.hide();
+		$q.dialog({
+			title: "Success",
+			message: "User updated successfully.",
+		}).onOk(() => {
+			router.replace("/users");
+		});
+	} catch (err) {
+		$q.loading.hide();
+		$q.dialog({
+			title: "Error",
+			message: err.message || err,
+		});
+	}
 };
 </script>
-
-<style scoped>
-    .buttons {
-        margin-top: 35px;
-    }
-
-    .ghost {
-        opacity: 0.5;
-        background: #c8ebfb;
-    }
-
-    .not-draggable {
-        cursor: no-drop;
-    }
-</style>
