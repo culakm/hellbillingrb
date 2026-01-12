@@ -1,64 +1,40 @@
 <template>
-    <main>
-        <base-dialog @close="clearError" :show="!!error" title="An error is ocurred!">
-            <p>{{ error }}</p>
-        </base-dialog>
-        <section>
-            <base-card>
-                <h2>Add Trip.</h2>
-                <div v-if="isLoading">
-                    <base-spinner></base-spinner>
-                </div>
-                <trip-form @save-data="createTripLocal"></trip-form>
-            </base-card>
-        </section>
-    </main>
+	<q-page class="q-pa-md bg-grey-2">
+		<Container>
+			<trip-form @save-data="createTripLocal" />
+		</Container>
+	</q-page>
 </template>
 
-<script>
-import { ref } from 'vue';
-import { useAuthStore } from '@/stores/auth';
-import { useTripsStore } from '@/stores/trips';
-import { useRouter } from 'vue-router';
-import { useError } from '@/composables/useError';
-import TripForm from '../../components/trips/TripForm.vue';
+<script setup>
+import { useAuthStore } from "@/stores/auth";
+import { useTripsStore } from "@/stores/trips";
+import { useRouter } from "vue-router";
+import { useQuasar } from "quasar";
+import TripForm from "@/components/trips/TripForm.vue";
 
-export default {
-    name: 'TripCreate',
-    components: {
-        TripForm,
-    },
-    setup() {
-        const componentName = 'TripCreate';
-        const authStore = useAuthStore();
-		const tripsStore = useTripsStore();
-        const router = useRouter();
-        const { error, setError, clearError } = useError(componentName);
+const componentName = "TripCreate";
+const authStore = useAuthStore();
+const tripsStore = useTripsStore();
+const router = useRouter();
+const $q = useQuasar();
 
-        const isLoading = ref(false);
-
-        async function createTripLocal(tripData) {
-
-            tripData.userId = authStore.userId;
-            isLoading.value = true;
-            try {
-				await tripsStore.createTrip(tripData);
-            } catch (err) {
-                setError(err.message || err);
-                isLoading.value = false;
-                return;
-            }
-            isLoading.value = false;
-            router.replace('/trips');
-        }
-
-        return {
-            componentName,
-            error,
-            clearError,
-            isLoading,
-            createTripLocal
-        };
-    }
+const createTripLocal = async (tripData) => {
+	tripData.userId = authStore.userId;
+	$q.loading.show();
+	try {
+		await tripsStore.createTrip(tripData);
+		$q.loading.hide();
+		$q.dialog({
+			title: "Success",
+			message: "Trip created successfully.",
+		}).onOk(() => {
+			router.replace("/trips");
+		});
+	} catch (err) {
+		$q.loading.hide();
+		$q.dialog({ title: "Error", message: err.message || err });
+		return;
+	}
 };
 </script>

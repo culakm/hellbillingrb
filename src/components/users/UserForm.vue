@@ -1,7 +1,8 @@
 <template>
-	<q-card style="min-width: 400px; max-width: 500px; width: 100%">
-		<q-card-section>
-			<div class="text-h5 text-primary q-mb-sm">{{ formTitle }}</div>
+	<q-card class="q-pa-md shadow-2 rounded-borders" style="max-width: 520px; width: 100%; margin: auto">
+		<q-card-section class="bg-primary text-white flex items-center q-mb-md rounded-borders">
+			<q-icon name="person" size="32px" class="q-mr-sm" />
+			<div class="text-h5">{{ formTitle }}</div>
 		</q-card-section>
 		<q-separator />
 		<q-form @submit.prevent="submitForm" class="q-gutter-md">

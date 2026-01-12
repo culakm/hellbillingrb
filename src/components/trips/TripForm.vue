@@ -1,307 +1,177 @@
 <template>
-    <base-dialog @close="clearError" :show="!!error" title="An error is ocurred!">
-        <p>{{ error }}</p>
-    </base-dialog>
-    <form @submit.prevent="submitForm">
-        <div class="form-control" :class="{ invalid: !name.isValid }">
-            <label for="name">Name</label>
-            <input type="text" id="name" v-model.trim="name.val" @blur="clearValidity('name')" />
-            <p v-if="!name.isValid">name must not be empty!</p>
-        </div>
-        <div class="form-control" :class="{ invalid: !description.isValid }">
-            <label for="description">Description</label>
-            <textarea id="description" rows="5" v-model.trim="description.val"
-                @blur="clearValidity('description')"></textarea>
-            <p v-if="!description.isValid">Description must not be empty!</p>
-        </div>
+	<q-card class="q-pa-md shadow-2 rounded-borders" style="max-width: 520px; width: 100%; margin: auto">
+		<q-card-section class="bg-primary text-white flex items-center q-mb-md rounded-borders">
+			<q-icon name="directions_car" size="32px" class="q-mr-sm" />
+			<div class="text-h5">{{ formTitle }}</div>
+		</q-card-section>
+		<q-separator />
+		<q-form @submit.prevent="submitForm" class="q-gutter-md">
+			<q-input filled v-model="name" label="Trip Name" :rules="[required]" autocomplete="off" class="q-mb-md" />
+			<q-input filled v-model="description" label="Description" type="textarea" autogrow class="q-mb-md" />
+			<q-file filled v-model="imageFile" label="Trip Image" @update:model-value="previewImage" accept="image/*" counter :loading="uploadProgressFlag" class="q-mb-md">
+				<template v-slot:prepend>
+					<q-icon name="attach_file" />
+				</template>
+			</q-file>
 
-        <div>
-            <div class="form-control">
-                <input type="file" @change="previewImage" accept="image/*">
-                <div v-if="isLoading">
-                    <base-spinner></base-spinner>
-                </div>
-                <div v-if="uploadProgressLocal > 0 && uploadProgressLocal < 100" class="progress">
-                    {{ uploadProgressLocal }}%
-                    <progress :value="uploadProgressLocal" max="100"></progress>
-                </div>
-                <div v-else>
-                    <div v-if="!imageSrc">
-                        <p>No image selected</p>
-                    </div>
-                    <div v-else>
-                        <!-- <div v-if="imageData">
-                            <button @click.prevent="uploadImageLocal">Upload Image</button>
-                        </div> -->
-                        <base-button @click.prevent="deleteImageCurrent">Delete Image</base-button>
-                        <img :src="imageSrc" alt="trip image" style="max-width: 100%; max-height: 200px;">
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <p v-if="!formIsValid">Please fix errors</p>
-        <div class="controls">
-            <base-button v-if="Object.keys(trip).length === 0">Add Trip</base-button>
-            <base-button v-else>Save Trip</base-button>
-            <base-button v-if="Object.keys(trip).length > 0" link :to="tripViewLink">View</base-button>
-            <base-button link newTab :to="tripPrintLink">Print</base-button>
-        </div>
-    </form>
+			<div class="q-mb-md flex flex-center">
+				<q-banner v-if="!imageSrc" class="bg-grey-2 text-grey-7 q-pa-sm rounded-borders" dense>
+					<q-icon name="image_not_supported" class="q-mr-sm" />
+					No image selected
+				</q-banner>
+				<div v-else class="column items-center">
+					<q-img :src="imageSrc" alt="trip image" style="max-width: 100%; max-height: 200px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08)" fit="contain" />
+					<q-btn class="q-mt-sm" color="negative" icon="delete" label="Delete Image" @click.prevent="deleteImageCurrent" />
+				</div>
+			</div>
+			<div class="row q-gutter-sm justify-end">
+				<q-btn v-if="!trip || !trip.tripId" color="primary" label="Add Trip" type="submit" />
+				<q-btn v-else color="primary" label="Save Trip" type="submit" />
+				<q-btn v-if="tripId" color="secondary" label="View" :to="tripViewLink" />
+				<q-btn v-if="tripId" color="secondary" label="Print" :to="tripPrintLink" target="_blank" />
+			</div>
+		</q-form>
+	</q-card>
 </template>
 
-<script>
-import { ref, toRef, computed, onMounted } from 'vue';
-import { useFirebaseStorage } from '@/composables/useFirebaseStorage';
-import { useTripsStore } from '@/stores/trips';
-import { useError } from '@/composables/useError';
+<script setup>
+import { ref, computed, onMounted, defineProps, defineEmits, watch } from "vue";
+import { useTripsStore } from "@/stores/trips";
+import { uploadProgress, fetchFileUrl, uploadStorageObject, deleteStorageObject } from "@/composables/useFirebaseStorage";
+import { useQuasar } from "quasar";
+import { required } from "@/composables/useFormValidationRules";
 
-export default {
-    name: 'TripForm',
-    emits: ['save-data'],
-    props: {
-        trip: {
-            type: Object,
-            required: false,
-            default: () => ({}),
-        },
-    },
-    setup(props, { emit }) {
-        const componentName = 'TripForm';
-		const tripsStore = useTripsStore();
-        const { error, setError, clearError } = useError(componentName);
+const props = defineProps({
+	trip: {
+		type: Object,
+		required: false,
+		default: () => ({}),
+	},
+});
+const emit = defineEmits(["save-data"]);
 
-        // Form fields
-        const name = ref({ val: '', isValid: true });
-        const description = ref({ val: '', isValid: true });
-        const imageName = ref({ val: '', isValid: true });
+const tripsStore = useTripsStore();
+const $q = useQuasar();
 
-        const isLoading = ref(false);
-        const formIsValid = ref(true);
-        const imageUrl = ref('');
-        const imageData = ref(null);
-        const imagePreview = ref(null);
-        const imageNameOriginal = ref('');
+// Form fields
+const name = ref(props.trip.name || "");
+const description = ref(props.trip.description || "");
+const imageName = ref("");
 
-		// Computed for image source
-		const imageSrc = computed(() => imagePreview.value ? imagePreview.value : imageUrl.value);
-		let tripId = props.trip.tripId || null;
+const imageUrl = ref("");
+const imageData = ref(null);
+const imagePreview = ref(null);
+const imageNameOriginal = ref("");
 
-        // Upload progress (getter/setter via computed)
-        // const uploadProgressLocal = computed({
-        //     // get: () => store.getters['tripsStorage/uploadProgress'],
-        //     get: () => store.getters['tripsStorage/uploadProgress'],
+const imageFile = ref(null);
 
-        //     // set: (val) => store.commit('tripsStorage/setUploadProgress', val)
-        //     set: (val) => store.commit('tripsStorage/setUploadProgress', val)
+const imageSrc = computed(() => (imagePreview.value ? imagePreview.value : imageUrl.value));
+let tripId = props.trip.tripId || null;
+const formTitle = computed(() => {
+	if (tripId) {
+		return "Edit Trip: " + name.value + " Lines Count: " + (tripsStore.activeTrip.linesCount ?? 0);
+	} else {
+		return "Create Trip";
+	}
+});
 
-        // });
+const uploadProgressFlag = computed(() => {
+	const val = Number(uploadProgress.value);
+	return val > 0 && val < 100;
+});
 
-		const { uploadProgress } = useFirebaseStorage()
-		const uploadProgressLocal = computed({
-			get: () => uploadProgress.value,
-			set: (val) => (uploadProgress.value = val)
-		})
+const tripViewLink = computed(() => (tripId ? `/trip/view/${tripId}` : ""));
+const tripPrintLink = computed(() => (tripId ? `/trip/view/print/${tripId}` : ""));
 
-        // View/Print links
-        const tripViewLink = computed(() => (tripId ? `/trip/view/${tripId}` : ''));
-        const tripPrintLink = computed(() => (tripId ? `/trip/view/print/${tripId}` : ''));
+onMounted(async () => {
+	if (!tripId) {
+		tripId = await tripsStore.getNewTripId();
+	}
+	name.value = props.trip.name || "";
+	description.value = props.trip.description || "";
+	imageName.value = props.trip.imageName || "";
+	if (imageName.value) {
+		await fetchImageUrlLocal();
+		imageNameOriginal.value = imageName.value;
+	}
+});
 
-        // Initialize form fields
-        onMounted(async () => {
-            if (!tripId) {
-				tripId = await tripsStore.getNewTripId();
-			}
+const fetchImageUrlLocal = async () => {
+	const path = `trips/${tripId}/${props.trip.imageName}`;
+	try {
+		imageUrl.value = await fetchFileUrl(props.trip.imageName, path);
+	} catch (err) {
+		$q.dialog({ title: "Error", message: err.message || err });
+	}
+};
 
-            name.value.val = props.trip.name || '';
-            description.value.val = props.trip.description || '';
-            imageName.value.val = props.trip.imageName || '';
-            if (imageName.value.val) {
-                await fetchImageUrlLocal();
-                imageNameOriginal.value = imageName.value.val;
-            }
-        });
+const deleteImageLocal = async () => {
+	const path = `trips/${tripId}/${props.trip.imageName}`;
+	try {
+		await Promise.all([tripsStore.deleteTripImage(tripId, props.trip.imageName), deleteStorageObject(props.trip.imageName, path)]);
+	} catch (err) {
+		$q.dialog({ title: "Error", message: err.message || err });
+	}
+};
 
-        async function fetchImageUrlLocal() {
-            try {
-				const { fetchImageUrl } = useFirebaseStorage();
-                imageUrl.value = await fetchImageUrl(props.trip.imageName, tripId);
-            } catch (err) {
-                setError(err.message || err);
-            }
-        }
+const previewImage = (input) => {
+	let file = null;
+	if (input && input.target && input.target.files) {
+		// Native input element event.target.files
+		file = input.target.files[0];
+	} else if (Array.isArray(input)) {
+		file = input[0];
+	} else {
+		file = input;
+	}
+	if (!file) return;
+	imageData.value = file;
+	imagePreview.value = URL.createObjectURL(file);
+	uploadProgress.value = 0;
+	imageName.value = file.name;
+};
 
-        async function deleteImageLocal() {
-            try {
-				const { deleteStorageObject } = useFirebaseStorage();
-                await Promise.all([
-					tripsStore.deleteTripImage(tripId, props.trip.imageName),
-                	imageUrl.value = await deleteStorageObject(tripId, props.trip.imageName)
-                ]);
-            } catch (err) {
-                setError(err.message || err);
-            }
-        }
+const uploadImageLocal = async () => {
+	if (!imageData.value) return;
+	if (imageNameOriginal.value) await deleteImageLocal();
+	imageName.value = imageData.value.name;
+	const file = imageData.value;
+	$q.loading.show();
+	try {
+		const path = `trips/${tripId}/${imageData.value.name}`;
+		const [downloadURL] = await Promise.all([await uploadStorageObject(file, path), tripsStore.updateTripImage(tripId, imageData.value.name)]);
+		imageUrl.value = downloadURL;
+		$q.loading.hide();
+	} catch (err) {
+		$q.loading.hide();
+		$q.dialog({ title: "Error", message: err.message || err });
+	}
+	imageData.value = null;
+	imagePreview.value = null;
+	uploadProgress.value = 0;
+};
 
-        function previewImage(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            imageData.value = file;
-            imagePreview.value = URL.createObjectURL(file);
-            uploadProgressLocal.value = 0;
-            imageName.value.val = file.name;
-        }
+const deleteImageCurrent = () => {
+	imageName.value = "";
+	imageUrl.value = "";
+	imagePreview.value = null;
+	imageData.value = null;
+	imageFile.value = null;
+};
 
-        async function uploadImageLocal() {
-            if (!imageData.value) return;
-
-            if (imageNameOriginal.value) await deleteImageLocal();
-
-            imageName.value.val = imageData.value.name;
-            const file = imageData.value;
-            isLoading.value = true;
-            try {
-                const fileName = `trips/${tripId}/${imageData.value.name}`;
-				const { uploadStorageObject } = useFirebaseStorage();
-                const [downloadURL] = await Promise.all([
-                    // store.dispatch('tripsStorage/uploadStorageObject', { file, path: fileName }),
-					await uploadStorageObject(file, fileName),
-					tripsStore.updateTripImage(tripId, imageData.value.name)
-                ]);
-                imageUrl.value = downloadURL;
-            } catch (err) {
-                setError(err.message || err);
-            }
-
-            imageData.value = null;
-            imagePreview.value = null;
-            isLoading.value = false;
-            uploadProgressLocal.value = 0;
-        }
-
-        function deleteImageCurrent() {
-            imageName.value.val = '';
-            imageUrl.value = '';
-        }
-
-        function clearValidity(input) {
-            if (input === 'name') name.value.isValid = true;
-            if (input === 'description') description.value.isValid = true;
-            if (input === 'imageName') imageName.value.isValid = true;
-        }
-
-        function validateForm() {
-            formIsValid.value = true;
-            if (name.value.val === '') {
-                name.value.isValid = false;
-                formIsValid.value = false;
-            }
-            // Add other validations if needed
-        }
-
-        async function submitForm() {
-            validateForm();
-            if (!formIsValid.value) return;
-
-            if (!imageName.value.val && imageNameOriginal.value) {
-                await deleteImageLocal();
-            }
-
-            if (imageName.value.val !== imageNameOriginal.value) {
-                await uploadImageLocal();
-            }
-
-            const tripData = {
-                tripId: tripId,
-                name: name.value.val,
-                description: description.value.val,
-                imageName: imageName.value.val,
-            };
-            emit('save-data', tripData);
-        }
-
-        return {
-            componentName,
-            error,
-            clearError,
-            name,
-            description,
-            imageName,
-            isLoading,
-            formIsValid,
-            imageUrl,
-            imageData,
-            uploadProgressLocal,
-            imageSrc,
-            tripViewLink,
-            tripPrintLink,
-			trip: toRef(props, 'trip'),
-            fetchImageUrlLocal,
-            deleteImageLocal,
-            previewImage,
-            uploadImageLocal,
-            deleteImageCurrent,
-            clearValidity,
-            validateForm,
-            submitForm
-        };
-    }
+const submitForm = async () => {
+	if (!imageName.value && imageNameOriginal.value) {
+		await deleteImageLocal();
+	}
+	if (imageName.value !== imageNameOriginal.value) {
+		await uploadImageLocal();
+	}
+	const tripData = {
+		tripId: tripId,
+		name: name.value,
+		description: description.value,
+		imageName: imageName.value,
+	};
+	emit("save-data", tripData);
 };
 </script>
-
-<style scoped>
-    .form-control {
-        margin: 0.5rem 0;
-    }
-
-    label {
-        font-weight: bold;
-        display: block;
-        margin-bottom: 0.5rem;
-    }
-
-    input[type='checkbox']+label {
-        font-weight: normal;
-        display: inline;
-        margin: 0 0 0 0.5rem;
-    }
-
-    input,
-    textarea {
-        display: block;
-        width: 100%;
-        border: 1px solid #ccc;
-        font: inherit;
-    }
-
-    input:focus,
-    textarea:focus {
-        background-color: #f0e6fd;
-        outline: none;
-        border-color: #3d008d;
-    }
-
-    input[type='checkbox'] {
-        display: inline;
-        width: auto;
-        border: none;
-    }
-
-    input[type='checkbox']:focus {
-        outline: #3d008d solid 1px;
-    }
-
-    .invalid label {
-        color: red;
-    }
-
-    .invalid input,
-    .invalid textarea {
-        border: 1px solid red;
-    }
-
-    .controls {
-        display: flex;
-        justify-content: flex-start;
-    }
-</style>

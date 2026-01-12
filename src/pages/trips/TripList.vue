@@ -1,115 +1,72 @@
 <template>
-	<main>
-		<base-dialog @close="clearError" :show="!!error" title="An error is ocurred!">
-			<p>{{ error }}</p>
-		</base-dialog>
-		<base-dialog :show="!!confirm" title="Really???">
-			<p>Are you shure you want to delete this trip?</p>
-		</base-dialog>
-		<section>
-			<base-card>
-				<div v-if="authStore.isAuthenticated" class="controls">
-					<base-button link to="/trip/add">Add New Trip</base-button>
-					<div v-if="authStore.isAdmin">
-					<input id="all-trips-flag" name="allTripsFlag" type="checkbox" v-model="allTripsFlag"/>
-					<label for="all-trips-flag">Zobraziť tripy všetkých uživateľov</label>
-					<p>Trips Count: {{ filteredTrips.length }}</p>
+	<q-page class="q-pa-md bg-grey-2">
+		<q-card>
+			<q-card-section class="row items-center justify-between">
+				<div class="row items-center col">
+					<div class="text-h6">Trips: {{ filteredTrips.length }}</div>
+					<q-toggle v-if="authStore.isAdmin" v-model="allTripsFlag" label="All users' trips" class="q-ml-md" />
 				</div>
+				<div class="col-auto q-ml-auto">
+					<q-btn color="primary" label="Add Trip" icon="add" to="/trip/add" />
 				</div>
-				<div v-if="isLoading">
-					<base-spinner></base-spinner>
-				</div>
-				<ul v-else-if="tripsStore.hasTrips">
-					<trip-actions v-for="trip in filteredTrips" :key="trip.tripId" :trip-id="trip.tripId" :name="trip.name" :description="trip.description"></trip-actions>
-				</ul>
-				<h3 v-else>No trips found</h3>
-			</base-card>
-		</section>
-	</main>
+			</q-card-section>
+			<q-separator />
+			<q-list v-if="tripsStore.hasTrips" bordered separator>
+				<trip-actions v-for="trip in filteredTrips" :key="trip.tripId" :trip-id="trip.tripId" :name="trip.name" :description="trip.description" :image-name="trip.imageName" />
+			</q-list>
+			<q-card-section v-else>
+				<div class="text-grey">No trips found</div>
+			</q-card-section>
+		</q-card>
+	</q-page>
 </template>
 
-<script>
-import { ref, computed, watch, onMounted } from 'vue';
-import { useAuthStore } from '@/stores/auth';
-import { useTripsStore } from '@/stores/trips';
-import { useError } from '@/composables/useError';
-import TripActions from '../../components/trips/TripActions.vue';
+<script setup>
+import { ref, computed, watch, onMounted } from "vue";
+import { useQuasar } from "quasar";
+import { useAuthStore } from "@/stores/auth";
+import { useTripsStore } from "@/stores/trips";
+import TripActions from "@/components/trips/TripActions.vue";
 
-export default {
-	name: 'TripList',
-	components: {
-		TripActions,
-	},
-	setup() {
-		const componentName = 'TripList';
-		const authStore = useAuthStore();
-		const tripsStore = useTripsStore();
-		const { error, setError, clearError } = useError(componentName);
+const authStore = useAuthStore();
+const tripsStore = useTripsStore();
+const $q = useQuasar();
 
-		const isLoading = ref(false);
-		const allTripsFlag = ref(false);
-		const confirm = ref(false);
+const allTripsFlag = ref(false);
 
-		onMounted(async () => {
-			const savedFlag = localStorage.getItem('allTripsFlag');
-			if (authStore.isAdmin && savedFlag !== null) {
-				allTripsFlag.value = savedFlag === 'true';
-			}
-			loadTripsLocal();
-		});
-
-		watch(allTripsFlag, (newValue) => {
-			localStorage.setItem('allTripsFlag', newValue);
-		})
-
-		async function loadTripsLocal() {
-			isLoading.value = true;
-			const userId = authStore.userId;
-			try {
-				if (authStore.isAdmin) {
-					await tripsStore.loadTrips()
-				} else {
-					await tripsStore.loadTrips(userId);
-				}
-			} catch (err) {
-				setError(err.message || 'Failed to load trips');
-			}
-			isLoading.value = false;
+const loadTripsLocal = async () => {
+	$q.loading.show();
+	const userId = authStore.userId;
+	try {
+		if (authStore.isAdmin) {
+			await tripsStore.loadTrips();
+		} else {
+			await tripsStore.loadTrips(userId);
 		}
-
-		const filteredTrips = computed(() => {
-			if (authStore.isAdmin && allTripsFlag.value) {
-				return tripsStore.trips;
-			}
-			else {
-				return tripsStore.trips.filter(trip => trip.userId === authStore.userId);
-			}
-
-		});
-
-		return {
-			error,
-			clearError,
-			isLoading,
-			confirm,
-			authStore,
-			tripsStore,
-			allTripsFlag,
-			filteredTrips
-		};
+	} catch (err) {
+		$q.dialog({ title: "Error", message: err.message || err });
+		$q.loading.hide();
 	}
+	$q.loading.hide();
 };
+
+onMounted(async () => {
+	const savedFlag = localStorage.getItem("allTripsFlag");
+	if (authStore.isAdmin && savedFlag !== null) {
+		allTripsFlag.value = savedFlag === "true";
+	}
+	await loadTripsLocal();
+});
+
+watch(allTripsFlag, (newValue) => {
+	localStorage.setItem("allTripsFlag", newValue);
+});
+
+const filteredTrips = computed(() => {
+	if (authStore.isAdmin && allTripsFlag.value) {
+		return tripsStore.trips;
+	} else {
+		return tripsStore.trips.filter((trip) => trip.userId === authStore.userId);
+	}
+});
 </script>
-
-<style scoped>
-	ul {
-		list-style: none;
-		margin: 0;
-		padding: 0;
-	}
-
-	.controls {
-		display: flex;
-		justify-content: left;
-	}
-</style>

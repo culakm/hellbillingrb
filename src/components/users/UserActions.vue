@@ -7,8 +7,10 @@
 			<div class="text-body2">Description: {{ user.description }}</div>
 		</q-item-section>
 		<q-item-section side>
-			<q-btn dense flat icon="edit" color="primary" :to="userEditLink" />
-			<q-btn dense flat icon="delete" color="negative" @click="deleteUserLocal" />
+			<q-btn-group spread>
+				<q-btn dense flat icon="edit" color="primary" :to="userEditLink" />
+				<q-btn dense flat icon="delete" color="negative" @click="deleteUserLocal" />
+			</q-btn-group>
 		</q-item-section>
 	</q-item>
 </template>
@@ -62,10 +64,7 @@ const deleteUserLocal = async () => {
 				});
 			} catch (err) {
 				$q.loading.hide();
-				$q.dialog({
-					title: "Error",
-					message: err.message || err,
-				});
+				$q.dialog({ title: "Error", message: err.message || err });
 			}
 		})
 		.onCancel(() => {

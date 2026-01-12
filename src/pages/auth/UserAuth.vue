@@ -53,10 +53,7 @@ const submitForm = async () => {
 		await authStore.login(userData);
 		router.replace("/");
 	} catch (err) {
-		$q.dialog({
-			title: "Error",
-			message: err.message || err,
-		});
+		$q.dialog({ title: "Error", message: err.message || err });
 		password.value = "";
 	}
 	$q.loading.hide();

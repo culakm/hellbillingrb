@@ -75,10 +75,7 @@ const submitForm = async () => {
 		});
 	} catch (err) {
 		$q.loading.hide();
-		$q.dialog({
-			title: "Error",
-			message: err.message || err,
-		});
+		$q.dialog({ title: "Error", message: err.message || err });
 	}
 };
 </script>

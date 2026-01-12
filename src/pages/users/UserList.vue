@@ -27,10 +27,7 @@ const loadUsersLocal = async () => {
 	try {
 		await usersStore.loadUsers();
 	} catch (err) {
-		$q.dialog({
-			title: "Error",
-			message: err.message || err,
-		});
+		$q.dialog({ title: "Error", message: err.message || err });
 		$q.loading.hide();
 	}
 	$q.loading.hide();

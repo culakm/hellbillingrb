@@ -38,10 +38,7 @@ const createUserLocal = async (userData) => {
 		});
 	} catch (err) {
 		$q.loading.hide();
-		$q.dialog({
-			title: "Error",
-			message: err.message || err,
-		});
+		$q.dialog({ title: "Error", message: err.message || err });
 		return;
 	}
 };

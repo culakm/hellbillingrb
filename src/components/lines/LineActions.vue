@@ -1,144 +1,112 @@
 <template>
-    <li class="line-item">
-        <base-dialog @close="clearError" :show="!!error" title="An error is ocurred!">
-            <p>{{ error }}</p>
-        </base-dialog>
-        <div v-if="isLoading">
-            <base-spinner></base-spinner>
-        </div>
-        <template v-if="!isEdited">
-            <line-view :line="line"></line-view>
-            <div class="actions">
-                <base-button @click="setEditedLine()">Edit</base-button>
-                <base-button @click="deleteLineLocal">Delete</base-button>
-            </div>
-        </template>
-        <template v-else>
-            <line-form @save-line="editLineLocal" @cancel-edit="cancelEditLocal" :line="line"></line-form>
-        </template>
-    </li>
+	<q-card class="q-mb-md q-pa-sm">
+		<q-card-section class="q-pa-none">
+			<template v-if="!isEdited">
+				<div class="row items-center no-wrap">
+					<div class="col">
+						<line-view :line="line" />
+					</div>
+					<div class="column q-gutter-y-sm">
+						<q-btn dense flat icon="edit" color="primary" @click="setEditedLine" />
+						<q-btn dense flat icon="delete" color="negative" @click="deleteLineLocal" />
+					</div>
+				</div>
+			</template>
+			<template v-else>
+				<line-form @save-line="editLineLocal" @cancel-edit="cancelEditLocal" :line="line" />
+			</template>
+		</q-card-section>
+	</q-card>
 </template>
 
-<script>
-import { ref, toRef } from 'vue';
-import { useLinesStore } from '@/stores/lines';
-import { useError } from '@/composables/useError';
-import LineView from './LineView.vue';
-import LineForm from './LineForm.vue';
+<script setup>
+import { ref, toRef } from "vue";
+import { useQuasar } from "quasar";
+import { useTripsStore } from "@/stores/trips";
+import { useLinesStore } from "@/stores/lines";
+import LineView from "./LineView.vue";
+import LineForm from "./LineForm.vue";
 
-export default {
-    name: 'LineActions',
-    components: {
-        LineView,
-        LineForm,
-    },
-    props: {
-        tripId: {
-            type: String,
-            required: true,
-        },
-        line: {
-            type: Object,
-            required: true,
-            default: () => ({
-                interest: [],
-            }),
-        },
-    },
-    setup(props, { emit }) {
-        const componentName = 'LineActions';
-		const linesStore = useLinesStore();
-        const { error, setError, clearError } = useError(componentName);
+const props = defineProps({
+	tripId: {
+		type: String,
+		required: true,
+	},
+	line: {
+		type: Object,
+		required: true,
+		default: () => ({ interest: [] }),
+	},
+});
+const emit = defineEmits(["line-is-edited"]);
+const $q = useQuasar();
+const linesStore = useLinesStore();
+const tripsStore = useTripsStore();
 
-        const isLoading = ref(false);
-        const isEdited = ref(false);
+const isEdited = ref(false);
 
-        async function editLineLocal(lineData) {
-            isLoading.value = true;
-            try {
-                lineData.tripId = props.tripId;
-				await linesStore.editLine(lineData);
-            } catch (err) {
-                setError(err.message || err);
-            }
-            isLoading.value = false;
-            setEditedLine();
-        }
-
-        async function deleteLineLocal() {
-            isLoading.value = true;
-            try {
-				await linesStore.deleteLine(props.tripId, props.line.lineId);
-            } catch (err) {
-                setError(err.message || err);
-            }
-            isLoading.value = false;
-        }
-
-        function setEditedLine() {
-            isEdited.value = !isEdited.value;
-            emit('line-is-edited');
-        }
-
-        function cancelEditLocal() {
-            isEdited.value = false;
-            emit('line-is-edited');
-        }
-
-        return {
-            componentName,
-            error,
-            clearError,
-            isLoading,
-            isEdited,
-			line: toRef(props, 'line'),
-            editLineLocal,
-            deleteLineLocal,
-            setEditedLine,
-            cancelEditLocal
-        };
-    }
+const editLineLocal = async (lineData) => {
+	$q.loading.show();
+	try {
+		lineData.tripId = props.tripId;
+		await linesStore.editLine(lineData);
+		$q.loading.hide();
+	} catch (err) {
+		$q.dialog({ title: "Error", message: err.message || err });
+		$q.loading.hide();
+	}
+	setEditedLine();
 };
+
+const deleteLineLocal = async () => {
+	$q.loading.show();
+	try {
+		tripsStore.activeTrip.linesCount--;
+		console.log("Deleting line:", tripsStore.activeTrip.linesCount);
+		await linesStore.deleteLine(props.tripId, props.line.lineId);
+		$q.loading.hide();
+	} catch (err) {
+		$q.dialog({ title: "Error", message: err.message || err });
+		$q.loading.hide();
+	}
+};
+
+const setEditedLine = () => {
+	isEdited.value = !isEdited.value;
+	emit("line-is-edited");
+};
+
+const cancelEditLocal = () => {
+	isEdited.value = false;
+	emit("line-is-edited");
+};
+
+const line = toRef(props, "line");
 </script>
 
 <style scoped>
-    .line-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
+li {
+	list-style-type: none;
+	padding: 10px;
+	margin-bottom: 10px;
+	border: 1px solid #ddd;
+	border-radius: 5px;
+	background-color: #f9f9f9;
+	transition: background-color 0.3s ease;
+}
 
-    li {
-        list-style-type: none;
-        padding: 10px;
-        margin-bottom: 10px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        background-color: #f9f9f9;
-        transition: background-color 0.3s ease;
-    }
+li:hover {
+	background-color: #e9e9e9;
+}
 
-    li:hover {
-        background-color: #e9e9e9;
-    }
+div {
+	margin: 0.5rem 0;
+}
 
-    h3 {
-        font-size: 1.5rem;
-    }
-
-    h3,
-    h4 {
-        margin: 0.5rem 0;
-    }
-
-    div {
-        margin: 0.5rem 0;
-    }
-
-    .actions {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-        justify-content: flex-end;
-    }
+.actions {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+	justify-content: flex-end;
+}
 </style>

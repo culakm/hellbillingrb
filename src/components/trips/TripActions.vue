@@ -1,124 +1,77 @@
 <template>
-    <base-dialog @close="clearError" :show="!!error" title="An error is ocurred!">
-        <p>{{ error }}</p>
-    </base-dialog>
-    <li>
-        <div class="header">
-            <h3>{{ name }}</h3>
-            <p>{{ description }}</p>
-        </div>
-        <div v-if="isLoading">
-            <base-spinner></base-spinner>
-        </div>
-        <div v-else class="actions">
-            <base-button link :to="tripViewLink">View</base-button>
-            <base-button link :to="tripEditLink">Edit</base-button>
-            <div class="print-button"><base-button link newTab :to="tripPrintLink">Print</base-button></div>
-            <base-button @click="deleteTripLocal">Delete</base-button>
-        </div>
-    </li>
+	<q-item class="q-py-sm">
+		<q-item-section>
+			<div class="text-subtitle1">{{ name }}</div>
+			<div class="text-caption text-grey-7">{{ description }}</div>
+		</q-item-section>
+		<q-item-section side>
+			<q-btn-group spread>
+				<q-btn dense flat icon="visibility" color="primary" :to="tripViewLink" />
+				<q-btn dense flat icon="edit" color="primary" :to="tripEditLink" />
+				<q-btn dense flat icon="print" color="secondary" :to="tripPrintLink" target="_blank" />
+				<q-btn dense flat icon="delete" color="negative" @click="deleteTripLocal" />
+			</q-btn-group>
+		</q-item-section>
+	</q-item>
 </template>
 
-<script>
-import { ref, toRef, computed } from 'vue';
-import { useTripsStore } from '@/stores/trips';
-import { useRouter } from 'vue-router';
-import { useError } from '@/composables/useError';
+<script setup>
+import { computed, defineProps } from "vue";
+import { useTripsStore } from "@/stores/trips";
+import { deleteStorageObject } from "@/composables/useFirebaseStorage";
+import { useRouter } from "vue-router";
+import { useQuasar } from "quasar";
 
-export default {
-    name: 'TripActions',
-    props: {
-        tripId: {
-            type: [String, Number],
-            required: true
-        },
-        name: {
-            type: String,
-            required: true
-        },
-        description: {
-            type: String,
-            required: false,
-            default: ''
-        }
-    },
-    setup(props) {
-        const componentName = 'TripActions';
-		const tripsStore = useTripsStore();
-        const router = useRouter();
-        const { error, setError, clearError } = useError(componentName);
+const props = defineProps({
+	tripId: {
+		type: [String, Number],
+		required: true,
+	},
+	name: {
+		type: String,
+		required: true,
+	},
+	description: {
+		type: String,
+		required: false,
+		default: "",
+	},
+	imageName: {
+		type: String,
+		required: false,
+		default: "",
+	},
+});
 
-        const isLoading = ref(false);
+const tripsStore = useTripsStore();
+const router = useRouter();
+const $q = useQuasar();
 
-        const tripViewLink = computed(() => `/trip/view/${props.tripId}`);
-        const tripPrintLink = computed(() => `/trip/view/print/${props.tripId}`);
-        const tripEditLink = computed(() => `/trip/edit/${props.tripId}`);
+const tripViewLink = computed(() => `/trip/view/${props.tripId}`);
+const tripPrintLink = computed(() => `/trip/view/print/${props.tripId}`);
+const tripEditLink = computed(() => `/trip/edit/${props.tripId}`);
 
-        async function deleteTripLocal() {
-            const confirmed = confirm('Are you sure you want to delete this trip?');
-            if (!confirmed) { return; }
-            isLoading.value = true;
-            try {
-				await tripsStore.deleteTrip(props.tripId);
-            } catch (err) {
-                setError(err.message || err);
-            }
-            isLoading.value = false;
-            router.replace('/trips');
-        }
-
-        return {
-            componentName,
-            error,
-            clearError,
-            isLoading,
-            // name: props.name,
-			line: toRef(props, 'name'),
-            // description: props.description,
-			line: toRef(props, 'description'),
-            tripViewLink,
-            tripPrintLink,
-            tripEditLink,
-            deleteTripLocal
-        };
-    }
+const deleteTripLocal = async () => {
+	$q.dialog({
+		title: "Confirm",
+		message: `Are you sure you want to delete trip: ${props.name}?`,
+		cancel: true,
+		persistent: true,
+	})
+		.onOk(async () => {
+			const path = `trips/${props.tripId}/${props.imageName}`;
+			$q.loading.show();
+			try {
+				await Promise.all([tripsStore.deleteTrip(props.tripId), deleteStorageObject(props.imageName, path)]);
+				$q.loading.hide();
+				router.replace("/trips");
+			} catch (err) {
+				$q.loading.hide();
+				$q.dialog({ title: "Error", message: err.message || err });
+			}
+		})
+		.onCancel(() => {
+			return;
+		});
 };
 </script>
-
-<style scoped>
-    @media (max-width: 46rem) {
-        .print-button {
-            display: none;
-        }
-    }
-
-    @media (min-width: 46rem) {
-        .print-button {
-            display: inherit;
-        }
-    }
-
-    li {
-        margin: 1rem 0;
-        border: 1px solid #424242;
-        border-radius: 12px;
-        padding: 1rem;
-    }
-
-    .header {
-        display: flex;
-        align-items: center;
-    }
-
-    .header h3,
-    .header p {
-        margin-right: 10px;
-        /* Adjust spacing between h3 and p */
-    }
-
-    .actions {
-        display: flex;
-        justify-content: flex-start;
-        /* Adjust spacing between the header and actions */
-    }
-</style>
