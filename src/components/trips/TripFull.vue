@@ -53,10 +53,7 @@ const fetchImageUrlLocal = async () => {
 const toggleFullscreen = () => {
 	const target = props.pageRef.$el;
 	if (target && target.requestFullscreen) {
-		$q.fullscreen
-			.toggle(target)
-			.then(() => console.log("Fullscreen toggled"))
-			.catch((err) => console.error("Fullscreen failed", err));
+		$q.fullscreen.toggle(target);
 	} else {
 		console.error("pageRef is not a valid DOM element for fullscreen");
 	}

@@ -1,7 +1,7 @@
 import { ref, computed } from "vue";
 import { defineStore } from "pinia";
 import { db } from "../firebase.js";
-import { interestNames } from "@/config/settings";
+import { interestNames, closeLineThresholdKm } from "@/config/settings";
 import { collection, doc, getDocs, updateDoc, setDoc, deleteDoc, query, orderBy } from "firebase/firestore";
 
 export const useLinesStore = defineStore("lines", () => {
@@ -144,6 +144,7 @@ export const useLinesStore = defineStore("lines", () => {
 
 	function recalculateLineExtraValues() {
 		lines.value.forEach((line, index) => {
+			// kmPart calculation
 			line.kmPart = null;
 			if (index === 0) {
 				line.kmPart = 0;
@@ -160,21 +161,25 @@ export const useLinesStore = defineStore("lines", () => {
 				}
 			}
 
+			// interest calculation
 			interestNames.forEach((name) => {
 				line[name] = false;
 			});
 			line.interest.forEach((value) => {
 				line[value] = true;
 			});
-			if (line.close) {
-				line.close = false;
-			}
+
+			// close line calculation
+			line.close = false;
 			const nextLine = lines.value[index + 1];
 			if (index < lines.value.length - 1 && line.kmTotal !== null && nextLine?.kmTotal !== null) {
-				if (nextLine.kmTotal - line.kmTotal < 2) {
+				if (nextLine.kmTotal - line.kmTotal < closeLineThresholdKm) {
 					line.close = true;
 				}
 			}
+
+			// order recalculation
+			line.order = index + 1;
 		});
 	}
 

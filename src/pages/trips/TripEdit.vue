@@ -25,7 +25,9 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
+import { useRouter } from "vue-router";
 import { useQuasar } from "quasar";
+
 import { useAuthStore } from "@/stores/auth";
 import { useTripsStore } from "@/stores/trips";
 import { useLinesStore } from "@/stores/lines";
@@ -38,6 +40,7 @@ const authStore = useAuthStore();
 const tripsStore = useTripsStore();
 const linesStore = useLinesStore();
 const route = useRoute();
+const router = useRouter();
 const $q = useQuasar();
 
 const draggableEnabled = ref(true);
@@ -64,6 +67,7 @@ const updateTripLocal = async (tripData) => {
 		$q.dialog({ title: "Error", message: err.message || err });
 		$q.loading.hide();
 	}
+	router.replace("/trips");
 };
 
 const createLineLocal = async (lineData) => {

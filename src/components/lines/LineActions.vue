@@ -62,7 +62,6 @@ const deleteLineLocal = async () => {
 	$q.loading.show();
 	try {
 		tripsStore.activeTrip.linesCount--;
-		console.log("Deleting line:", tripsStore.activeTrip.linesCount);
 		await linesStore.deleteLine(props.tripId, props.line.lineId);
 		$q.loading.hide();
 	} catch (err) {
