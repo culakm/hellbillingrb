@@ -1,93 +1,54 @@
 <template>
-	<q-page v-touch-pan.up.right.prevent.mouse="handlePan" class="flex flex-center">
-		<div class="row items-center">
-			<div class="col text-center">Test Page</div>
-			<div class="col text-center">
-				<q-btn round icon="sync" color="red" @click="saveData" :loading="loading" />
+	<button @click="start">start</button>
+	<button @click="pause">pause</button>
+	<button @click="disabled = true">disabled</button>
+	<div class="flex">
+		<VueDraggable ref="el" v-model="list" :disabled="disabled" :animation="150" ghostClass="ghost" class="flex flex-col gap-2 p-4 w-300px h-300px m-auto bg-gray-500/5 rounded" @start="onStart" @update="onUpdate" @end="onEnd">
+			<div v-for="item in list" :key="item.id" class="cursor-move h-30 bg-gray-500/5 rounded p-3">
+				{{ item.name }}
 			</div>
-			<div class="col text-center">
-				<q-input filled v-model="data.name" input-class="text-center text-h5" color="teal" placeholder="Counter" />
-			</div>
-		</div>
-		<div class="row full-width items-center">
-			<div class="col text-center">
-				<q-btn round icon="remove" color="black" @click="handleRemove" />
-			</div>
-			<div class="col text-center text-h3">
-				{{ data.counter }}
-			</div>
-			<div class="col text-center">
-				<q-btn icon="add" v-touch-repeat:300:300:200:50.mouse.enter.space="handleAdd" color="red" @click="handleAdd" />
-			</div>
-		</div>
-		<div class="row full-width items-center">
-			<div class="col text-center">
-				<q-btn round icon="refresh" color="black" @click="handleRefresh" />
-			</div>
-		</div>
-	</q-page>
+		</VueDraggable>
+	</div>
 </template>
 
-<script>
-import { reactive, ref } from "vue";
+<script setup>
+import { ref } from "vue";
+import { VueDraggable } from "vue-draggable-plus";
 
-export default {
-	name: "TestPage",
-	setup() {
-		const loading = ref(false);
-		// const counter = ref(0);
-		// const name = ref('Test text');
-		const data = reactive({
-			counter: 0,
-			name: "Test text",
-		});
-		const saveData = async () => {
-			loading.value = true;
-			// Simulate API call
-			await new Promise((resolve) => setTimeout(resolve, 2000));
-			loading.value = false;
-			console.log("Data saved!");
-		};
+const list = ref([
+	{ name: "Joao", id: 1 },
+	{ name: "Jean", id: 2 },
+	{ name: "Johanna", id: 3 },
+	{ name: "Juan", id: 4 },
+]);
 
-		// const handleAdd= () => { counter.value++; };
-		// const handleRemove= () => { counter.value--; };
-		// const handleRefresh= () => { counter.value = 0; };
-		const handleAdd = () => {
-			data.counter++;
-		};
-		const handleRemove = () => {
-			data.counter--;
-		};
-		const handleRefresh = () => {
-			data.counter = 0;
-		};
-		const handlePan = (event) => {
-			if (event.delta.y < 0) {
-				handleAdd();
-			}
-			if (event.delta.y > 0) {
-				handleRemove();
-			}
-		};
+const el = ref();
+const disabled = ref(false);
 
-		return {
-			// counter,
-			// name,
-			data,
-			handleAdd,
-			handleRemove,
-			handleRefresh,
-			handlePan,
-			loading,
-			saveData,
-		};
-	},
+function pause() {
+	if (el.value && el.value.pause) el.value.pause();
+}
+
+function start() {
+	if (el.value && el.value.start) el.value.start();
+}
+
+const onStart = (e) => {
+	console.log("start", e);
+};
+
+const onEnd = (e) => {
+	console.log("onEnd", e);
+};
+
+const onUpdate = () => {
+	console.log("update");
 };
 </script>
 
 <style scoped>
-.q-page {
-	max-width: 700px;
-	margin: 0 auto;
+.ghost {
+	opacity: 0.5;
+	background: #c8ebfb;
 }
 </style>

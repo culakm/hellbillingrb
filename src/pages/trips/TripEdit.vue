@@ -46,6 +46,10 @@ const $q = useQuasar();
 const draggableEnabled = ref(true);
 const dragging = ref(false);
 
+onMounted(() => {
+	tripByIdLocal(route.params.tripId);
+});
+
 const tripByIdLocal = async (tripId) => {
 	$q.loading.show();
 	try {
@@ -101,10 +105,6 @@ const onEnd = async (evt) => {
 		$q.loading.hide();
 	}
 };
-
-onMounted(() => {
-	tripByIdLocal(route.params.tripId);
-});
 </script>
 
 <style scoped>

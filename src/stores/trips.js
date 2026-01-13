@@ -14,10 +14,10 @@ export const useTripsStore = defineStore("trips", () => {
 	const activeTrip = ref(null);
 
 	// Reset state
-	function $reset() {
+	const $reset = () => {
 		trips.value = [];
 		activeTrip.value = null;
-	}
+	};
 
 	// Getters
 	const hasTrips = computed(() => trips.value.length > 0);
@@ -35,7 +35,7 @@ export const useTripsStore = defineStore("trips", () => {
 	});
 
 	// Actions
-	async function getNewTripId() {
+	const getNewTripId = async () => {
 		try {
 			const newDocRef = doc(collection(db, "trips"));
 			return newDocRef.id;
@@ -44,18 +44,18 @@ export const useTripsStore = defineStore("trips", () => {
 			console.error(errorOut);
 			throw new Error(errorOut);
 		}
-	}
+	};
 
-	async function setActiveTrip(tripId) {
+	const setActiveTrip = async (tripId) => {
 		activeTrip.value = await getTripById(tripId);
 		if (activeTrip.value) {
 			await linesStore.loadLines(tripId);
 			activeTrip.value.linesCount = linesStore.linesCount;
 			activeTrip.value.hasLines = linesStore.linesCount > 0;
 		}
-	}
+	};
 
-	async function getTripById(tripId) {
+	const getTripById = async (tripId) => {
 		if (activeTrip.value?.tripId === tripId) {
 			return activeTrip.value;
 		}
@@ -73,13 +73,13 @@ export const useTripsStore = defineStore("trips", () => {
 			throw new Error(errorOut);
 		}
 		return localTrip;
-	}
+	};
 
-	function clearActiveTrip() {
+	const clearActiveTrip = () => {
 		activeTrip.value = null;
-	}
+	};
 
-	async function updateTripImage(tripId, imageName) {
+	const updateTripImage = async (tripId, imageName) => {
 		try {
 			const tripRef = doc(db, "trips", tripId);
 			await setDoc(tripRef, { imageName }, { merge: true });
@@ -89,9 +89,9 @@ export const useTripsStore = defineStore("trips", () => {
 			console.error(errorOut);
 			throw new Error(errorOut);
 		}
-	}
+	};
 
-	async function deleteTripImage(tripId) {
+	const deleteTripImage = async (tripId) => {
 		try {
 			const tripRef = doc(db, "trips", tripId);
 			await updateDoc(tripRef, { imageName: "" });
@@ -102,9 +102,9 @@ export const useTripsStore = defineStore("trips", () => {
 			console.error(errorOut);
 			throw new Error(errorOut);
 		}
-	}
+	};
 
-	async function loadTrips(userId = null) {
+	const loadTrips = async (userId = null) => {
 		try {
 			const tripsCollectionRef = collection(db, "trips");
 			let tripsQuery;
@@ -124,9 +124,9 @@ export const useTripsStore = defineStore("trips", () => {
 			console.error(errorOut);
 			throw new Error(errorOut);
 		}
-	}
+	};
 
-	async function createTrip(tripData) {
+	const createTrip = async (tripData) => {
 		try {
 			await setDoc(doc(db, "trips", tripData.tripId), tripData);
 			trips.value.push(tripData);
@@ -135,9 +135,9 @@ export const useTripsStore = defineStore("trips", () => {
 			console.error(errorOut);
 			throw new Error(errorOut);
 		}
-	}
+	};
 
-	async function updateTrip(tripData) {
+	const updateTrip = async (tripData) => {
 		try {
 			await setDoc(doc(db, "trips", tripData.tripId), tripData);
 			activeTrip.value = { ...activeTrip.value, ...tripData };
@@ -146,9 +146,9 @@ export const useTripsStore = defineStore("trips", () => {
 			console.error(errorOut);
 			throw new Error(errorOut);
 		}
-	}
+	};
 
-	async function deleteTrip(tripId) {
+	const deleteTrip = async (tripId) => {
 		try {
 			const tripDocRef = doc(db, "trips", tripId);
 			const docSnap = await getDoc(tripDocRef);
@@ -169,7 +169,7 @@ export const useTripsStore = defineStore("trips", () => {
 			console.error(errorOut);
 			throw new Error(errorOut);
 		}
-	}
+	};
 
 	return {
 		// State

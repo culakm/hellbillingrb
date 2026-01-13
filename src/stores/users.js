@@ -18,21 +18,23 @@ const _getUserRole = async (email) => {
 };
 
 export const useUsersStore = defineStore("users", () => {
+
 	// State
 	const users = ref([]);
 	const activeUser = ref(null);
 
 	// Reset state
-	function $reset() {
+	const $reset = () => {
 		users.value = [];
 		activeUser.value = null;
-	}
+	};
 
 	// Getters
 	const hasUsers = computed(() => users.value.length > 0);
-	const UsersCount = computed(() => users.value.length);
+	const usersCount = computed(() => users.value.length);
 
-	async function loadUsers() {
+	// Actions
+	const loadUsers = async () => {
 		try {
 			users.value = [];
 			const usersCollectionRef = collection(db, "users");
@@ -58,9 +60,9 @@ export const useUsersStore = defineStore("users", () => {
 			console.error(`Error loading users: ${error.message}`);
 			throw new Error(`Error loading users: ${error.message}`);
 		}
-	}
+	};
 
-	async function createUser(userData) {
+	const createUser = async (userData) => {
 		try {
 			const createUserFn = httpsCallable(cloudFunctions, "createUser");
 			const cloudFunctionData = await createUserFn({ user: userData });
@@ -72,8 +74,9 @@ export const useUsersStore = defineStore("users", () => {
 			console.error(errorOut);
 			throw new Error(errorOut);
 		}
-	}
-	async function updateUser(userData) {
+	};
+
+	const updateUser = async (userData) => {
 		try {
 			const updateUserFn = httpsCallable(cloudFunctions, "updateUser");
 			await updateUserFn({ user: userData });
@@ -87,9 +90,9 @@ export const useUsersStore = defineStore("users", () => {
 			console.error(errorOut);
 			throw new Error(errorOut);
 		}
-	}
+	};
 
-	async function deleteUser(userId) {
+	const deleteUser = async (userId) => {
 		try {
 			const deleteUserFn = httpsCallable(cloudFunctions, "deleteUser");
 			await deleteUserFn({ userId: userId });
@@ -99,9 +102,9 @@ export const useUsersStore = defineStore("users", () => {
 			console.error(errorOut);
 			throw new Error(errorOut);
 		}
-	}
+	};
 
-	async function userByEmail(email) {
+	const userByEmail = async (email) => {
 		if (!email) {
 			return null;
 		}
@@ -123,9 +126,9 @@ export const useUsersStore = defineStore("users", () => {
 			console.error(errorOut);
 			throw new Error(errorOut);
 		}
-	}
+	};
 
-	async function userById(userId) {
+	const userById = async (userId) => {
 		if (!userId) {
 			return null;
 		}
@@ -140,7 +143,7 @@ export const useUsersStore = defineStore("users", () => {
 			console.error(errorOut);
 			throw new Error(errorOut);
 		}
-	}
+	};
 
 	return {
 		// State
@@ -152,7 +155,7 @@ export const useUsersStore = defineStore("users", () => {
 
 		// Getters
 		hasUsers,
-		UsersCount,
+		usersCount,
 
 		// Actions
 		loadUsers,

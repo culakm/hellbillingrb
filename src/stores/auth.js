@@ -1,50 +1,54 @@
 let timer;
-import { ref, computed } from 'vue';
-import { defineStore } from 'pinia';
-import { auth } from '@/firebase.js';
+import { ref, computed } from "vue";
+import { defineStore } from "pinia";
+import { auth } from "@/firebase.js";
 import { onAuthStateChanged, getIdTokenResult, signInWithEmailAndPassword, signOut } from "firebase/auth";
 
-
-export const useAuthStore = defineStore('auth', () => {
-
-    // State
+export const useAuthStore = defineStore("auth", () => {
+	// State
 	const userId = ref(null);
 	const token = ref(null);
 	const email = ref(null);
 	const role = ref(null);
 	const didAutoLogout = ref(false);
 
-    // Getters
-    const isAuthenticated = computed(() => !!token.value);
-	const isAdmin = computed(() => { return role.value === 'admin' });
-	const isEditor = computed(() => { return role.value === 'editor' });
-	const isUser = computed(() => { return role.value === 'user' });
+	// Getters
+	const isAuthenticated = computed(() => !!token.value);
+	const isAdmin = computed(() => {
+		return role.value === "admin";
+	});
+	const isEditor = computed(() => {
+		return role.value === "editor";
+	});
+	const isUser = computed(() => {
+		return role.value === "user";
+	});
 
 	// Actions
 	// sledovac zmeny usera, inicializuje sa v App.vue created()
-	// handleAuthStateChange() {
-	// 	try {
-	// 		onAuthStateChanged(auth, async (user) => {
-	// 			if (user) {
-	// 				console.log(`User ${user.email} is signed in`);
-	// 			} else {
-	// 				console.log('No user is signed in');
-	// 			}
-	// 		});
-	// 	} catch (error) {
-	// 		const errorOut = `Error handling auth state change: ${error.message}`;
-	// 		console.error(errorOut);
-	// 		throw new Error(errorOut);
-	// 	}
-	// },
-	async function login(userData) {
+	// const handleAuthStateChange = () => {
+	//     try {
+	//         onAuthStateChanged(auth, async (user) => {
+	//             if (user) {
+	//                 console.log(`User ${user.email} is signed in`);
+	//             } else {
+	//                 console.log('No user is signed in');
+	//             }
+	//         });
+	//     } catch (error) {
+	//         const errorOut = `Error handling auth state change: ${error.message}`;
+	//         console.error(errorOut);
+	//         throw new Error(errorOut);
+	//     }
+	// };
+
+	const login = async (userData) => {
 		try {
 			const responseData = await signInWithEmailAndPassword(auth, userData.email, userData.password);
 			if (!responseData) {
-				const error = new Error(responseData.message || 'Failed to login. Check your login data.');
+				const error = new Error(responseData.message || "Failed to login. Check your login data.");
 				throw error;
 			}
-
 
 			const idTokenResult = await getIdTokenResult(responseData.user);
 			const claims = idTokenResult.claims;
@@ -55,11 +59,11 @@ export const useAuthStore = defineStore('auth', () => {
 			const expiresIn = +responseData._tokenResponse.expiresIn * 1000;
 			const expirationDate = new Date().getTime() + expiresIn;
 
-			localStorage.setItem('token', localIdToken);
-			localStorage.setItem('userId', localUserId);
-			localStorage.setItem('email', localEmail);
-			localStorage.setItem('role', localRole);
-			localStorage.setItem('tokenExpiration', expirationDate);
+			localStorage.setItem("token", localIdToken);
+			localStorage.setItem("userId", localUserId);
+			localStorage.setItem("email", localEmail);
+			localStorage.setItem("role", localRole);
+			localStorage.setItem("tokenExpiration", expirationDate);
 
 			timer = setTimeout(function () {
 				didAutoLogout.value = true;
@@ -75,13 +79,14 @@ export const useAuthStore = defineStore('auth', () => {
 			console.error(errorOut);
 			throw new Error(errorOut);
 		}
-	}
-	function tryLogin() {
+	};
+
+	const tryLogin = () => {
 		try {
-			const localIdToken = localStorage.getItem('token');
-			const localUserId = localStorage.getItem('userId');
-			const localEmail = localStorage.getItem('email');
-			const localRole = localStorage.getItem('role');
+			const localIdToken = localStorage.getItem("token");
+			const localUserId = localStorage.getItem("userId");
+			const localEmail = localStorage.getItem("email");
+			const localRole = localStorage.getItem("role");
 			//const tokenExpiration = localStorage.getItem('tokenExpiration');
 
 			// const expiresIn = +tokenExpiration - new Date().getTime();
@@ -106,14 +111,15 @@ export const useAuthStore = defineStore('auth', () => {
 			console.error(errorOut);
 			throw new Error(errorOut);
 		}
-	}
-	function logout() {
+	};
+
+	const logout = () => {
 		try {
-			localStorage.removeItem('token');
-			localStorage.removeItem('userId');
-			localStorage.removeItem('email');
-			localStorage.removeItem('tokenExpiration');
-			localStorage.removeItem('role');
+			localStorage.removeItem("token");
+			localStorage.removeItem("userId");
+			localStorage.removeItem("email");
+			localStorage.removeItem("tokenExpiration");
+			localStorage.removeItem("role");
 
 			clearTimeout(timer);
 
@@ -129,38 +135,37 @@ export const useAuthStore = defineStore('auth', () => {
 			console.error(errorOut);
 			throw new Error(errorOut);
 		}
-	}
+	};
 
-	function autoLogout() {
+	const autoLogout = () => {
 		try {
 			// context.dispatch('logout');
 			logout();
 			// context.commit('setAutoLogout');
 			didAutoLogout.value = true;
-
 		} catch (error) {
 			const errorOut = `Error during auto logout: ${error.message}`;
 			console.error(errorOut);
 			throw new Error(errorOut);
 		}
-	}
+	};
 
-    return {
-        // State
+	return {
+		// State
 		userId,
 		token,
 		email,
 		role,
 		didAutoLogout,
-        // Getters
+		// Getters
 		isAuthenticated,
 		isAdmin,
 		isEditor,
 		isUser,
-        // Actions
+		// Actions
 		login,
 		tryLogin,
 		logout,
-		autoLogout
-    };
+		autoLogout,
+	};
 });

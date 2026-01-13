@@ -10,47 +10,48 @@ export const useLinesStore = defineStore("lines", () => {
 	const tripId = ref(undefined);
 
 	// Reset state
-	function $reset() {
+	const $reset = () => {
 		lines.value = [];
 		tripId.value = undefined;
-	}
+	};
 
 	// Getters
 	const linesCount = computed(() => lines.value.length);
 
 	// Actions
-	async function getNewLineId(tripId) {
+	const getNewLineId = async (localTripId) => {
 		try {
-			if (!tripId) {
+			if (!localTripId) {
 				throw new Error("Trip ID is required to generate a new line ID.");
 			}
-			const newDocRef = doc(collection(db, "trips", tripId, "lines"));
+			const newDocRef = doc(collection(db, "trips", localTripId, "lines"));
 			return newDocRef.id;
 		} catch (error) {
-			const errorOut = `Error generating new line ID for trip ID ${tripId}: ${error.message}`;
+			const errorOut = `Error generating new line ID for trip ID ${localTripId}: ${error.message}`;
 			console.error(errorOut);
 			throw new Error(errorOut);
 		}
-	}
+	};
 
-	function getLinesForTrip(requestedTripId) {
+	const getLinesForTrip = (requestedTripId) => {
 		if (tripId.value === requestedTripId) {
 			return lines.value;
 		}
 		return [];
-	}
+	};
 
-	// Actions
-	async function loadLines(localTripId) {
+	const loadLines = async (localTripId) => {
 		try {
 			const docRef = doc(db, "trips", localTripId);
 			const linesCollectionRef = collection(docRef, "lines");
 			const linesQuery = query(linesCollectionRef, orderBy("order"));
 			const querySnapshot = await getDocs(linesQuery);
-			const loadedLines = querySnapshot.docs.map((doc) => ({
-				lineId: doc.id,
-				...doc.data(),
+
+			const loadedLines = querySnapshot.docs.map((docSnap) => ({
+				lineId: docSnap.id,
+				...docSnap.data(),
 			}));
+
 			lines.value = loadedLines;
 			tripId.value = localTripId;
 			sortLines();
@@ -60,16 +61,16 @@ export const useLinesStore = defineStore("lines", () => {
 			console.error(errorOut);
 			throw new Error(errorOut);
 		}
-	}
+	};
 
-	async function updateLines(lines, tripId) {
+	const updateLines = async (newLines, localTripId) => {
 		try {
-			const linesCollectionRef = collection(db, `trips/${tripId}/lines`);
-			lines.forEach(async (line) => {
+			const linesCollectionRef = collection(db, `trips/${localTripId}/lines`);
+			newLines.forEach(async (line) => {
 				const lineRef = doc(linesCollectionRef, line.lineId);
 				await updateDoc(lineRef, line);
 			});
-			lines.value = lines;
+			lines.value = newLines;
 			sortLines();
 			recalculateLineExtraValues();
 		} catch (error) {
@@ -77,12 +78,14 @@ export const useLinesStore = defineStore("lines", () => {
 			console.error(errorOut);
 			throw new Error(errorOut);
 		}
-	}
-	async function createLine(lineData) {
+	};
+
+	const createLine = async (lineData) => {
 		try {
 			const lineId = await getNewLineId(lineData.tripId);
 			lineData.lineId = lineId;
 			await setDoc(doc(db, `trips/${lineData.tripId}/lines`, lineId), lineData);
+
 			if (tripId.value === lineData.tripId) {
 				lines.value.push(lineData);
 				sortLines();
@@ -93,15 +96,18 @@ export const useLinesStore = defineStore("lines", () => {
 			console.error(errorOut);
 			throw new Error(errorOut);
 		}
-	}
+	};
 
-	async function editLine(lineData) {
+	const editLine = async (lineData) => {
 		try {
 			await setDoc(doc(db, `trips/${lineData.tripId}/lines/`, lineData.lineId), lineData);
+
 			const index = lines.value.findIndex((line) => line.lineId === lineData.lineId);
+
 			if (index !== -1) {
 				lines.value.splice(index, 1, { ...lines.value[index], ...lineData });
 			}
+
 			sortLines();
 			recalculateLineExtraValues();
 		} catch (error) {
@@ -109,10 +115,12 @@ export const useLinesStore = defineStore("lines", () => {
 			console.error(errorOut);
 			throw new Error(errorOut);
 		}
-	}
-	async function deleteLine(localTripId, localLineId) {
+	};
+
+	const deleteLine = async (localTripId, localLineId) => {
 		try {
 			await deleteDoc(doc(db, "trips", localTripId, "lines", localLineId));
+
 			if (tripId.value === localTripId) {
 				lines.value = lines.value.filter((line) => line.lineId !== localLineId);
 				sortLines();
@@ -123,26 +131,27 @@ export const useLinesStore = defineStore("lines", () => {
 			console.error(errorOut);
 			throw new Error(errorOut);
 		}
-	}
+	};
 
-	async function passedLine(localLineId, localPassed) {
+	const passedLine = async (localLineId, localPassed) => {
 		try {
 			const lineRef = doc(db, "trips", tripId.value, "lines", localLineId);
 			await updateDoc(lineRef, { passed: localPassed });
-			const line = lines.value.find((line) => line.lineId === localLineId);
+
+			const line = lines.value.find((l) => l.lineId === localLineId);
 			if (line) line.passed = localPassed;
 		} catch (error) {
 			const errorOut = `Error updating passed line status: ${error.message}`;
 			console.error(errorOut);
 			throw new Error(errorOut);
 		}
-	}
+	};
 
-	function sortLines() {
+	const sortLines = () => {
 		lines.value.sort((a, b) => a.order - b.order);
-	}
+	};
 
-	function recalculateLineExtraValues() {
+	const recalculateLineExtraValues = () => {
 		lines.value.forEach((line, index) => {
 			// kmPart calculation
 			line.kmPart = null;
@@ -181,7 +190,7 @@ export const useLinesStore = defineStore("lines", () => {
 			// order recalculation
 			line.order = index + 1;
 		});
-	}
+	};
 
 	return {
 		// State
