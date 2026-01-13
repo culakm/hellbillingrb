@@ -6,7 +6,7 @@
 			</q-card-section>
 			<q-separator />
 			<q-card-section>
-				<draggable :list="tripsStore.activeTripLines" :disabled="!draggableEnabled" item-key="order" class="list-group" ghost-class="ghost" @start="dragging = true" @end="onEnd">
+				<draggable v-if="tripsStore.activeTrip" :list="tripsStore.activeTrip.lines" :disabled="!draggableEnabled" item-key="order" class="list-group" ghost-class="ghost" @start="dragging = true" @end="onEnd">
 					<template #item="{ element }">
 						<div class="list-group-item" :class="{ 'not-draggable': !draggableEnabled }">
 							<line-actions :key="element.lineId" :line="element" :trip-id="tripsStore.activeTrip.tripId" @line-is-edited="lineIsEdited"></line-actions>
@@ -76,7 +76,7 @@ const updateTripLocal = async (tripData) => {
 
 const createLineLocal = async (lineData) => {
 	$q.loading.show();
-	const lastOrder = tripsStore.activeTripLines.length;
+	const lastOrder = tripsStore.activeTrip.lines.length;
 	lineData.order = lastOrder + 1;
 	lineData.tripId = tripsStore.activeTrip.tripId;
 	try {
@@ -94,11 +94,11 @@ const lineIsEdited = () => {
 
 const onEnd = async (evt) => {
 	dragging.value = false;
-	tripsStore.activeTripLines.forEach((line, index) => {
+	tripsStore.activeTrip.lines.forEach((line, index) => {
 		line.order = index + 1;
 	});
 	try {
-		await linesStore.updateLines(tripsStore.activeTripLines, tripsStore.activeTrip.tripId);
+		await linesStore.updateLines(tripsStore.activeTrip.lines, tripsStore.activeTrip.tripId);
 		$q.loading.hide();
 	} catch (err) {
 		$q.dialog({ title: "Error", message: err.message || err });

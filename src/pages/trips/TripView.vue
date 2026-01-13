@@ -2,8 +2,8 @@
 	<q-page class="q-pa-md bg-grey-2">
 		<q-card ref="pageRef">
 			<trip-full v-if="tripsStore.activeTrip" :trip="tripsStore.activeTrip" :pageRef="pageRef"></trip-full>
-			<div v-if="tripsStore.activeTripHasLines">
-				<line-view v-for="line in tripsStore.activeTripLines" :key="line.lineId" :line="line"></line-view>
+			<div v-if="tripsStore.activeTrip?.hasLines">
+				<line-view v-for="line in tripsStore.activeTrip.lines" :key="line.lineId" :line="line"></line-view>
 			</div>
 		</q-card>
 	</q-page>

@@ -22,17 +22,6 @@ export const useTripsStore = defineStore("trips", () => {
 	// Getters
 	const hasTrips = computed(() => trips.value.length > 0);
 	const tripsCount = computed(() => trips.value.length);
-	const activeTripLines = computed(() => {
-		if (!activeTrip.value || !activeTrip.value.tripId) return [];
-		return linesStore.getLinesForTrip(activeTrip.value.tripId);
-	});
-
-	const activeTripHasLines = computed(() => {
-		return activeTripLines && activeTripLines.value.length > 0;
-	});
-	const activeTripLinesCount = computed(() => {
-		return activeTripLines ? activeTripLines.value.length : 0;
-	});
 
 	// Actions
 	const getNewTripId = async () => {
@@ -52,6 +41,7 @@ export const useTripsStore = defineStore("trips", () => {
 			await linesStore.loadLines(tripId);
 			activeTrip.value.linesCount = linesStore.linesCount;
 			activeTrip.value.hasLines = linesStore.linesCount > 0;
+			activeTrip.value.lines = linesStore.lines;
 		}
 	};
 
@@ -182,9 +172,6 @@ export const useTripsStore = defineStore("trips", () => {
 		// Getters
 		hasTrips,
 		tripsCount,
-		activeTripLines,
-		activeTripHasLines,
-		activeTripLinesCount,
 
 		// Actions
 		getNewTripId,

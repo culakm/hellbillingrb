@@ -34,7 +34,7 @@
 					{{ typeof line.kmTotal === "number" && line.kmTotal >= 0 ? line.kmTotal + " Km" : "--" }}
 				</div>
 				<div class="km-start-end">
-					{{ line.order === 1 ? "DSS" : line.order === tripsStore.activeTripLinesCount ? "ASS" : "" }}
+					{{ line.order === 1 ? "DSS" : line.order === tripsStore.activeTrip.linesCount ? "ASS" : "" }}
 				</div>
 				<div class="km-part">{{ line.kmPart > 0 ? line.kmPart + " Km" : "--" }}</div>
 			</div>
