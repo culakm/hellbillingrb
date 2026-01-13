@@ -28,8 +28,7 @@
     "vite-plugin-vue-devtools": "^8.0.5",
     "vue": "^3.4.21",
     "vue-draggable-plus": "^0.6.1",
-    "vue-router": "^4.3.0",
-    "vuex": "^4.0.2"
+    "vue-router": "^4.3.0"
   },
   "devDependencies": {
     "@quasar/vite-plugin": "^1.10.0",
