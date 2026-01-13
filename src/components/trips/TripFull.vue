@@ -3,7 +3,7 @@
 		<q-card-section class="row items-center q-gutter-md">
 			<q-icon name="directions_car" size="32px" class="q-mr-sm text-primary" />
 			<span class="text-h6">{{ trip.name }}</span>
-			<q-btn v-if="!$q.fullscreen.isActive" @click="toggleFullscreen" icon="fullscreen" label="Go Fullscreen" />
+			<q-btn v-if="!$q.fullscreen.isActive" @click="toggleFullscreen" icon="fullscreen" label="Fullscreen" />
 			<q-btn v-else @click="toggleFullscreen" round icon="fullscreen_exit" class="fullscreen-btn" />
 		</q-card-section>
 		<q-separator />

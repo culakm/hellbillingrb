@@ -6,13 +6,9 @@
 			</q-card-section>
 			<q-separator />
 			<q-card-section>
-				<draggable v-if="tripsStore.activeTrip" :list="tripsStore.activeTrip.lines" :disabled="!draggableEnabled" item-key="order" class="list-group" ghost-class="ghost" @start="dragging = true" @end="onEnd">
-					<template #item="{ element }">
-						<div class="list-group-item" :class="{ 'not-draggable': !draggableEnabled }">
-							<line-actions :key="element.lineId" :line="element" :trip-id="tripsStore.activeTrip.tripId" @line-is-edited="lineIsEdited"></line-actions>
-						</div>
-					</template>
-				</draggable>
+				<VueDraggable v-if="activeTripReactive?.lines?.length" ref="el" v-model="activeTripReactive.lines" item-key="lineId" :disabled="!draggableEnabled" :animation="150" ghostClass="ghost" @start="onStart" @end="onEnd">
+					<line-actions v-for="line in activeTripReactive.lines" :key="line.lineId" :line="line" :trip-id="activeTripReactive.tripId" @line-is-edited="lineIsEdited"></line-actions>
+				</VueDraggable>
 			</q-card-section>
 			<q-separator />
 			<q-card-section>
@@ -24,6 +20,7 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
+import { storeToRefs } from "pinia";
 import { useRoute } from "vue-router";
 import { useRouter } from "vue-router";
 import { useQuasar } from "quasar";
@@ -31,13 +28,14 @@ import { useQuasar } from "quasar";
 import { useAuthStore } from "@/stores/auth";
 import { useTripsStore } from "@/stores/trips";
 import { useLinesStore } from "@/stores/lines";
-import draggable from "vuedraggable";
+import { VueDraggable } from "vue-draggable-plus";
 import TripForm from "@/components/trips/TripForm.vue";
 import LineForm from "@/components/lines/LineForm.vue";
 import LineActions from "@/components/lines/LineActions.vue";
 
 const authStore = useAuthStore();
 const tripsStore = useTripsStore();
+const { activeTrip: activeTripReactive } = storeToRefs(tripsStore);
 const linesStore = useLinesStore();
 const route = useRoute();
 const router = useRouter();
@@ -92,7 +90,11 @@ const lineIsEdited = () => {
 	draggableEnabled.value = !draggableEnabled.value;
 };
 
-const onEnd = async (evt) => {
+const onStart = (e) => {
+	dragging.value = true;
+};
+
+const onEnd = async (e) => {
 	dragging.value = false;
 	tripsStore.activeTrip.lines.forEach((line, index) => {
 		line.order = index + 1;
@@ -111,9 +113,5 @@ const onEnd = async (evt) => {
 .ghost {
 	opacity: 0.5;
 	background: #c8ebfb;
-}
-
-.not-draggable {
-	cursor: no-drop;
 }
 </style>
