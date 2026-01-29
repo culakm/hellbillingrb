@@ -121,8 +121,12 @@ export const useLinesStore = defineStore("lines", () => {
 		try {
 			await deleteDoc(doc(db, "trips", localTripId, "lines", localLineId));
 
+			console.log(`Deleted line with ID ${localLineId} from trip ID ${localTripId}`);
 			if (tripId.value === localTripId) {
+				console.log(`Removing line with ID ${localLineId} from local store`);
 				lines.value = lines.value.filter((line) => line.lineId !== localLineId);
+				console.log(`Line with ID ${localLineId} removed. Recalculating line values.`);
+				console.log(`Current lines:`, lines.value);
 				sortLines();
 				recalculateLineExtraValues();
 			}

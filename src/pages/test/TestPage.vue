@@ -63,6 +63,7 @@ const addMarker = ({ latLng }) => {
 		position: { lat: latLng.lat(), lng: latLng.lng() },
 		title: `Marker at ${latLng.lat()}, ${latLng.lng()}`,
 	});
+	console.log("Markers:", markers.value);
 };
 const removeMarker = (marker) => {
 	markers.value = markers.value.filter((m) => m !== marker);

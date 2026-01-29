@@ -50,6 +50,9 @@ const editLineLocal = async (lineData) => {
 	try {
 		lineData.tripId = props.tripId;
 		await linesStore.editLine(lineData);
+		// Update the line in tripsStore.activeTrip.lines as well
+		const idx = tripsStore.activeTrip.lines.findIndex((l) => l.lineId === lineData.lineId);
+		if (idx !== -1) tripsStore.activeTrip.lines.splice(idx, 1, { ...tripsStore.activeTrip.lines[idx], ...lineData });
 		$q.loading.hide();
 	} catch (err) {
 		$q.dialog({ title: "Error", message: err.message || err });
@@ -63,6 +66,8 @@ const deleteLineLocal = async () => {
 	try {
 		tripsStore.activeTrip.linesCount--;
 		await linesStore.deleteLine(props.tripId, props.line.lineId);
+		const idx = tripsStore.activeTrip.lines.findIndex((l) => l.lineId === props.line.lineId);
+		if (idx !== -1) tripsStore.activeTrip.lines.splice(idx, 1);
 		$q.loading.hide();
 	} catch (err) {
 		$q.dialog({ title: "Error", message: err.message || err });

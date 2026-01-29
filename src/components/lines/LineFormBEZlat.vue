@@ -1,9 +1,6 @@
 <template>
 	<q-form @submit.prevent="submitForm" class="line-form q-pa-xs q-gutter-xs">
-		<q-input class="form-item-lat" filled v-model="lat" label="Lat" autocomplete="off" lazy-rules />
-		<q-input class="form-item-lng" filled v-model="lng" label="Lng" autocomplete="off" lazy-rules />
-		<!-- <q-input class="form-item-name" filled v-model="name" label="Meno" :rules="[required]" autocomplete="off" lazy-rules /> -->
-		<q-input class="form-item-name" filled v-model="name" label="Meno" autocomplete="off" lazy-rules />
+		<q-input class="form-item-name" filled v-model="name" label="Meno" :rules="[required]" autocomplete="off" lazy-rules />
 		<q-input class="form-item-kmTotal" filled v-model.number="kmTotal" label="kmTotal" type="number" step="0.01" />
 		<q-input class="form-item-mapPage" filled v-model="mapPage" label="mapPage" />
 		<q-input class="form-item-roadNo" filled v-model="roadNo" label="RoadNo" />
@@ -33,7 +30,7 @@
 <script setup>
 import { ref, computed } from "vue";
 import { useTripsStore } from "@/stores/trips";
-// import { required } from "@/composables/useFormValidationRules";
+import { required } from "@/composables/useFormValidationRules";
 
 const props = defineProps({
 	line: {
@@ -59,8 +56,6 @@ const interestOptions = [
 
 const lineId = ref(props.line.lineId ?? null);
 const order = ref(props.line.order ?? 0);
-const lat = ref(props.line.lat ?? "");
-const lng = ref(props.line.lng ?? "");
 const name = ref(props.line.name ?? "");
 const kmTotal = ref(props.line.kmTotal ?? null);
 const tulip = ref(props.line.tulip ?? "");
@@ -76,8 +71,6 @@ const submitForm = async () => {
 	const formData = {
 		lineId: lineId.value,
 		order: order.value,
-		lat: lat.value,
-		lng: lng.value,
 		name: name.value,
 		kmTotal: kmTotal.value,
 		tulip: tulip.value,
@@ -92,8 +85,6 @@ const submitForm = async () => {
 	tripsStore.activeTrip.linesCount++;
 
 	order.value = null;
-	lat.value = "";
-	lng.value = "";
 	name.value = "";
 	kmTotal.value = null;
 	tulip.value = "";
@@ -112,21 +103,12 @@ const submitForm = async () => {
 	width: 100%;
 	display: grid;
 	grid-template-areas:
-		"form-item-lat form-item-lng . . . ."
 		"form-item-name form-item-kmTotal form-item-mapPage form-item-roadNo form-item-tulip form-item-buttons"
 		"form-item-interest form-item-stop form-item-note form-item-note form-item-tulip form-item-buttons";
 }
 
 [class^="form-item"] {
 	/* padding: 0.3rem; */
-}
-
-.form-item-lat {
-	grid-area: form-item-lat;
-}
-
-.form-item-lng {
-	grid-area: form-item-lng;
 }
 
 .form-item-name {
