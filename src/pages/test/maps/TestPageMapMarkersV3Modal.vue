@@ -4,7 +4,8 @@
 
 		<!-- Simple overlay background -->
 		<div v-if="dialogVis" class="fixed fullscreen" @click.self="dialogVis = false">
-			<q-card class="fixed" :style="cardStyle" style="width: 80%; height: 80%; overflow: hidden">
+			<q-card :style="cardStyle" class="fixed" style="width: 600px; height: 400px; overflow: hidden">
+				<!-- Drag handle -->
 				<q-bar class="bg-primary text-white" v-touch-pan.mouse="onPan">
 					<div>Map window</div>
 					<q-space />
@@ -20,9 +21,9 @@
 								position: marker.position,
 								title: marker.title,
 							}"
-							@click="removeMarker(marker)"
 						/>
 					</GoogleMap>
+					<!-- <GoogleMap ref="mapRef" :api-key="apiMapKey" :mapId="mapId" :center="center" :zoom="13" style="width: 100%; height: 100%" /> -->
 				</q-card-section>
 			</q-card>
 		</div>
@@ -63,8 +64,6 @@ const addMarker = ({ latLng }) => {
 		position: { lat: latLng.lat(), lng: latLng.lng() },
 		title: `Marker at ${latLng.lat()}, ${latLng.lng()}`,
 	});
-};
-const removeMarker = (marker) => {
-	markers.value = markers.value.filter((m) => m !== marker);
+	console.log("Markers:", markers.value);
 };
 </script>

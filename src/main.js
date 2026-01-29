@@ -19,4 +19,11 @@ app.use(Quasar, { plugins: { Loading, Dialog, AppFullscreen } });
 
 app.component("Container", Container);
 
+const isDevelopment = import.meta.env.MODE === "development";
+
+app.config.globalProperties.$apiMapId = import.meta.env.VITE_GOOGLE_CLOUD_API_MAP_ID;
+app.config.globalProperties.$apiMapKey = import.meta.env.VITE_GOOGLE_CLOUD_API_MAP_KEY;
+if (isDevelopment) {
+	app.config.globalProperties.$apiMapKey = import.meta.env.VITE_GOOGLE_CLOUD_API_MAP_KEY_LOCALHOST;
+}
 app.mount("#app");
