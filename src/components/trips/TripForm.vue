@@ -1,30 +1,37 @@
 <template>
-	<q-card class="q-pa-md shadow-2 rounded-borders" style="max-width: 520px; width: 100%; margin: auto">
+	<q-card class="q-pa-md shadow-2 rounded-borders" style="width: 100%; margin: auto">
 		<q-card-section class="bg-primary text-white flex items-center q-mb-md rounded-borders">
 			<q-icon name="directions_car" size="32px" class="q-mr-sm" />
 			<div class="text-h5">{{ formTitle }}</div>
 		</q-card-section>
 		<q-separator />
 		<q-form @submit.prevent="submitForm" class="q-gutter-md">
-			<q-input filled v-model="name" label="Trip Name" :rules="[required]" autocomplete="off" class="q-mb-md" />
-			<q-input filled v-model="description" label="Description" type="textarea" autogrow class="q-mb-md" />
-			<q-file filled v-model="imageFile" label="Trip Image" @update:model-value="previewImage" accept="image/*" counter :loading="uploadProgressFlag" class="q-mb-md">
-				<template v-slot:prepend>
-					<q-icon name="attach_file" />
-				</template>
-			</q-file>
-
-			<div class="q-mb-md flex flex-center">
-				<q-banner v-if="!imageSrc" class="bg-grey-2 text-grey-7 q-pa-sm rounded-borders" dense>
-					<q-icon name="image_not_supported" class="q-mr-sm" />
-					No image selected
-				</q-banner>
-				<div v-else class="column items-center">
-					<q-img :src="imageSrc" alt="trip image" style="max-width: 100%; max-height: 200px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08)" fit="contain" />
-					<q-btn class="q-mt-sm" color="negative" icon="delete" label="Delete Image" @click.prevent="deleteImageCurrent" />
+			<div class="row q-col-gutter-md items-start">
+				<div class="col-6">
+					<q-input filled v-model="name" label="Trip Name" :rules="[required]" autocomplete="off" />
+				</div>
+				<div class="col-6">
+					<q-input filled v-model="description" label="Description" type="textarea" autogrow />
+				</div>
+				<div class="col-12">
+					<q-file filled v-model="imageFile" label="Trip Image" @update:model-value="previewImage" accept="image/*" counter :loading="uploadProgressFlag">
+						<template v-slot:prepend>
+							<q-icon name="attach_file" />
+						</template>
+					</q-file>
+					<div class="q-mt-sm">
+						<q-banner v-if="!imageSrc" class="bg-grey-2 text-grey-7 q-pa-sm rounded-borders" dense>
+							<q-icon name="image_not_supported" class="q-mr-sm" />
+							No image selected
+						</q-banner>
+						<div v-else class="column items-center">
+							<q-img :src="imageSrc" alt="trip image" style="max-width: 100%; max-height: 200px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08)" fit="contain" />
+							<q-btn class="q-mt-sm" color="negative" icon="delete" label="Delete Image" @click.prevent="deleteImageCurrent" />
+						</div>
+					</div>
 				</div>
 			</div>
-			<div class="row q-gutter-sm justify-end">
+			<div class="row q-gutter-sm justify-end q-mt-md">
 				<q-btn v-if="!trip || !trip.tripId" color="primary" label="Add Trip" type="submit" />
 				<q-btn v-else color="primary" label="Save Trip" type="submit" />
 				<q-btn v-if="tripId" color="secondary" label="View" :to="tripViewLink" />

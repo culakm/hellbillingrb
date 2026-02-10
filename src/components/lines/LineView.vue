@@ -2,9 +2,9 @@
 	<div class="roadbook-item" :class="{ passed: line.passed === true && passFunctionality === false }" @click="passedLineLocal()">
 		<div class="roadbook-item-latlng">
 			<div class="lat-label">Lat</div>
-			<div class="lat-value">{{ line.lat }}</div>
+			<div class="lat-value">{{ decimalToDMS(line.lat) }}</div>
 			<div class="lng-label">Lng</div>
-			<div class="lng-value">{{ line.lng }}</div>
+			<div class="lng-value">{{ decimalToDMS(line.lng) }}</div>
 		</div>
 		<div class="roadbook-item-place">
 			<div class="order">{{ line.order }}</div>
@@ -64,6 +64,7 @@ import { useTripsStore } from "@/stores/trips";
 import { useLinesStore } from "@/stores/lines";
 import { useRoute } from "vue-router";
 import { useQuasar } from "quasar";
+import { decimalToDMS, DMSToDecimal } from "@/utils";
 
 const props = defineProps({
 	line: {
@@ -72,6 +73,13 @@ const props = defineProps({
 		default: () => ({}),
 	},
 });
+
+// const lat = 18.035144142314884;
+// console.log("Decimal START!!!!!!!!!!!!!:", lat);
+// const dms = decimalToDMS(lat);
+// console.log("DMS!!!!!!!!!!!!!:", dms);
+// const decimal = DMSToDecimal(dms);
+// console.log("Decimal!!!!!!!!!!!!!:", decimal);
 
 const tripsStore = useTripsStore();
 const linesStore = useLinesStore();

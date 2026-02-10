@@ -2,12 +2,24 @@ import { ref, computed } from "vue";
 import { defineStore } from "pinia";
 import { db } from "../firebase.js";
 import { interestNames, closeLineThresholdKm } from "@/config/settings";
-import { collection, doc, getDocs, updateDoc, setDoc, deleteDoc, query, orderBy } from "firebase/firestore";
+import { collection, doc, getDocs, updateDoc, setDoc, deleteDoc, query, orderBy, writeBatch } from "firebase/firestore";
 
 export const useLinesStore = defineStore("lines", () => {
 	// State
 	const lines = ref([]);
 	const tripId = ref(undefined);
+
+	const mapMarkers = computed(() => {
+		console.log("Computing mapMarkers for active trip...");
+		if (!lines) return [];
+		let allMarkers = [];
+		for (const line of lines.value) {
+			if (line.lat && line.lng) {
+				allMarkers.push({ position: { lat: line.lat, lng: line.lng }, title: line.name || `Line ${line.order}` });
+			}
+		}
+		return allMarkers;
+	});
 
 	// Reset state
 	const $reset = () => {
@@ -80,6 +92,23 @@ export const useLinesStore = defineStore("lines", () => {
 		}
 	};
 
+	const deleteLines = async (localTripId) => {
+		try {
+			const linesCollectionRef = collection(db, `trips/${localTripId}/lines`);
+			const linesSnapshot = await getDocs(linesCollectionRef);
+			const batch = writeBatch(db);
+			linesSnapshot.docs.forEach((lineDoc) => batch.delete(lineDoc.ref));
+			await batch.commit();
+			if (tripId.value === localTripId) {
+				lines.value = [];
+			}
+		} catch (error) {
+			const errorOut = `Error deleting lines: ${error.message}`;
+			console.error(errorOut);
+			throw new Error(errorOut);
+		}
+	};
+
 	const createLine = async (lineData) => {
 		try {
 			const lineId = await getNewLineId(lineData.tripId);
@@ -120,13 +149,8 @@ export const useLinesStore = defineStore("lines", () => {
 	const deleteLine = async (localTripId, localLineId) => {
 		try {
 			await deleteDoc(doc(db, "trips", localTripId, "lines", localLineId));
-
-			console.log(`Deleted line with ID ${localLineId} from trip ID ${localTripId}`);
 			if (tripId.value === localTripId) {
-				console.log(`Removing line with ID ${localLineId} from local store`);
 				lines.value = lines.value.filter((line) => line.lineId !== localLineId);
-				console.log(`Line with ID ${localLineId} removed. Recalculating line values.`);
-				console.log(`Current lines:`, lines.value);
 				sortLines();
 				recalculateLineExtraValues();
 			}
@@ -200,6 +224,7 @@ export const useLinesStore = defineStore("lines", () => {
 		// State
 		tripId,
 		lines,
+		mapMarkers,
 
 		// Reset
 		$reset,
@@ -211,6 +236,7 @@ export const useLinesStore = defineStore("lines", () => {
 		getLinesForTrip,
 		loadLines,
 		updateLines,
+		deleteLines,
 		createLine,
 		editLine,
 		deleteLine,
