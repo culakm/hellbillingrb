@@ -8,7 +8,7 @@
 			<q-card-section>
 				<q-btn label="Open movable map" color="primary" @click="openMapsDialog" />
 				<q-btn label="Delete all lines" color="primary" @click="deleteLinesLocal" />
-				<maps-dialog v-if="dialogVis" :markers="activeTripReactive?.mapMarkers" @save-markers="markers2Lines" />
+				<maps-dialog v-if="dialogVis" :markers="linesStore.mapMarkers" @save-markers="markers2Lines" />
 			</q-card-section>
 			<q-separator />
 			<q-card-section>
@@ -59,22 +59,14 @@ onMounted(() => {
 
 const openMapsDialog = () => {
 	dialogVis.value = true;
-	console.log("Opening maps dialog");
-	console.log("Current active trip markers:", activeTripReactive.value.mapMarkers);
-	if (activeTripReactive.value?.mapMarkers) {
-		for (const marker of activeTripReactive.value.mapMarkers) {
-			console.log(`Marker: lat=${marker.position.lat}, lng=${marker.position.lng}, title=${marker.title}`);
-		}
-	}
 };
 
-const markers2Lines = (markers, save = true) => {
+const markers2Lines = async (markers, save = true) => {
 	dialogVis.value = false;
 	if (!save || !markers?.length || !activeTripReactive.value) return;
 	for (const marker of markers) {
 		const exists = activeTripReactive.value.lines.some((line) => Number(line.lat) === Number(marker.position.lat) && Number(line.lng) === Number(marker.position.lng));
 		if (exists) {
-			console.log(`NEZAPISUJEM lat=${marker.position.lat}, lng=${marker.position.lng}`);
 			continue;
 		}
 
@@ -93,7 +85,7 @@ const markers2Lines = (markers, save = true) => {
 			passed: false,
 		};
 		activeTripReactive.value.linesCount++;
-		createLineLocal(lineData);
+		await createLineLocal(lineData);
 	}
 };
 

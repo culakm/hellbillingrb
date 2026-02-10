@@ -5,8 +5,8 @@
 			<q-bar class="bg-primary text-white" v-touch-pan.mouse="onPan">
 				<div>Map window</div>
 				<q-space />
-				<q-btn dense flat icon="save" @click="sendMarkers" />
-				<q-btn dense flat icon="close" @click="closeMap" />
+				<q-btn dense flat icon="save" @click="closeMap()" />
+				<q-btn dense flat icon="close" @click="closeMap(false)" />
 			</q-bar>
 
 			<q-card-section class="q-pa-none" style="height: calc(100% - 32px)">
@@ -36,15 +36,8 @@ const loadedMarkers = defineProps({
 	},
 });
 const emit = defineEmits(["save-markers"]);
-
-onMounted(() => {
-	markers.value = loadedMarkers.markers || [];
-	window.addEventListener("keydown", handleEscClose);
-});
-
-onUnmounted(() => {
-	window.removeEventListener("keydown", handleEscClose);
-});
+// deep copy
+const markersOrig = JSON.parse(JSON.stringify(loadedMarkers.markers || []));
 
 const instance = getCurrentInstance();
 const apiMapKey = instance.appContext.config.globalProperties.$apiMapKey;
@@ -52,6 +45,15 @@ const mapId = instance.appContext.config.globalProperties.$apiMapId;
 const center = { lat: 48.893931, lng: 18.039421 };
 const cardPos = ref({ x: 100, y: 100 });
 const markers = ref([]);
+
+onMounted(() => {
+	markers.value = JSON.parse(JSON.stringify(loadedMarkers.markers || []));
+	window.addEventListener("keydown", handleEscClose);
+});
+
+onUnmounted(() => {
+	window.removeEventListener("keydown", handleEscClose);
+});
 
 const addMarker = ({ latLng }) => {
 	const latOut = Number(latLng.lat().toFixed(6));
@@ -71,8 +73,13 @@ const sendMarkers = async () => {
 	emit("save-markers", markers.value);
 };
 
-const closeMap = () => {
-	emit("save-markers", markers.value, false);
+const closeMap = async (save = true) => {
+	if (!save) {
+		markers.value = markers.value.filter((marker) => markersOrig.some((m) => Number(m.position.lat) === Number(marker.position.lat) && Number(m.position.lng) === Number(marker.position.lng)));
+		emit("save-markers", markers.value, false);
+	} else {
+		emit("save-markers", markers.value, true);
+	}
 };
 
 const handleEscClose = (event) => {

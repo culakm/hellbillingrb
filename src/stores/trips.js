@@ -42,7 +42,6 @@ export const useTripsStore = defineStore("trips", () => {
 			activeTrip.value.linesCount = linesStore.linesCount;
 			activeTrip.value.hasLines = linesStore.linesCount > 0;
 			activeTrip.value.lines = linesStore.lines;
-			activeTrip.value.mapMarkers = linesStore.mapMarkers;
 		}
 	};
 
