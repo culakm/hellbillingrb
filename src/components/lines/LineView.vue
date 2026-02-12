@@ -4,7 +4,7 @@
 			<div class="lat-label">Lat</div>
 			<div class="lat-value">{{ decimalToDMS(line.lat) }}</div>
 			<div class="lng-label">Lng</div>
-			<div class="lng-value">{{ decimalToDMS(line.lng) }}</div>
+			<div class="lng-value">{{ decimalToDMS(line.lng, false) }}</div>
 		</div>
 		<div class="roadbook-item-place">
 			<div class="order">{{ line.order }}</div>

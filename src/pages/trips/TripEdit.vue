@@ -25,7 +25,7 @@
 </template>
 
 <script setup>
-import { ref, getCurrentInstance, computed, onMounted } from "vue";
+import { ref, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import { useRoute } from "vue-router";
 import { useRouter } from "vue-router";

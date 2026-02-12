@@ -1,8 +1,10 @@
 <template>
 	<q-form @submit.prevent="submitForm" class="line-form q-pa-xs q-gutter-xs">
-		<q-input class="form-item-lat" filled v-model="lat" label="Lat" autocomplete="off" lazy-rules />
-		<q-input class="form-item-lng" filled v-model="lng" label="Lng" autocomplete="off" lazy-rules />
-		<!-- <q-input class="form-item-name" filled v-model="name" label="Meno" :rules="[required]" autocomplete="off" lazy-rules /> -->
+		<q-input class="form-item-lat" filled v-model="lat" label="Lat" :rules="coordsRules" autocomplete="off" lazy-rules />
+		<q-input class="form-item-lng" filled v-model="lng" label="Lng" :rules="coordsRules" autocomplete="off" lazy-rules />
+		<q-btn class="form-item-latlng-copy" dense flat @click="pasteProgrammatic" icon="content_copy" color="primary">
+			<q-tooltip>Paste coordinates from clipboard</q-tooltip>
+		</q-btn>
 		<q-input class="form-item-name" filled v-model="name" label="Meno" autocomplete="off" lazy-rules />
 		<q-input class="form-item-kmTotal" filled v-model.number="kmTotal" label="kmTotal" type="number" step="0.01" />
 		<q-input class="form-item-mapPage" filled v-model="mapPage" label="mapPage" />
@@ -19,10 +21,9 @@
 		<q-checkbox class="form-item-stop" v-model="stop" label="Zastaviť" color="primary" />
 		<q-input class="form-item-note" filled v-model="note" label="Note" type="textarea" />
 		<div class="form-item-buttons">
-			<q-btn v-if="Object.keys(line).length === 0" type="submit" dense flat icon="save" color="primary" />
-			<template v-else>
+			<q-btn dense flat type="submit" icon="save" color="primary" />
+			<template v-if="Object.keys(line).length !== 0">
 				<div class="column q-gutter-y-sm">
-					<q-btn dense flat type="submit" icon="save" color="primary" />
 					<q-btn dense flat @click="$emit('cancel-edit')" icon="close" color="negative" />
 				</div>
 			</template>
@@ -31,9 +32,11 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, nextTick } from "vue";
 import { useTripsStore } from "@/stores/trips";
-// import { required } from "@/composables/useFormValidationRules";
+import { useQuasar } from "quasar";
+import { decimalToDMS, DMSToDecimal } from "@/utils";
+import { coordsRules, coordsDMS } from "@/composables/useFormValidationRules";
 
 const props = defineProps({
 	line: {
@@ -44,6 +47,7 @@ const props = defineProps({
 });
 const emit = defineEmits(["save-line", "cancel-edit"]);
 const tripsStore = useTripsStore();
+const $q = useQuasar();
 
 const tulipOptions = [
 	{ label: "Right", value: "tulipR" },
@@ -72,7 +76,44 @@ const note = ref(props.line.note ?? "");
 
 const tulipSrc = computed(() => (tulip.value ? `/img/${tulip.value}.svg` : ""));
 
+const pasteProgrammatic = async () => {
+	try {
+		const text = await navigator.clipboard.readText();
+		await nextTick();
+
+		const dialogData = {
+			title: "Error",
+			message: `Could not parse coordinates from text: <br>"${text}"`,
+			html: true,
+		};
+
+		const [latStr, lngStr] = text.trim().split(/\s+|,/).filter(Boolean);
+		if (!latStr || !lngStr) {
+			$q.dialog(dialogData);
+			return;
+		}
+
+		if (latStr.includes("°") && /[NSEW]/.test(text)) {
+			lat.value = latStr;
+			lng.value = lngStr;
+		} else if (latStr.includes(".")) {
+			lat.value = decimalToDMS(Number(latStr).toFixed(6));
+			lng.value = decimalToDMS(Number(lngStr).toFixed(6));
+		} else {
+			$q.dialog(dialogData);
+		}
+	} catch (err) {
+		$q.dialog({ title: "Error", message: err.message || err });
+	}
+};
+
 const submitForm = async () => {
+	if (coordsDMS(lat.value)) {
+		lat.value = DMSToDecimal(lat.value);
+	}
+	if (coordsDMS(lng.value)) {
+		lng.value = DMSToDecimal(lng.value);
+	}
 	const formData = {
 		lineId: lineId.value,
 		order: order.value,
@@ -112,7 +153,7 @@ const submitForm = async () => {
 	width: 100%;
 	display: grid;
 	grid-template-areas:
-		"form-item-lat form-item-lng . . . ."
+		"form-item-lat form-item-lng form-item-latlng-copy . . ."
 		"form-item-name form-item-kmTotal form-item-mapPage form-item-roadNo form-item-tulip form-item-buttons"
 		"form-item-interest form-item-stop form-item-note form-item-note form-item-tulip form-item-buttons";
 }
@@ -127,6 +168,12 @@ const submitForm = async () => {
 
 .form-item-lng {
 	grid-area: form-item-lng;
+}
+
+.form-item-latlng-copy {
+	grid-area: form-item-latlng-copy;
+	align-self: start;
+	justify-self: start;
 }
 
 .form-item-name {

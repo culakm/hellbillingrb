@@ -10,7 +10,6 @@ export const useLinesStore = defineStore("lines", () => {
 	const tripId = ref(undefined);
 
 	const mapMarkers = computed(() => {
-		console.log("Computing mapMarkers for active trip...");
 		if (!lines) return [];
 		let allMarkers = [];
 		for (const line of lines.value) {
