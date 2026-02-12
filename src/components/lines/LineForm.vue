@@ -5,10 +5,10 @@
 		<q-btn class="form-item-latlng-copy" dense flat @click="pasteProgrammatic" icon="content_copy" color="primary">
 			<q-tooltip>Paste coordinates from clipboard</q-tooltip>
 		</q-btn>
-		<q-input class="form-item-name" filled v-model="name" label="Meno" autocomplete="off" lazy-rules />
-		<q-input class="form-item-kmTotal" filled v-model.number="kmTotal" label="kmTotal" type="number" step="0.01" />
-		<q-input class="form-item-mapPage" filled v-model="mapPage" label="mapPage" />
-		<q-input class="form-item-roadNo" filled v-model="roadNo" label="RoadNo" />
+		<q-input class="form-item-name" filled v-model="name" label="Meno" :rules="[optional]" />
+		<q-input class="form-item-kmTotal" filled v-model.number="kmTotal" label="kmTotal" type="number" step="0.01" :rules="[optional]" />
+		<q-input class="form-item-mapPage" filled v-model="mapPage" label="mapPage" :rules="[optional]" />
+		<q-input class="form-item-roadNo" filled v-model="roadNo" label="roadNo" :rules="[optional]" />
 		<div class="form-item-tulip">
 			<q-select class="form-item-tulip-select" filled v-model="tulip" label="Tulip" :options="tulipOptions" option-value="value" option-label="label" map-options emit-value />
 			<div v-if="tulip" class="form-item-tulip-img">
@@ -36,7 +36,7 @@ import { ref, computed, nextTick } from "vue";
 import { useTripsStore } from "@/stores/trips";
 import { useQuasar } from "quasar";
 import { decimalToDMS, DMSToDecimal } from "@/utils";
-import { coordsRules, coordsDMS } from "@/composables/useFormValidationRules";
+import { coordsRules, coordsDMS, optional } from "@/composables/useFormValidationRules";
 
 const props = defineProps({
 	line: {
@@ -153,9 +153,9 @@ const submitForm = async () => {
 	width: 100%;
 	display: grid;
 	grid-template-areas:
-		"form-item-lat form-item-lng form-item-latlng-copy . . ."
-		"form-item-name form-item-kmTotal form-item-mapPage form-item-roadNo form-item-tulip form-item-buttons"
-		"form-item-interest form-item-stop form-item-note form-item-note form-item-tulip form-item-buttons";
+		"form-item-name form-item-lat form-item-lng form-item-latlng-copy . form-item-buttons"
+		"form-item-tulip form-item-tulip form-item-kmTotal form-item-mapPage form-item-roadNo form-item-buttons"
+		"form-item-interest form-item-stop form-item-note form-item-note form-item-note form-item-buttons";
 }
 
 [class^="form-item"] {
@@ -211,21 +211,22 @@ const submitForm = async () => {
 	grid-area: form-item-tulip;
 	padding: 0;
 	display: flex;
-	flex-direction: column;
+	flex-direction: row;
 }
 
 .form-item-tulip-select {
+	width: 50%;
 	margin: 0;
 	padding: 0;
 }
 
 .form-item-tulip-img {
 	display: flex;
-	align-items: center;
-	justify-content: center;
-	max-height: 50px;
+	width: 50%;
 	margin: 0;
 	padding: 0;
+	align-items: center;
+	justify-content: center;
 }
 
 .form-item-buttons {
