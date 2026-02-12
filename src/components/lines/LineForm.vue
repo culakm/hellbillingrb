@@ -1,11 +1,11 @@
 <template>
 	<q-form @submit.prevent="submitForm" class="line-form q-pa-xs q-gutter-xs">
+		<q-input class="form-item-name" filled v-model="name" label="Meno" :rules="[optional]" />
 		<q-input class="form-item-lat" filled v-model="lat" label="Lat" :rules="coordsRules" autocomplete="off" lazy-rules />
 		<q-input class="form-item-lng" filled v-model="lng" label="Lng" :rules="coordsRules" autocomplete="off" lazy-rules />
 		<q-btn class="form-item-latlng-copy" dense flat @click="pasteProgrammatic" icon="content_copy" color="primary">
 			<q-tooltip>Paste coordinates from clipboard</q-tooltip>
 		</q-btn>
-		<q-input class="form-item-name" filled v-model="name" label="Meno" :rules="[optional]" />
 		<q-input class="form-item-kmTotal" filled v-model.number="kmTotal" label="kmTotal" type="number" step="0.01" :rules="[optional]" />
 		<q-input class="form-item-mapPage" filled v-model="mapPage" label="mapPage" :rules="[optional]" />
 		<q-input class="form-item-roadNo" filled v-model="roadNo" label="roadNo" :rules="[optional]" />
