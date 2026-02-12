@@ -41,7 +41,7 @@ export const cloudFunctions = getFunctions(app);
 const checkEmulators = async () => {
 	try {
 		let response;
-		if (isDevelopment) {
+		if (import.meta.env.VITE_FIREBASE_PROJECT_ID !== "hellbilling") {
 			response = await fetch("http://localhost:4001/emulator/v1/projects");
 		} else {
 			response = await fetch("http://localhost:4000/emulator/v1/projects");

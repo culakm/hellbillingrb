@@ -17,7 +17,7 @@ export function decimalToDMS(decimal, isLatitude = true, precision = 1) {
 
 	const direction = isLatitude ? (sign > 0 ? "N" : "S") : sign > 0 ? "E" : "W";
 
-	return `${degrees}° ${minPadded}' ${secPadded}" ${direction}`;
+	return `${degrees}°${minPadded}'${secPadded}"${direction}`;
 }
 
 export function DMSToDecimal(dms) {
