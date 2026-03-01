@@ -6,6 +6,9 @@
 		<q-btn class="form-item-latlng-copy" dense flat @click="pasteProgrammatic" icon="content_copy" color="primary">
 			<q-tooltip>Paste coordinates from clipboard</q-tooltip>
 		</q-btn>
+
+		<pre class="form-item-temp" style="white-space: pre-line">{{ note }}</pre>
+
 		<q-input class="form-item-kmTotal" filled v-model.number="kmTotal" label="kmTotal" type="number" step="0.01" :rules="[optional]" />
 		<q-input class="form-item-mapPage" filled v-model="mapPage" label="mapPage" :rules="[optional]" />
 		<q-input class="form-item-roadNo" filled v-model="roadNo" label="roadNo" :rules="[optional]" />
@@ -19,7 +22,41 @@
 			<q-option-group v-model="interest" :options="interestOptions" type="checkbox" option-value="value" option-label="label" map-options emit-value label="Zaujímavosť" />
 		</div>
 		<q-checkbox class="form-item-stop" v-model="stop" label="Zastaviť" color="primary" />
-		<q-input class="form-item-note" filled v-model="note" label="Note" type="textarea" />
+		<!-- <q-input class="form-item-note" filled v-model="note" label="Note" type="textarea" /> -->
+		<!-- <q-editor class="form-item-note" v-model="note" label="Note" /> -->
+		<q-editor
+			class="form-item-note"
+			v-model="note"
+			label="Note"
+			:toolbar="[
+				['bold', 'italic', 'underline', 'strike'],
+				['backColor', 'backColorDropdown'],
+				['undo', 'redo'],
+			]"
+		>
+			<template v-slot:backColor>
+				<q-btn class="backColor" dense flat size="sm">
+					<q-icon name="format_color_fill" :color="highlightColor === 'white' ? 'black' : highlightColor" @click="applyHighlight" />
+				</q-btn>
+			</template>
+			<template v-slot:backColorDropdown>
+				<q-btn-dropdown ref="backColorDropdown" class="backColorDropdown" dense no-wrap unelevated size="sm">
+					<div class="row q-pa-sm q-gutter-sm">
+						<q-btn
+							v-for="c in ['none', 'red', 'blue', 'teal', 'green', 'yellow', 'orange', 'brown']"
+							:key="c"
+							size="sm"
+							:style="{ backgroundColor: c }"
+							@click="
+								highlightColor = c;
+								applyHighlight();
+								backColorDropdown.hide();
+							"
+						/>
+					</div>
+				</q-btn-dropdown>
+			</template>
+		</q-editor>
 		<div class="form-item-buttons">
 			<q-btn dense flat type="submit" icon="save" color="primary" />
 			<template v-if="Object.keys(line).length !== 0">
@@ -75,6 +112,63 @@ const stop = ref(props.line.stop ?? false);
 const note = ref(props.line.note ?? "");
 
 const tulipSrc = computed(() => (tulip.value ? `/img/${tulip.value}.svg` : ""));
+const highlightColor = ref("");
+const backColorDropdown = ref(null);
+
+const applyHighlight = () => {
+	const color = highlightColor.value || "none";
+	const sel = window.getSelection();
+	const hasSelection = sel && sel.rangeCount > 0 && !sel.getRangeAt(0).collapsed;
+	const range = sel.getRangeAt(0);
+	console.log("Applying highlight: color:", color, "Has selection:", hasSelection);
+	if (hasSelection) {
+		if (color !== "none") {
+			console.log("Applying highlight to selection with color:", color);
+			const span = document.createElement("span");
+			span.style.backgroundColor = color;
+
+			try {
+				range.surroundContents(span);
+			} catch (e) {
+				document.execCommand("styleWithCSS", false, true);
+				if (!document.execCommand("hiliteColor", false, color) && !document.execCommand("backColor", false, color)) {
+				}
+			}
+		} else {
+			const frag = range.extractContents();
+			const spans = frag.querySelectorAll('span[style*="background-color"]');
+			spans.forEach((span) => {
+				const parent = span.parentNode;
+				while (span.firstChild) parent.insertBefore(span.firstChild, span);
+				parent.removeChild(span);
+			});
+			range.insertNode(frag);
+
+			/// vymazanie vsetkych tagov z vyberu a ponechanie len plain textu
+			const div = document.createElement("div");
+			div.appendChild(range.cloneContents());
+			const html = div.innerHTML;
+
+			// Remove tags -> plain text
+			const tmp = document.createElement("div");
+			tmp.innerHTML = html;
+			const plain = tmp.textContent || tmp.innerText || "";
+
+			// Replace selection with plain text
+			range.deleteContents();
+			range.insertNode(document.createTextNode(plain));
+		}
+	}
+	// toto je na to aby sa farba zobrazoval priamo pri pisani
+	// else {
+	// 	isTypingHighlight.value = !isTypingHighlight.value;
+	// 	const value = isTypingHighlight.value ? color : "transparent";
+
+	// 	document.execCommand("styleWithCSS", false, true);
+	// 	if (!document.execCommand("hiliteColor", false, value) && !document.execCommand("backColor", false, value)) {
+	// 	}
+	// }
+};
 
 const pasteProgrammatic = async () => {
 	try {
@@ -153,9 +247,10 @@ const submitForm = async () => {
 	width: 100%;
 	display: grid;
 	grid-template-areas:
-		"form-item-name form-item-lat form-item-lng form-item-latlng-copy . form-item-buttons"
+		"form-item-name form-item-lat form-item-lng form-item-latlng-copy form-item-temp form-item-buttons"
 		"form-item-tulip form-item-tulip form-item-kmTotal form-item-mapPage form-item-roadNo form-item-buttons"
 		"form-item-interest form-item-stop form-item-note form-item-note form-item-note form-item-buttons";
+	grid-template-columns: auto auto auto auto auto 3rem;
 }
 
 [class^="form-item"] {
@@ -172,6 +267,12 @@ const submitForm = async () => {
 
 .form-item-latlng-copy {
 	grid-area: form-item-latlng-copy;
+	align-self: start;
+	justify-self: start;
+}
+
+.form-item-temp {
+	grid-area: form-item-temp;
 	align-self: start;
 	justify-self: start;
 }
@@ -235,5 +336,15 @@ const submitForm = async () => {
 	flex-direction: column;
 	align-items: normal;
 	justify-content: space-evenly;
+}
+
+.q-editor .q-btn.backColor {
+	margin-right: 0;
+	padding-right: 0;
+}
+
+.q-editor .q-btn-dropdown.backColorDropdown {
+	margin-left: 0;
+	padding-left: 0;
 }
 </style>

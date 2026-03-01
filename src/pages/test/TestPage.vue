@@ -1,71 +1,145 @@
 <template>
 	<q-page class="q-pa-md">
-		<q-btn label="Open movable map" color="primary" @click="dialogVis = true" />
+		<div class="q-pa-md q-gutter-sm">
+			<q-editor
+				class="form-item-note"
+				v-model="note"
+				label="Note"
+				:toolbar="[
+					['bold', 'italic', 'underline', 'strike'],
+					['backColor', 'backColorDropdown'],
+					['undo', 'redo'],
+				]"
+			>
+				<template v-slot:backColor>
+					<q-btn class="backColor" dense flat size="sm">
+						<q-icon name="format_color_fill" :color="highlightColor === 'transparent' ? 'black' : highlightColor" @click="applyHighlight" />
+					</q-btn>
+				</template>
+				<template v-slot:backColorDropdown>
+					<q-btn-dropdown ref="backColorDropdown" class="backColorDropdown" dense no-wrap unelevated size="sm">
+						<div class="row q-pa-sm q-gutter-sm">
+							<q-btn
+								v-for="c in ['transparent', 'red', 'blue', 'teal', 'green', 'yellow', 'orange', 'brown']"
+								:key="c"
+								size="sm"
+								:style="{ backgroundColor: c }"
+								@click="
+									highlightColor = c;
+									backColorDropdown.hide();
+								"
+							/>
+						</div>
+					</q-btn-dropdown>
+				</template>
+			</q-editor>
 
-		<!-- Simple overlay background -->
-		<div v-if="dialogVis" class="fixed fullscreen" @click.self="dialogVis = false">
-			<q-card class="fixed" :style="cardStyle" style="width: 80%; height: 80%; overflow: hidden">
-				<q-bar class="bg-primary text-white" v-touch-pan.mouse="onPan">
-					<div>Map window</div>
-					<q-space />
-					<q-btn dense flat icon="close" @click="dialogVis = false" />
-				</q-bar>
-
-				<q-card-section class="q-pa-none" style="height: calc(100% - 32px)">
-					<GoogleMap :api-key="apiMapKey" :mapId="mapId" style="width: 100%; height: 100%" :center="center" :zoom="15" @click="addMarker">
-						<AdvancedMarker
-							v-for="(marker, index) in markers"
-							:key="index"
-							:options="{
-								position: marker.position,
-								title: marker.title,
-							}"
-							@click="removeMarker(marker)"
-						/>
-					</GoogleMap>
-				</q-card-section>
+			<q-card style="min-height: 150px" flat bordered>
+				<div class="note" v-html="note"></div>
+			</q-card>
+			<q-card style="min-height: 150px" flat bordered>
+				<blockquote contenteditable="true">
+					<p>Edit this content to add your own quote</p>
+				</blockquote>
 			</q-card>
 		</div>
 	</q-page>
 </template>
 
 <script setup>
-import { GoogleMap, AdvancedMarker } from "vue3-google-map";
-import { ref, getCurrentInstance, computed } from "vue";
+import { ref } from "vue";
 
-const instance = getCurrentInstance();
-const apiMapKey = instance.appContext.config.globalProperties.$apiMapKey;
-const mapId = instance.appContext.config.globalProperties.$apiMapId;
-const center = { lat: 48.890079, lng: 18.036729 };
+const note = ref("This is a sentence.");
+const highlightColor = ref("");
+const isTypingHighlight = ref(false);
+const backColorDropdown = ref(null);
+const applyHighlight = () => {
+	const color = highlightColor.value || "transparent";
+	const sel = window.getSelection();
+	const hasSelection = sel && sel.rangeCount > 0 && !sel.getRangeAt(0).collapsed;
 
-const dialogVis = ref(false);
-const cardPos = ref({ x: 100, y: 100 });
-const cardStyle = computed(() => ({
-	left: cardPos.value.x + "px",
-	top: cardPos.value.y + "px",
-	transform: `translate(${cardPos.value.x}px, ${cardPos.value.y}px)`,
-	"z-index": 3000,
-}));
+	if (hasSelection) {
+		const range = sel.getRangeAt(0);
+		const span = document.createElement("span");
+		span.style.backgroundColor = color;
 
-const onPan = (ev) => {
-	if (ev.isFirst) {
-		cardPos.value = { x: cardPos.value.x, y: cardPos.value.y };
+		try {
+			range.surroundContents(span);
+		} catch (e) {
+			document.execCommand("styleWithCSS", false, true);
+			if (!document.execCommand("hiliteColor", false, color) && !document.execCommand("backColor", false, color)) {
+			}
+		}
+	} else {
+		isTypingHighlight.value = !isTypingHighlight.value;
+		const value = isTypingHighlight.value ? color : "transparent";
+
+		document.execCommand("styleWithCSS", false, true);
+		if (!document.execCommand("hiliteColor", false, value) && !document.execCommand("backColor", false, value)) {
+		}
 	}
-	cardPos.value = {
-		x: cardPos.value.x + ev.delta.x,
-		y: cardPos.value.y + ev.delta.y,
-	};
 };
 
-const markers = ref([]);
-const addMarker = ({ latLng }) => {
-	markers.value.push({
-		position: { lat: latLng.lat(), lng: latLng.lng() },
-		title: `Marker at ${latLng.lat()}, ${latLng.lng()}`,
-	});
-	console.log("Markers:", markers.value);
+// const markOrToggleColor = () => {
+// 	const color = "red";
+// 	const sel = window.getSelection();
+// 	const hasSelection = sel && sel.rangeCount > 0 && !sel.getRangeAt(0).collapsed;
+
+// 	if (hasSelection) {
+// 		// Case 1: selected text → mark selection red
+// 		const range = sel.getRangeAt(0);
+// 		const span = document.createElement("span");
+// 		span.style.backgroundColor = color;
+
+// 		try {
+// 			range.surroundContents(span);
+// 		} catch (e) {
+// 			document.execCommand("backColor", false, color);
+// 		}
+// 	} else {
+// 		// Case 2: no selection → toggle red typing mode
+// 		isTypingColor.value = !isTypingColor.value;
+
+// 		document.execCommand("styleWithCSS", false, true);
+// 		document.execCommand("backColor", false, isTypingColor.value ? color : "transparent");
+// 	}
+// }
+
+const markSelectionRed = () => {
+	const sel = window.getSelection();
+	if (!sel || sel.rangeCount === 0) return;
+
+	const range = sel.getRangeAt(0);
+	if (range.collapsed) return; // nothing selected
+
+	const span = document.createElement("span");
+	span.style.backgroundColor = "red";
+	range.surroundContents(span);
 };
-const removeMarker = (marker) => {
-	markers.value = markers.value.filter((m) => m !== marker);
+
+const highlightSelection = () => {
+	const sel = window.getSelection();
+	if (!sel || sel.rangeCount === 0) return;
+
+	const range = sel.getRangeAt(0);
+	if (range.collapsed) return;
+
+	// Wrap selection in span with background color
+	const span = document.createElement("span");
+	span.style.backgroundColor = "#ffff00"; // yellow
+
+	range.surroundContents(span);
 };
 </script>
+
+<style scoped>
+.q-editor .q-btn.backColor {
+	margin-right: 0;
+	padding-right: 0;
+}
+
+.q-editor .q-btn-dropdown.backColorDropdown {
+	margin-left: 0;
+	padding-left: 0;
+}
+</style>

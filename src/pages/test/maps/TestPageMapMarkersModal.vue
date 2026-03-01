@@ -4,8 +4,7 @@
 
 		<!-- Simple overlay background -->
 		<div v-if="dialogVis" class="fixed fullscreen" @click.self="dialogVis = false">
-			<q-card :style="cardStyle" class="fixed" style="width: 600px; height: 400px; overflow: hidden">
-				<!-- Drag handle -->
+			<q-card class="fixed" :style="cardStyle" style="width: 80%; height: 80%; overflow: hidden">
 				<q-bar class="bg-primary text-white" v-touch-pan.mouse="onPan">
 					<div>Map window</div>
 					<q-space />
@@ -21,6 +20,7 @@
 								position: marker.position,
 								title: marker.title,
 							}"
+							@click="removeMarker(marker)"
 						/>
 					</GoogleMap>
 					<!-- <GoogleMap ref="mapRef" :api-key="apiMapKey" :mapId="mapId" :center="center" :zoom="13" style="width: 100%; height: 100%" /> -->
