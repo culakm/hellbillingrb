@@ -22,41 +22,7 @@
 			<q-option-group v-model="interest" :options="interestOptions" type="checkbox" option-value="value" option-label="label" map-options emit-value label="Zaujímavosť" />
 		</div>
 		<q-checkbox class="form-item-stop" v-model="stop" label="Zastaviť" color="primary" />
-		<!-- <q-input class="form-item-note" filled v-model="note" label="Note" type="textarea" /> -->
-		<!-- <q-editor class="form-item-note" v-model="note" label="Note" /> -->
-		<q-editor
-			class="form-item-note"
-			v-model="note"
-			label="Note"
-			:toolbar="[
-				['bold', 'italic', 'underline', 'strike'],
-				['backColor', 'backColorDropdown'],
-				['undo', 'redo'],
-			]"
-		>
-			<template v-slot:backColor>
-				<q-btn class="backColor" dense flat size="sm">
-					<q-icon name="format_color_fill" :color="highlightColor === 'white' ? 'black' : highlightColor" @click="applyHighlight" />
-				</q-btn>
-			</template>
-			<template v-slot:backColorDropdown>
-				<q-btn-dropdown ref="backColorDropdown" class="backColorDropdown" dense no-wrap unelevated size="sm">
-					<div class="row q-pa-sm q-gutter-sm">
-						<q-btn
-							v-for="c in ['none', 'red', 'blue', 'teal', 'green', 'yellow', 'orange', 'brown']"
-							:key="c"
-							size="sm"
-							:style="{ backgroundColor: c }"
-							@click="
-								highlightColor = c;
-								applyHighlight();
-								backColorDropdown.hide();
-							"
-						/>
-					</div>
-				</q-btn-dropdown>
-			</template>
-		</q-editor>
+		<mc-q-editor v-model="note" :reset-color="resetColor" @unset-reset-color="unsetResetColor" />
 		<div class="form-item-buttons">
 			<q-btn dense flat type="submit" icon="save" color="primary" />
 			<template v-if="Object.keys(line).length !== 0">
@@ -72,6 +38,7 @@
 import { ref, computed, nextTick } from "vue";
 import { useTripsStore } from "@/stores/trips";
 import { useQuasar } from "quasar";
+import McQEditor from "@/components/ui/mcQEditor.vue";
 import { decimalToDMS, DMSToDecimal } from "@/utils";
 import { coordsRules, coordsDMS, optional } from "@/composables/useFormValidationRules";
 
@@ -112,63 +79,11 @@ const stop = ref(props.line.stop ?? false);
 const note = ref(props.line.note ?? "");
 
 const tulipSrc = computed(() => (tulip.value ? `/img/${tulip.value}.svg` : ""));
-const highlightColor = ref("");
-const backColorDropdown = ref(null);
+const resetColor = ref(false);
 
-const applyHighlight = () => {
-	const color = highlightColor.value || "none";
-	const sel = window.getSelection();
-	const hasSelection = sel && sel.rangeCount > 0 && !sel.getRangeAt(0).collapsed;
-	const range = sel.getRangeAt(0);
-	console.log("Applying highlight: color:", color, "Has selection:", hasSelection);
-	if (hasSelection) {
-		if (color !== "none") {
-			console.log("Applying highlight to selection with color:", color);
-			const span = document.createElement("span");
-			span.style.backgroundColor = color;
-
-			try {
-				range.surroundContents(span);
-			} catch (e) {
-				document.execCommand("styleWithCSS", false, true);
-				if (!document.execCommand("hiliteColor", false, color) && !document.execCommand("backColor", false, color)) {
-				}
-			}
-		} else {
-			const frag = range.extractContents();
-			const spans = frag.querySelectorAll('span[style*="background-color"]');
-			spans.forEach((span) => {
-				const parent = span.parentNode;
-				while (span.firstChild) parent.insertBefore(span.firstChild, span);
-				parent.removeChild(span);
-			});
-			range.insertNode(frag);
-
-			/// vymazanie vsetkych tagov z vyberu a ponechanie len plain textu
-			const div = document.createElement("div");
-			div.appendChild(range.cloneContents());
-			const html = div.innerHTML;
-
-			// Remove tags -> plain text
-			const tmp = document.createElement("div");
-			tmp.innerHTML = html;
-			const plain = tmp.textContent || tmp.innerText || "";
-
-			// Replace selection with plain text
-			range.deleteContents();
-			range.insertNode(document.createTextNode(plain));
-		}
-	}
-	// toto je na to aby sa farba zobrazoval priamo pri pisani
-	// else {
-	// 	isTypingHighlight.value = !isTypingHighlight.value;
-	// 	const value = isTypingHighlight.value ? color : "transparent";
-
-	// 	document.execCommand("styleWithCSS", false, true);
-	// 	if (!document.execCommand("hiliteColor", false, value) && !document.execCommand("backColor", false, value)) {
-	// 	}
-	// }
-};
+function unsetResetColor() {
+	resetColor.value = false;
+}
 
 const pasteProgrammatic = async () => {
 	try {
@@ -237,6 +152,8 @@ const submitForm = async () => {
 	interest.value = [];
 	stop.value = false;
 	note.value = "";
+
+	resetColor.value = true;
 
 	emit("save-line", formData);
 };

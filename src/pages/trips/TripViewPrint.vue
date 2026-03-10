@@ -9,7 +9,7 @@
 			<div class="roadbook-header pagebreak-after">
 				<trip-full v-if="tripsStore.activeTrip" :trip="tripsStore.activeTrip"></trip-full>
 			</div>
-			<div v-if="tripsStore.activeTrip.hasLines" :id="printHeader ? null : 'element-to-pdf'" class="roadbook" :class="{ 'print-area': !printHeader }">
+			<div v-if="tripsStore.activeTrip?.hasLines" :id="printHeader ? null : 'element-to-pdf'" class="roadbook" :class="{ 'print-area': !printHeader }">
 				<template v-for="(line, index) in tripsStore.activeTrip.lines" :key="line.lineId">
 					<div class="roadbook-item-wrap" :class="{ 'pagebreak-after': isEvery7th(index), offset: isEvery7thPlus1(index) }">
 						<line-view :line="line"></line-view>
