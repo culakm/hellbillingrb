@@ -3,8 +3,10 @@
 		<q-card-section class="row items-center q-gutter-md">
 			<q-icon name="directions_car" size="32px" class="q-mr-sm text-primary" />
 			<span class="text-h6">{{ trip.name }}</span>
-			<q-btn v-if="!$q.fullscreen.isActive" @click="toggleFullscreen" icon="fullscreen" label="Fullscreen" />
-			<q-btn v-else @click="toggleFullscreen" round icon="fullscreen_exit" class="fullscreen-btn" />
+			<template v-if="!printPage">
+				<q-btn v-if="!$q.fullscreen.isActive" @click="toggleFullscreen" icon="fullscreen" label="Fullscreen" />
+				<q-btn v-else @click="toggleFullscreen" round icon="fullscreen_exit" class="fullscreen-btn" />
+			</template>
 		</q-card-section>
 		<q-separator />
 		<q-card-section>
@@ -16,8 +18,9 @@
 </template>
 
 <script setup>
-import { ref, toRef, onMounted, defineProps } from "vue";
+import { ref, toRef, computed, onMounted } from "vue";
 import { fetchFileUrl } from "@/composables/useFirebaseStorage";
+import { useRoute } from "vue-router";
 import { useQuasar } from "quasar";
 
 const props = defineProps({
@@ -33,9 +36,14 @@ const props = defineProps({
 	},
 });
 
+const route = useRoute();
 const $q = useQuasar();
 const imageUrl = ref("");
 const trip = toRef(props, "trip");
+
+const printPage = computed(() => {
+	return route.path.includes("trip/view/print");
+});
 
 const fetchImageUrlLocal = async () => {
 	if (!props.trip.imageName) return;

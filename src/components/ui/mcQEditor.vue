@@ -32,7 +32,7 @@
 			</q-btn-dropdown>
 		</template>
 	</q-editor>
-	<q-card flat bordered>
+	<!-- <q-card flat bordered>
 		<q-card-section>
 			<pre style="white-space: pre-line">{{ innerText }}</pre>
 		</q-card-section>
@@ -40,7 +40,7 @@
 
 	<q-card flat bordered>
 		<q-card-section v-html="innerText" />
-	</q-card>
+	</q-card> -->
 </template>
 
 <script setup>

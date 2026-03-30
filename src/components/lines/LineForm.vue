@@ -7,8 +7,6 @@
 			<q-tooltip>Paste coordinates from clipboard</q-tooltip>
 		</q-btn>
 
-		<pre class="form-item-temp" style="white-space: pre-line">{{ note }}</pre>
-
 		<q-input class="form-item-kmTotal" filled v-model.number="kmTotal" label="kmTotal" type="number" step="0.01" :rules="[optional]" />
 		<q-input class="form-item-mapPage" filled v-model="mapPage" label="mapPage" :rules="[optional]" />
 		<q-input class="form-item-roadNo" filled v-model="roadNo" label="roadNo" :rules="[optional]" />
@@ -22,7 +20,7 @@
 			<q-option-group v-model="interest" :options="interestOptions" type="checkbox" option-value="value" option-label="label" map-options emit-value label="Zaujímavosť" />
 		</div>
 		<q-checkbox class="form-item-stop" v-model="stop" label="Zastaviť" color="primary" />
-		<mc-q-editor v-model="note" :reset-color="resetColor" @unset-reset-color="unsetResetColor" />
+		<mc-q-editor class="form-item-note" v-model="note" :reset-color="resetColor" @unset-reset-color="unsetResetColor" />
 		<div class="form-item-buttons">
 			<q-btn dense flat type="submit" icon="save" color="primary" />
 			<template v-if="Object.keys(line).length !== 0">
@@ -164,7 +162,7 @@ const submitForm = async () => {
 	width: 100%;
 	display: grid;
 	grid-template-areas:
-		"form-item-name form-item-lat form-item-lng form-item-latlng-copy form-item-temp form-item-buttons"
+		"form-item-name form-item-lat form-item-lng form-item-latlng-copy . form-item-buttons"
 		"form-item-tulip form-item-tulip form-item-kmTotal form-item-mapPage form-item-roadNo form-item-buttons"
 		"form-item-interest form-item-stop form-item-note form-item-note form-item-note form-item-buttons";
 	grid-template-columns: auto auto auto auto auto 3rem;
@@ -184,12 +182,6 @@ const submitForm = async () => {
 
 .form-item-latlng-copy {
 	grid-area: form-item-latlng-copy;
-	align-self: start;
-	justify-self: start;
-}
-
-.form-item-temp {
-	grid-area: form-item-temp;
 	align-self: start;
 	justify-self: start;
 }

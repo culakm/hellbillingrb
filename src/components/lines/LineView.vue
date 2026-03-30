@@ -1,16 +1,14 @@
 <template>
 	<div class="roadbook-item" :class="{ passed: line.passed === true && passFunctionality === false }" @click="passedLineLocal()">
-		<div class="roadbook-item-latlng">
-			<div class="lat-label">Lat</div>
-			<div class="lat-value">{{ decimalToDMS(line.lat) }}</div>
-			<div class="lng-label">Lng</div>
-			<div class="lng-value">{{ decimalToDMS(line.lng, false) }}</div>
-		</div>
 		<div class="roadbook-item-place">
 			<div class="order">{{ line.order }}</div>
 			<div class="point">
 				<div class="point-grid">
-					<div class="name" v-html="line.name"></div>
+					<div class="place-label">
+						<div class="name" v-html="line.name"></div>
+						<div class="lat-value">{{ decimalToDMS(line.lat) }}</div>
+						<div class="lng-value">{{ decimalToDMS(line.lng, false) }}</div>
+					</div>
 					<div class="tags">
 						<div v-if="line.stop" class="stop">
 							<div class="svgicon" :class="{ 'color-stop': !isTripViewPrint }">
@@ -129,16 +127,6 @@ const line = toRef(props, "line");
 	page-break-inside: avoid;
 }
 
-.roadbook-item-latlng {
-	height: 2.5rem;
-	grid-area: latlng;
-	border: #000 1px solid;
-	display: flex;
-	flex-wrap: nowrap;
-	justify-content: space-between;
-	align-items: stretch;
-}
-
 .roadbook-item-place {
 	height: 4rem;
 	grid-area: place;
@@ -172,15 +160,18 @@ const line = toRef(props, "line");
 	height: 100%;
 	display: grid;
 	grid-template-areas:
-		"name"
+		"place-label"
 		"tags";
 }
 
-.roadbook-item-place > div.point .point-grid .name {
+.roadbook-item-place > div.point .point-grid .place-label {
+	width: stretch;
 	margin: 0 1rem;
-	grid-area: name;
+	grid-area: place-label;
 	justify-self: left;
 	align-self: center;
+	display: grid;
+	grid-template-columns: 2fr 1fr 1fr;
 }
 
 .roadbook-item-place > div.point .point-grid .tags {

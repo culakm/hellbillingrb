@@ -3,7 +3,7 @@
 		<q-card ref="pageRef">
 			<trip-full v-if="tripsStore.activeTrip" :trip="tripsStore.activeTrip" :pageRef="pageRef"></trip-full>
 			<div v-if="tripsStore.activeTrip?.hasLines">
-				<line-view v-for="line in tripsStore.activeTrip.lines" :key="line.lineId" :line="line"></line-view>
+				<line-view-t-c-r v-for="line in tripsStore.activeTrip.lines" :key="line.lineId" :line="line"></line-view-t-c-r>
 			</div>
 		</q-card>
 	</q-page>
@@ -15,7 +15,7 @@ import { useTripsStore } from "@/stores/trips";
 import { useRoute } from "vue-router";
 import { useQuasar } from "quasar";
 import TripFull from "@/components/trips/TripFull.vue";
-import LineView from "@/components/lines/LineView.vue";
+import LineViewTCR from "@/components/lines/LineViewTCR.vue";
 
 const tripsStore = useTripsStore();
 const route = useRoute();
