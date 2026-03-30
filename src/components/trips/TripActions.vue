@@ -31,7 +31,7 @@
 </template>
 
 <script setup>
-import { computed, defineProps } from "vue";
+import { computed } from "vue";
 import { useTripsStore } from "@/stores/trips";
 import { deleteStorageObject } from "@/composables/useFirebaseStorage";
 import { useRouter } from "vue-router";

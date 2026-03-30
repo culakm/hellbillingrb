@@ -42,7 +42,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, defineProps, defineEmits, watch } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useTripsStore } from "@/stores/trips";
 import { uploadProgress, fetchFileUrl, uploadStorageObject, deleteStorageObject } from "@/composables/useFirebaseStorage";
 import { useQuasar } from "quasar";

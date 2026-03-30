@@ -20,7 +20,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed, defineProps, defineEmits } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { required, emailRules, passwordRules, passwordMatch } from "@/composables/useFormValidationRules";
 
 const props = defineProps({
