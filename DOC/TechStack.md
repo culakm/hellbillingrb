@@ -31,6 +31,7 @@
 - **jsPDF** (`^3.0.1`) — programmatic PDF creation
 - **jspdf-autotable** (`^5.0.2`) — table plugin for jsPDF
 - **html2pdf.js** (`^0.10.3`) — HTML-to-PDF rendering (canvas-based)
+- **pdfMake** (`^0.3.7`) — alternative declarative PDF generation library (used in `src/composables/usePdfExport.js`)
 - Custom embedded fonts: `Montserrat-Bold`, `Montserrat-Regular` (pre-encoded JS files in `src/assets/fonts/`)
 
 ### Drag & Drop

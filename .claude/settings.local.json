@@ -2,7 +2,15 @@
   "permissions": {
     "allow": [
       "mcp__context7__resolve-library-id",
-      "mcp__context7__query-docs"
+      "mcp__context7__query-docs",
+      "Read(*)",
+      "Glob(*)",
+      "Grep(*)",
+      "Bash(npm run *)",
+      "Bash(git status*)",
+      "Bash(git log*)",
+      "Bash(git diff*)",
+      "Bash(ls *)"
     ]
   }
 }

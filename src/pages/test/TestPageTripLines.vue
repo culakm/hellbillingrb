@@ -22,7 +22,6 @@ const tripByIdLocal = async (tripId) => {
 		$q.loading.hide();
 		$q.dialog({ title: "Error", message: err.message || err });
 	}
-	console.log("tripByIdLocal!!!!!!!!!!!!!:", tripsStore.activeTrip);
 };
 
 onMounted(() => {

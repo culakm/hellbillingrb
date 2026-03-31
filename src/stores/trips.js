@@ -36,13 +36,14 @@ export const useTripsStore = defineStore("trips", () => {
 	};
 
 	const setActiveTrip = async (tripId) => {
-		activeTrip.value = await getTripById(tripId);
-		if (activeTrip.value) {
+		const trip = await getTripById(tripId);
+		if (trip) {
 			await linesStore.loadLines(tripId);
-			activeTrip.value.linesCount = linesStore.linesCount;
-			activeTrip.value.hasLines = linesStore.linesCount > 0;
-			activeTrip.value.lines = linesStore.lines;
+			trip.linesCount = linesStore.linesCount;
+			trip.hasLines = linesStore.linesCount > 0;
+			trip.lines = linesStore.lines;
 		}
+		activeTrip.value = trip;
 	};
 
 	const getTripById = async (tripId) => {

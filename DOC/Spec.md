@@ -125,7 +125,7 @@ Role is stored as a **custom claim** on the Firebase Auth token, not in the Fire
 | State management | Pinia (setup-style stores) |
 | UI library | Quasar |
 | Maps | vue3-google-map (Google Maps JavaScript API, Advanced Markers) |
-| PDF export | jsPDF + jspdf-autotable, html2pdf.js |
+| PDF export | jsPDF + jspdf-autotable, html2pdf.js, pdfMake |
 | Drag & drop | vue-draggable-plus |
 | Language | JavaScript (ES Modules, no TypeScript) |
 
@@ -264,6 +264,7 @@ write: authenticated users only
 - Generate printable roadbook PDF from trip data
 - Table-based layout using **jsPDF** + **jspdf-autotable**
 - HTML-to-PDF rendering via **html2pdf.js** for complex layouts
+- Declarative PDF generation via **pdfMake** (used in `usePdfExport` composable)
 - Custom embedded fonts: **Montserrat Bold** and **Montserrat Regular**
 
 ### 9.2 Print View

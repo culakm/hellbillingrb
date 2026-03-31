@@ -16,6 +16,7 @@ HellBillingRB is a web app for creating and managing car journey roadbooks. User
 - **Vite 7** build tool, dev server on port 5175
 - **vue3-google-map** for Google Maps with Advanced Markers
 - **jsPDF + html2pdf.js** for PDF export with embedded Montserrat fonts
+- **pdfMake** as alternative PDF generation library (used in `usePdfExport` composable)
 - **vue-draggable-plus** for line drag-and-drop reordering
 
 ## Commands
@@ -59,7 +60,7 @@ Roles (user/editor/admin) are stored as **custom claims** on Firebase Auth token
 - `src/pages/` — route pages organized by domain (auth, trips, users, cards, test)
 - `src/components/` — reusable components by domain (trips, lines, users, maps, ui)
 - `src/stores/` — Pinia setup-style stores (auth, trips, lines, users)
-- `src/composables/` — shared logic (useError, useFirebaseStorage, useFormValidationRules, useUtils)
+- `src/composables/` — shared logic (useError, useFirebaseStorage, useFormValidationRules, usePdfExport, useUtils)
 - `src/utils/coordinates.js` — DMS/decimal coordinate conversion
 - `src/config/settings.js` — app config (interest categories, closeLineThresholdKm)
 - `src/layouts/` — MainLayout with TheHeader, TheDrawer, TheFooter

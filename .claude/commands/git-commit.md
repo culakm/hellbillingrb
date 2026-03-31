@@ -6,10 +6,11 @@ allowed-tools: Bash(git *)
 argument-hint: [commit-message]
 ---
 
-Stage all changes and create a git commit.
+Stage changes and create a git commit.
 
 **Message:** $ARGUMENTS
 
-1. Run `git add .`
-2. Run `git commit -m "$ARGUMENTS"`
-3. If $ARGUMENTS is empty, ask for a commit message before proceeding.
+1. If $ARGUMENTS is empty, ask for a commit message before proceeding.
+2. Run `git status` to review what will be staged.
+3. Stage specific changed files with `git add <file>...` — avoid staging `.env*`, `dist/`, or build artifacts.
+4. Run `git commit -m "$ARGUMENTS"`
