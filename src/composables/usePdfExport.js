@@ -1,7 +1,14 @@
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
+import htmlToPdfmake from "html-to-pdfmake";
 
 pdfMake.vfs = pdfFonts.pdfMake ? pdfFonts.pdfMake.vfs : pdfFonts.vfs;
+
+const parseHtml = (html) => {
+	if (!html) return { text: "" };
+	const converted = htmlToPdfmake(html, { removeExtraBlanks: true });
+	return { text: converted };
+};
 
 export const usePdfExport = () => {
 	const downloadTCRPdf = (lines) => {
@@ -23,19 +30,19 @@ export const usePdfExport = () => {
 								{ text: "X", style: "tableHeader" },
 							],
 							...lines.map((line) => {
-								const note = line.note.replace(/\s+/g, " ").trim();
+								const note = parseHtml(line.note);
 								const hasCoords = line.lat && line.lng;
 								const hasCheck = line.stop;
 								if (hasCoords && hasCheck) {
 									return [{ text: String(line.order), alignment: "center" }, line.lat, line.lng, note, { text: "", alignment: "center" }];
 								}
 								if (hasCoords && !hasCheck) {
-									return [{ text: String(line.order), alignment: "center" }, line.lat, line.lng, { text: note, colSpan: 2 }, {}];
+									return [{ text: String(line.order), alignment: "center" }, line.lat, line.lng, { ...note, colSpan: 2 }, {}];
 								}
 								if (!hasCoords && hasCheck) {
-									return [{ text: String(line.order), alignment: "center" }, { text: note, colSpan: 3 }, {}, {}, { text: "", alignment: "center" }];
+									return [{ text: String(line.order), alignment: "center" }, { ...note, colSpan: 3 }, {}, {}, { text: "", alignment: "center" }];
 								}
-								return [{ text: String(line.order), alignment: "center" }, { text: note, colSpan: 4 }, {}, {}, {}];
+								return [{ text: String(line.order), alignment: "center" }, { ...note, colSpan: 4 }, {}, {}, {}];
 							}),
 						],
 					},

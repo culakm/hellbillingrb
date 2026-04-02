@@ -16,7 +16,7 @@ HellBillingRB is a web app for creating and managing car journey roadbooks. User
 - **Vite 7** build tool, dev server on port 5175
 - **vue3-google-map** for Google Maps with Advanced Markers
 - **jsPDF + html2pdf.js** for PDF export with embedded Montserrat fonts
-- **pdfMake** as alternative PDF generation library (used in `usePdfExport` composable)
+- **pdfMake + html-to-pdfmake** as alternative PDF generation library (used in `usePdfExport` composable)
 - **vue-draggable-plus** for line drag-and-drop reordering
 
 ## Commands

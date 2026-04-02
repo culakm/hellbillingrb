@@ -264,7 +264,7 @@ write: authenticated users only
 - Generate printable roadbook PDF from trip data
 - Table-based layout using **jsPDF** + **jspdf-autotable**
 - HTML-to-PDF rendering via **html2pdf.js** for complex layouts
-- Declarative PDF generation via **pdfMake** (used in `usePdfExport` composable)
+- Declarative PDF generation via **pdfMake** + **html-to-pdfmake** for HTML content conversion (used in `usePdfExport` composable)
 - Custom embedded fonts: **Montserrat Bold** and **Montserrat Regular**
 
 ### 9.2 Print View

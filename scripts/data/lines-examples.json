@@ -1,0 +1,149 @@
+[
+	{
+		"lineId": "test-pdf-001", "order": 101, "name": "Bold test",
+		"lat": 48.1486, "lng": 17.1077, "kmTotal": 0, "kmPart": 0,
+		"interest": [], "mapPage": "", "roadNo": "E75", "stop": "",
+		"note": "Bratislava <b>hlavne namestie</b> centrum",
+		"tulip": "", "passed": false
+	},
+	{
+		"lineId": "test-pdf-002", "order": 102, "name": "Strike test",
+		"lat": 48.2082, "lng": 16.3738, "kmTotal": 65, "kmPart": 65,
+		"interest": ["culture"], "mapPage": "1", "roadNo": "E58", "stop": "",
+		"note": "Vieden <strike>stara cesta</strike> nova cesta",
+		"tulip": "tulipR", "passed": false
+	},
+	{
+		"lineId": "test-pdf-003", "order": 103, "name": "Highlight test",
+		"lat": 48.3064, "lng": 14.2858, "kmTotal": 215, "kmPart": 150,
+		"interest": ["history"], "mapPage": "2", "roadNo": "A1", "stop": "stop",
+		"note": "Linz <span style=\"background-color: yellow;\">dolezity bod</span> pri Dunaji",
+		"tulip": "tulipL", "passed": false
+	},
+	{
+		"lineId": "test-pdf-004", "order": 104, "name": "Mixed HTML",
+		"lat": 0, "lng": 0, "kmTotal": 300, "kmPart": 85,
+		"interest": ["sport", "culture"], "mapPage": "", "roadNo": "", "stop": "",
+		"note": "<b>Pozor</b> <span style=\"background-color: red; color: white;\">nebezpecny usek</span> a <strike>stary most</strike> novy tunel",
+		"tulip": "", "passed": false
+	},
+	{
+		"lineId": "test-pdf-005", "order": 105, "name": "Plain note",
+		"lat": 0, "lng": 0, "kmTotal": 350, "kmPart": 50,
+		"interest": [], "mapPage": "", "roadNo": "D1", "stop": "",
+		"note": "Obycajna poznamka bez HTML formatovania",
+		"tulip": "tulipF", "passed": false
+	},
+	{
+		"lineId": "test-pdf-006", "order": 106, "name": "Empty note with coords",
+		"lat": 47.4979, "lng": 19.0402, "kmTotal": 400, "kmPart": 50,
+		"interest": ["history"], "mapPage": "3", "roadNo": "M1", "stop": "stop",
+		"note": "",
+		"tulip": "tulipR", "passed": true
+	},
+	{
+		"lineId": "test-pdf-007", "order": 107, "name": "Underline test",
+		"lat": 48.7164, "lng": 21.2611, "kmTotal": 420, "kmPart": 20,
+		"interest": ["culture"], "mapPage": "3", "roadNo": "E50", "stop": "",
+		"note": "Kosice <u>hlavna ulica</u> pesia zona",
+		"tulip": "tulipF", "passed": false
+	},
+	{
+		"lineId": "test-pdf-008", "order": 108, "name": "Italic test",
+		"lat": 49.2194, "lng": 18.7408, "kmTotal": 480, "kmPart": 60,
+		"interest": [], "mapPage": "", "roadNo": "D3", "stop": "",
+		"note": "Zilina <em>pozor na kruhovak</em> pred mostom",
+		"tulip": "tulipL", "passed": false
+	},
+	{
+		"lineId": "test-pdf-009", "order": 109, "name": "Long description crossroads",
+		"lat": 48.6833, "lng": 19.1500, "kmTotal": 540, "kmPart": 60,
+		"interest": ["history", "culture"], "mapPage": "4", "roadNo": "R1", "stop": "stop",
+		"note": "Banska Bystrica velka krizovatka pred centrom. Drzte sa v lavom pruhu a pokracujte rovno cez svetelnu krizovatku. Za krizovatkou uvidite <b>historicky most</b> s tabulou. Most je jednosmerny, preto pockajte na zelenu. Za mostom sa cesta rozdeluje na tri smery. Zvolte <span style=\"background-color: yellow;\">pravy odbocovaci pruh</span> smerom na Zvolen. Po odboceni pokracujte priblizne 2 km az k bezciarke. Pred benzinkou je <u>ostry zatackovy usek</u> s maximalnou rychlostou 30 km/h. Na konci useku je parkovisko kde je mozne zastavit a skontrolovat mapu.",
+		"tulip": "tulipR", "passed": false
+	},
+	{
+		"lineId": "test-pdf-010", "order": 110, "name": "Multiple highlights",
+		"lat": 48.3892, "lng": 17.5869, "kmTotal": 580, "kmPart": 40,
+		"interest": ["sport"], "mapPage": "", "roadNo": "E571", "stop": "",
+		"note": "<span style=\"background-color: green; color: white;\">bezpecny usek</span> potom <span style=\"background-color: orange;\">stredne narocny</span> a nakoniec <span style=\"background-color: red; color: white;\">nebezpecny usek</span>",
+		"tulip": "tulipF", "passed": true
+	},
+	{
+		"lineId": "test-pdf-011", "order": 111, "name": "Close line test",
+		"lat": 48.3900, "lng": 17.5880, "kmTotal": 581, "kmPart": 1,
+		"interest": [], "mapPage": "", "roadNo": "E571", "stop": "",
+		"note": "Tesne za predchadzajucim bodom. Krátky usek.",
+		"tulip": "", "passed": false
+	},
+	{
+		"lineId": "test-pdf-012", "order": 112, "name": "Long mountain route",
+		"lat": 49.0794, "lng": 19.6272, "kmTotal": 650, "kmPart": 69,
+		"interest": ["sport", "history"], "mapPage": "5", "roadNo": "E77", "stop": "stop",
+		"note": "Liptovsky Mikulas zaciatok horskeho useku cez Nizke Tatry. Cesta je uzka a klukata s mnohymi ostrymi zatackami. V zimnom obdobi je <b>nutne mat zimne pneumatiky a retaze</b>. Prvy usek vedie cez les s obmedzenou viditelnostou. <em>Odporucame znizit rychlost na 40 km/h.</em> Po 5 km sa dostanete k prvemu tunelu ktory je dlhy priblizne 800 metrov. Za tunelom je <span style=\"background-color: yellow;\">odpocivadlo s vyhliadkou</span> na Demanovsku dolinu. Pokracujte dalej az na sedlo kde je krizovatka s cestou na Chopok. Tu odbocte vpravo a kleste sa dole do doliny. Cely usek trva priblizne 45 minut za normalnych podmienok a je jednym z najkrajsich na celej trase.",
+		"tulip": "tulipL", "passed": false
+	},
+	{
+		"lineId": "test-pdf-013", "order": 113, "name": "All interests",
+		"lat": 48.8945, "lng": 18.0386, "kmTotal": 700, "kmPart": 50,
+		"interest": ["culture", "history", "sport"], "mapPage": "5", "roadNo": "R2", "stop": "",
+		"note": "Trencin hrad je viditelny z dialnice. <b>Historicka pamiatka</b> z 11. storocia.",
+		"tulip": "tulipR", "passed": false
+	},
+	{
+		"lineId": "test-pdf-014", "order": 114, "name": "No coords long note",
+		"lat": 0, "lng": 0, "kmTotal": 720, "kmPart": 20,
+		"interest": [], "mapPage": "", "roadNo": "", "stop": "",
+		"note": "Tento bod nema suradnice pretoze je to orientacny bod bez presnej polohy. Ide o usek cesty kde sa meni povrch z asfaltu na strkovu cestu. <b>Znizite rychlost</b> a sledujte znacenie na krajnici. Strkovy usek trva priblizne 3 kilometre. Na konci strkoveho useku je maly most cez potok. Most je <span style=\"background-color: orange;\">v zlom stave</span> a ma nosnost len 3.5 tony. Za mostom sa cesta opat meni na asfaltovu a kvalita sa vyrazne zlepsi. Pokracujte rovno az k dalsiemu bodu. Ak je mokro <em>davajte pozor na klzky povrch</em> na strkovom useku.",
+		"tulip": "", "passed": false
+	},
+	{
+		"lineId": "test-pdf-015", "order": 115, "name": "Nested HTML",
+		"lat": 48.1550, "lng": 17.1260, "kmTotal": 740, "kmPart": 20,
+		"interest": ["culture"], "mapPage": "6", "roadNo": "D1", "stop": "",
+		"note": "<b>Dolezite: <span style=\"background-color: yellow;\">odbocka na Petrzalku</span></b> je <u>jednosmerna</u>",
+		"tulip": "tulipR", "passed": false
+	},
+	{
+		"lineId": "test-pdf-016", "order": 116, "name": "Checkpoint city center",
+		"lat": 47.3769, "lng": 8.5417, "kmTotal": 850, "kmPart": 110,
+		"interest": ["culture", "history"], "mapPage": "7", "roadNo": "A2", "stop": "stop",
+		"note": "Zurich centrum. Parkovanie v podzemnej garazi Urania je <b>odporucane</b>. Vstup z Bahnhofstrasse smerom na juh. Sadzba je 4 CHF za hodinu. <strike>Stare parkovisko pri jazere je zatvorene</strike>. Alternativne mozete parkovat pri hlavnej stanici ale kapacita je obmedzena. Po zaparkovani pokracujte pesky cez most na Limmatquai. Cesta k checkpointu trva priblizne 10 minut. <span style=\"background-color: green; color: white;\">Checkpoint je oznaceny zelenou vlajkou</span> pri fontane pred Grossmunster. Nezabudnite odfotit kontrolny kod na vlajke. Po splneni checkpointu sa vratte k autu rovnakou cestou.",
+		"tulip": "tulipF", "passed": false
+	},
+	{
+		"lineId": "test-pdf-017", "order": 117, "name": "Highway exit",
+		"lat": 47.5596, "lng": 7.5886, "kmTotal": 940, "kmPart": 90,
+		"interest": [], "mapPage": "8", "roadNo": "A3", "stop": "",
+		"note": "Zjazd z dialnice exit 12B smer <b>Basel-Sud</b>",
+		"tulip": "tulipR", "passed": false
+	},
+	{
+		"lineId": "test-pdf-018", "order": 118, "name": "Border crossing",
+		"lat": 47.5884, "lng": 7.5875, "kmTotal": 945, "kmPart": 5,
+		"interest": [], "mapPage": "8", "roadNo": "E25", "stop": "stop",
+		"note": "Hranicny priechod Svajciarsko-Francuzsko. <span style=\"background-color: red; color: white;\">Pripravte si doklady a dialnicnu znamku.</span> Kontrola trva zvycajne 5-10 minut. <b>V piatok popoludni moze byt front az 30 minut.</b> Odporucame mat pripraveny pas nie obciansky preukaz. Za hranicou sa menia pravidla cestnej premavky. <em>Maximalna rychlost na francuzskej dialnici je 130 km/h.</em> Platenie myto je mozne kartou alebo hotovostou v EUR. Na prvy usek do Mulhouse je myto priblizne 2.50 EUR. Za mytnou branou pokracujte v pravom pruhu a sledujte znacenie na Colmar.",
+		"tulip": "tulipF", "passed": false
+	},
+	{
+		"lineId": "test-pdf-019", "order": 119, "name": "Fuel stop",
+		"lat": 48.0833, "lng": 7.3586, "kmTotal": 1050, "kmPart": 105,
+		"interest": ["sport"], "mapPage": "9", "roadNo": "A35", "stop": "stop",
+		"note": "Benzinka Total pri Colmare. <u>Posledna benzinka pred horskym usekom</u> cez Vogesy.",
+		"tulip": "", "passed": false
+	},
+	{
+		"lineId": "test-pdf-020", "order": 120, "name": "Mountain pass finish",
+		"lat": 48.4117, "lng": 7.4886, "kmTotal": 1120, "kmPart": 70,
+		"interest": ["sport", "culture", "history"], "mapPage": "10", "roadNo": "D1420", "stop": "stop",
+		"note": "Strasbourg cielova rovina a posledny checkpoint rally. Parkovanie je pripravene na Place Kleber v centre mesta. <b>Cas uzavierky je 18:00</b> a kazda minuta po termine znamena penalizaciu. Po prichode nahlaste sa u hlavneho rozhodcu pri <span style=\"background-color: yellow;\">zltom stane</span> na namesti. Odovzdajte roadbook a kontrolnu kartu. <strike>Povodny ciel pri katedrale bol presunuty</strike> kvoli stavebnym pracam. Vysledky budu vyhlasene o 20:00 v restauracii Au Pont Saint-Martin. <em>Nezabudnite si vyzdvihnut ucastnicky diplom a pamiatku.</em> Gratulujeme k dokonceniu rally a dakujeme za ucast. Vidime sa na dalsom rocniku!",
+		"tulip": "tulipF", "passed": false
+	},
+	{
+		"lineId": "test-pdf-021", "order": 121, "name": "Combo formatting stress",
+		"lat": 0, "lng": 0, "kmTotal": 1120, "kmPart": 0,
+		"interest": [], "mapPage": "", "roadNo": "", "stop": "",
+		"note": "<b>Toto je bold</b> a <em>toto italic</em> a <u>toto underline</u> a <strike>toto preskrtnute</strike>. Potom <b><em>bold italic</em></b> a <span style=\"background-color: cyan;\">cyan pozadie</span> a <span style=\"color: red;\">cerveny text</span> a <span style=\"background-color: black; color: white;\">biely text na ciernom</span>. Toto je dlhsi odstavec ktory testuje ci sa text spravne lamie na viacero riadkov v PDF exporte a ci sa formatovanie zachova aj pri dlhsom texte.",
+		"tulip": "", "passed": false
+	}
+]
