@@ -47,7 +47,6 @@ const isTripView = computed(() => route.path.includes("trip/view"));
 const passFunctionality = computed(() => isTripViewPrint.value || route.path.includes("trip/edit"));
 
 const hasCoords = computed(() => props.line.lat && props.line.lng);
-const hasCheck = computed(() => props.line.stop);
 
 onMounted(() => {
 	if (props.line.mapPage && isTripView.value) {
@@ -75,7 +74,7 @@ const line = toRef(props, "line");
 <style scoped>
 .roadbook-item {
 	display: grid;
-	grid-template-columns: 3% 8% 8% 1fr 4%;
+	grid-template-columns: 3% 7% 7% 1fr 4%;
 	border: 1px solid #111;
 	padding: 0;
 	width: 100%;

@@ -6,7 +6,7 @@
 			<template v-if="!printPage">
 				<q-btn v-if="!$q.fullscreen.isActive" @click="toggleFullscreen" icon="fullscreen" label="Fullscreen" />
 				<q-btn v-else @click="toggleFullscreen" round icon="fullscreen_exit" class="fullscreen-btn" />
-				<q-btn v-if="tcrPage" label="Download PDF" color="primary" icon="picture_as_pdf" :disable="trip.linesCount === 0" @click="downloadTCRPdf(trip.lines)" />
+				<q-btn v-if="tcrPage" label="Download PDF" color="primary" icon="picture_as_pdf" :disable="trip.linesCount === 0" @click="downloadTCRPdf(trip.lines, trip.name)" />
 			</template>
 		</q-card-section>
 		<q-separator />
@@ -74,12 +74,10 @@ const toggleFullscreen = () => {
 	}
 };
 
-// onMounted(fetchImageUrlLocal);
 onMounted(() => {
 	if (props.trip.imageName) {
 		fetchImageUrlLocal();
 	}
-	console.log("TripFull mounted with trip lines:", props.trip.lines);
 });
 </script>
 

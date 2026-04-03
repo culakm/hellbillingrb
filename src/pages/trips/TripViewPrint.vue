@@ -28,6 +28,7 @@ import { useQuasar } from "quasar";
 import TripFull from "@/components/trips/TripFull.vue";
 import LineView from "@/components/lines/LineView.vue";
 import html2pdf from "html2pdf.js";
+import { tripFileName } from "@/utils";
 
 const tripsStore = useTripsStore();
 const route = useRoute();
@@ -37,7 +38,7 @@ const printHeader = ref(true);
 
 const isEvery7th = (index) => (index + 1) % 7 === 0;
 const isEvery7thPlus1 = (index) => index > 0 && (index + 1) % 7 === 1;
-const tripNamePrint = computed(() => (tripsStore.activeTrip.value && tripsStore.activeTrip.value.name ? tripsStore.activeTrip.value.name.replace(/ /g, "_").toLowerCase() : "trip"));
+const tripNamePrint = computed(() => tripFileName(tripsStore.activeTrip?.name));
 
 const tripByIdLocal = async (tripId) => {
 	$q.loading.show();
@@ -54,7 +55,7 @@ const exportToPDF = () => {
 	const element = document.getElementById("element-to-pdf");
 	const opt = {
 		margin: 10,
-		filename: "hbrb_" + tripNamePrint.value + ".pdf",
+		filename: tripNamePrint.value + ".pdf",
 		image: { type: "jpeg", quality: 0.98 },
 		html2canvas: { scale: 2, useCORS: true },
 		jsPDF: { format: "letter", orientation: "portrait" },
