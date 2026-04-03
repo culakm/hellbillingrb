@@ -2,30 +2,14 @@
 	<div class="roadbook-item" :class="{ passed: line.passed === true && passFunctionality === false }" @click="passedLineLocal()">
 		<div class="order">{{ line.order }}</div>
 
-		<!-- hasCoords && hasCheck -->
-		<template v-if="hasCoords && hasCheck">
+		<template v-if="hasCoords">
 			<div class="lat-value">{{ decimalToDMS(line.lat) }}</div>
 			<div class="lng-value">{{ decimalToDMS(line.lng, false) }}</div>
 			<div class="note" v-html="line.note"></div>
-			<div class="check"></div>
 		</template>
 
-		<!-- hasCoords && !hasCheck -->
-		<template v-else-if="hasCoords && !hasCheck">
-			<div class="lat-value">{{ decimalToDMS(line.lat) }}</div>
-			<div class="lng-value">{{ decimalToDMS(line.lng, false) }}</div>
-			<div class="note span-2" v-html="line.note"></div>
-		</template>
-
-		<!-- !hasCoords && hasCheck -->
-		<template v-else-if="!hasCoords && hasCheck">
-			<div class="note span-3" v-html="line.note"></div>
-			<div class="check"></div>
-		</template>
-
-		<!-- !hasCoords && !hasCheck -->
 		<template v-else>
-			<div class="note span-4" v-html="line.note"></div>
+			<div class="note span-3" v-html="line.note"></div>
 		</template>
 	</div>
 </template>
@@ -91,7 +75,7 @@ const line = toRef(props, "line");
 <style scoped>
 .roadbook-item {
 	display: grid;
-	grid-template-columns: 8% 14% 14% 1fr 4%;
+	grid-template-columns: 3% 8% 8% 1fr 4%;
 	border: 1px solid #111;
 	padding: 0;
 	width: 100%;
