@@ -1,32 +1,10 @@
 <template>
 	<div class="roadbook-item" :class="{ passed: line.passed === true && passFunctionality === false }" @click="passedLineLocal()">
 		<div class="order">{{ line.order }}</div>
-
-		<!-- hasCoords && hasCheck -->
-		<template v-if="hasCoords && hasCheck">
-			<div class="lat-value">{{ decimalToDMS(line.lat) }}</div>
-			<div class="lng-value">{{ decimalToDMS(line.lng, false) }}</div>
-			<div class="note" v-html="line.note"></div>
-			<div class="check"></div>
-		</template>
-
-		<!-- hasCoords && !hasCheck -->
-		<template v-else-if="hasCoords && !hasCheck">
-			<div class="lat-value">{{ decimalToDMS(line.lat) }}</div>
-			<div class="lng-value">{{ decimalToDMS(line.lng, false) }}</div>
-			<div class="note span-2" v-html="line.note"></div>
-		</template>
-
-		<!-- !hasCoords && hasCheck -->
-		<template v-else-if="!hasCoords && hasCheck">
-			<div class="note span-3" v-html="line.note"></div>
-			<div class="check"></div>
-		</template>
-
-		<!-- !hasCoords && !hasCheck -->
-		<template v-else>
-			<div class="note span-4" v-html="line.note"></div>
-		</template>
+		<div class="lat-value">{{ decimalToDMS(line.lat) }}</div>
+		<div class="lng-value">{{ decimalToDMS(line.lng, false) }}</div>
+		<div class="note" v-html="line.note"></div>
+		<div class="check"></div>
 	</div>
 </template>
 
@@ -62,9 +40,6 @@ const isTripViewPrint = computed(() => route.path.includes("trip/view/print"));
 const isTripView = computed(() => route.path.includes("trip/view"));
 const passFunctionality = computed(() => isTripViewPrint.value || route.path.includes("trip/edit"));
 
-const hasCoords = computed(() => props.line.lat && props.line.lng);
-const hasCheck = computed(() => props.line.stop);
-
 onMounted(() => {
 	if (props.line.mapPage && isTripView.value) {
 		props.line.mapPage = props.line.mapPage.replace(/,/g, " ");
@@ -90,56 +65,50 @@ const line = toRef(props, "line");
 
 <style scoped>
 .roadbook-item {
-	display: grid;
-	grid-template-columns: 8% 14% 14% 1fr 4%;
-	border: 1px solid #111;
+	display: flex;
+	grid-template-areas: "order lat-value lng-value note";
+	border: 2px solid #111;
 	padding: 0;
+	margin: 0;
 	width: 100%;
 	page-break-inside: avoid;
 }
 
 .roadbook-item > div {
-	border-right: 1px solid #111;
-	padding: 0.2rem 0.3rem;
+	border: 1px solid #111;
+}
+
+.roadbook-item > div.order {
+	flex: 0 0 3%;
+	padding: 0.2rem;
+	font-weight: bold;
+	justify-content: center;
 	align-items: center;
 }
 
-.roadbook-item > div:last-child {
-	border-right: none;
-}
-
-.order {
-	font-weight: bold;
+.roadbook-item > div.lat-value,
+.roadbook-item > div.lng-value {
+	flex: 0 0 8%;
+	padding: 0.2rem;
+	font-weight: normal;
 	justify-content: center;
-	text-align: center;
+	align-items: center;
 }
 
-.lat-value,
-.lng-value {
-	justify-content: center;
-	text-align: center;
+.roadbook-item > div.note {
+	flex: 0 0 78%;
+	padding: 0.2rem 0.3rem;
+	font-weight: normal;
+	justify-content: left;
+	align-items: flex-start;
 }
 
-.note {
-	justify-content: flex-start;
-	text-align: left;
-}
-
-.check {
-	justify-content: center;
-	text-align: center;
-}
-
-.span-2 {
-	grid-column: span 2;
-}
-
-.span-3 {
-	grid-column: span 3;
-}
-
-.span-4 {
-	grid-column: span 4;
+.roadbook-item > div.check {
+	flex: 0 0 78%;
+	padding: 0.2rem 0.3rem;
+	font-weight: normal;
+	justify-content: left;
+	align-items: flex-start;
 }
 
 .passed {

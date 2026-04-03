@@ -2,7 +2,7 @@
 	<q-page class="q-pa-md bg-grey-2">
 		<q-card ref="pageRef">
 			<trip-full v-if="tripsStore.activeTrip" :trip="tripsStore.activeTrip" :pageRef="pageRef"></trip-full>
-			<div v-if="tripsStore.activeTrip?.hasLines">
+			<div v-if="tripsStore.activeTrip?.hasLines" class="tcr-lines">
 				<line-view-t-c-r v-for="line in tripsStore.activeTrip.lines" :key="line.lineId" :line="line"></line-view-t-c-r>
 			</div>
 		</q-card>
@@ -44,5 +44,11 @@ onMounted(() => {
 :fullscreen,
 :-webkit-full-screen {
 	overflow: auto !important;
+}
+</style>
+
+<style>
+.tcr-lines > .roadbook-item + .roadbook-item {
+	margin-top: -1px;
 }
 </style>
