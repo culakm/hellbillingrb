@@ -6,8 +6,8 @@
 				<div class="point-grid">
 					<div class="place-label">
 						<div class="name" v-html="line.name"></div>
-						<div class="lat-value">{{ decimalToDMS(line.lat) }}</div>
-						<div class="lng-value">{{ decimalToDMS(line.lng, false) }}</div>
+						<div class="lat">{{ decimalToDMS(line.lat) }}</div>
+						<div class="lng">{{ decimalToDMS(line.lng, false) }}</div>
 					</div>
 					<div class="tags">
 						<div v-if="line.stop" class="stop">
@@ -117,7 +117,6 @@ const line = toRef(props, "line");
 .roadbook-item {
 	display: grid;
 	grid-template-areas:
-		"latlng"
 		"place"
 		"road";
 	border: 2px solid #111;
@@ -130,7 +129,6 @@ const line = toRef(props, "line");
 .roadbook-item-place {
 	height: 4rem;
 	grid-area: place;
-	border: #000 1px solid;
 	display: flex;
 	flex-wrap: nowrap;
 	justify-content: space-between;
@@ -138,7 +136,7 @@ const line = toRef(props, "line");
 }
 
 .roadbook-item-place > div {
-	border: #000 1px solid;
+	border-right: 1px solid #111;
 	height: 100%;
 	display: flex;
 	align-items: center;
@@ -146,8 +144,11 @@ const line = toRef(props, "line");
 	font-weight: bold;
 }
 
+.roadbook-item-place > div:last-child {
+	border-right: none;
+}
+
 .roadbook-item-place > div.order {
-	/* flex-grow: 0; flex-shrink: 0; flex-basis: 5%; */
 	flex: 0 0 5%;
 }
 
@@ -168,10 +169,21 @@ const line = toRef(props, "line");
 	width: stretch;
 	margin: 0 1rem;
 	grid-area: place-label;
-	justify-self: left;
 	align-self: center;
-	display: grid;
-	grid-template-columns: 2fr 1fr 1fr;
+	display: flex;
+	align-items: baseline;
+	gap: 0.5rem;
+	font-size: 1.1rem;
+}
+
+.roadbook-item-place > div.point .point-grid .place-label .name {
+	flex: 1;
+	text-align: left;
+}
+
+.roadbook-item-place > div.point .point-grid .place-label .lat,
+.roadbook-item-place > div.point .point-grid .place-label .lng {
+	white-space: nowrap;
 }
 
 .roadbook-item-place > div.point .point-grid .tags {
@@ -207,8 +219,8 @@ const line = toRef(props, "line");
 	bottom: 0;
 	width: 50%;
 	height: 33%;
-	border-left: 1px solid #000;
-	border-top: 1px solid #000;
+	border-left: 1px solid #111;
+	border-top: 1px solid #111;
 	box-sizing: border-box;
 	display: flex;
 	justify-content: center;
@@ -256,9 +268,9 @@ const line = toRef(props, "line");
 }
 
 .roadbook-item-road {
-	height: 4rem;
+	min-height: 4rem;
 	grid-area: road;
-	border: #000 1px solid;
+	border-top: 1px solid #111;
 	display: flex;
 	flex-wrap: nowrap;
 	justify-content: space-between;
@@ -266,12 +278,15 @@ const line = toRef(props, "line");
 }
 
 .roadbook-item-road > div {
-	border: #000 1px solid;
-	height: 100%;
+	border-right: 1px solid #111;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	font-weight: bold;
+}
+
+.roadbook-item-road > div:last-child {
+	border-right: none;
 }
 
 .roadbook-item-road > div.tulip {
@@ -302,21 +317,25 @@ const line = toRef(props, "line");
 .roadbook-item-road > div.road-no {
 	flex: 0 0 15%;
 	position: relative;
-	display: flex;
 	flex-direction: column;
+	align-items: flex-start;
 }
 
 .roadbook-item-road > div.road-no .road-no-label {
-	flex: 0 0 25%;
-	align-self: flex-start;
+	width: 100%;
+	padding: 0.1rem 0.3rem;
 	font-weight: normal;
+	font-size: 0.65rem;
+	text-transform: uppercase;
+	letter-spacing: 0.03em;
+	color: #666;
 }
 
 .roadbook-item-road > div.road-no .road-no-value {
 	flex: 1;
-	align-self: flex-start;
-	margin: 0.1rem 0.3rem;
+	padding: 0.2rem 0.3rem;
 	max-width: 11rem;
+	font-size: 0.85rem;
 	word-wrap: break-word;
 	overflow-wrap: break-word;
 	white-space: break-spaces;
@@ -325,31 +344,35 @@ const line = toRef(props, "line");
 
 .roadbook-item-road > div.note {
 	flex: 0 0 70%;
+	display: block;
 	padding: 0.2rem 0.3rem;
 	font-weight: normal;
-	justify-content: left;
-	align-items: flex-start;
+	word-wrap: break-word;
+	overflow-wrap: break-word;
 }
 
 .roadbook-item-place > div.map-page {
 	flex: 0 0 15%;
 	position: relative;
-	display: flex;
 	flex-direction: column;
-	/* Set flex container with column layout */
+	align-items: flex-start;
 }
 
 .roadbook-item-place > div.map-page .map-page-label {
-	flex: 0 0 25%;
-	align-self: flex-start;
+	width: 100%;
+	padding: 0.1rem 0.3rem;
 	font-weight: normal;
+	font-size: 0.65rem;
+	text-transform: uppercase;
+	letter-spacing: 0.03em;
+	color: #666;
 }
 
 .roadbook-item-place > div.map-page .map-page-value {
 	flex: 1;
-	align-self: flex-start;
-	margin: 0.1rem 0.3rem;
+	padding: 0.2rem 0.3rem;
 	max-width: 9rem;
+	font-size: 0.85rem;
 	word-wrap: break-word;
 	overflow-wrap: break-word;
 	white-space: break-spaces;
