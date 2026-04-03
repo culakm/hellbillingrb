@@ -1,4 +1,6 @@
+import { pdfFilePrefix } from "@/config/settings";
+
 export function tripFileName(name) {
 	if (!name) return "trip";
-	return "roadbook-" + name.replace(/ /g, "-").toLowerCase();
+	return pdfFilePrefix + name.replace(/ /g, "-").toLowerCase();
 }
