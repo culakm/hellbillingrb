@@ -192,16 +192,14 @@ const line = toRef(props, "line");
 	justify-self: left;
 	align-self: center;
 	display: flex;
-}
-
-.roadbook-item-place > div.point .point-grid .tags .stop {
-	margin-right: 1rem;
+	align-items: center;
+	gap: 0.6rem;
 }
 
 .roadbook-item-place > div.point .point-grid .tags .interest {
 	display: flex;
-	justify-content: space-between;
-	gap: 0.5rem;
+	align-items: center;
+	gap: 0.6rem;
 }
 
 .roadbook-item-place > div.distance {
@@ -240,31 +238,35 @@ const line = toRef(props, "line");
 }
 
 .svgicon {
-	width: 1.5rem;
+	width: 1.8rem;
+	height: 1.8rem;
+	padding: 0.15rem;
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	border-radius: 50%;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+	box-sizing: border-box;
 }
 
 .svgicon img {
-	max-height: 1.5rem;
+	max-height: 1.4rem;
 }
 
 .color-culture {
-	background-color: yellow;
+	background-color: #f5c518;
 }
 
 .color-history {
-	background-color: brown;
+	background-color: #8b5e3c;
 }
 
 .color-sport {
-	background-color: blue;
+	background-color: #2979ff;
 }
 
 .color-stop {
-	background-color: red;
+	background-color: #e53935;
 }
 
 .roadbook-item-road {
