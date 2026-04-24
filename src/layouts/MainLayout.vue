@@ -1,11 +1,11 @@
 <template>
 	<q-layout view="hHh lpR fFf">
 		<TheHeader
-			:toggleRightDrawer="toggleRightDrawer"
-			:logoutLocal="logoutLocal"
-			:authStore="authStore"
+			:toggle-right-drawer="toggleRightDrawer"
+			:logout-local="logoutLocal"
+			:auth-store="authStore"
 		/>
-		<TheDrawer v-model="rightDrawerOpen" :authStore="authStore" />
+		<TheDrawer v-model="rightDrawerOpen" :auth-store="authStore" />
 		<q-page-container>
 			<router-view />
 		</q-page-container>

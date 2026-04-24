@@ -26,9 +26,9 @@
 			</template>
 			<template v-else>
 				<line-form
+					:line="line"
 					@save-line="editLineLocal"
 					@cancel-edit="cancelEditLocal"
-					:line="line"
 				/>
 			</template>
 		</q-card-section>

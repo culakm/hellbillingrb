@@ -6,7 +6,7 @@
 			:style="cardStyle"
 			style="width: 80%; height: 80%; overflow: hidden"
 		>
-			<q-bar class="bg-primary text-white" v-touch-pan.mouse="onPan">
+			<q-bar v-touch-pan.mouse="onPan" class="bg-primary text-white">
 				<div>Map window</div>
 				<q-space />
 				<q-btn dense flat icon="save" @click="closeMap()" />
@@ -16,7 +16,7 @@
 			<q-card-section class="q-pa-none" style="height: calc(100% - 32px)">
 				<GoogleMap
 					:api-key="apiMapKey"
-					:mapId="mapId"
+					:map-id="mapId"
 					style="width: 100%; height: 100%"
 					:center="center"
 					:zoom="15"

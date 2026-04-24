@@ -3,8 +3,8 @@
 		<q-btn
 			label="Open map"
 			color="primary"
-			@click="openMap"
 			style="height: 50px"
+			@click="openMap"
 		/>
 
 		<q-dialog v-model="showMap" persistent maximized>
@@ -12,7 +12,7 @@
 				<q-card-section class="row items-center q-pb-none">
 					<div class="text-h6">Select location</div>
 					<q-space />
-					<q-btn icon="close" flat round dense v-close-popup />
+					<q-btn v-close-popup icon="close" flat round dense />
 				</q-card-section>
 
 				<q-card-section class="q-pa-none" style="height: calc(100vh - 56px)">
@@ -21,7 +21,7 @@
 						v-if="showMap"
 						ref="mapRef"
 						:api-key="apiMapKey"
-						:mapId="mapId"
+						:map-id="mapId"
 						:options="mapOptions"
 						:center="center"
 						:zoom="13"

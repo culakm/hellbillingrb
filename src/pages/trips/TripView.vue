@@ -4,7 +4,7 @@
 			<trip-full
 				v-if="tripsStore.activeTrip"
 				:trip="tripsStore.activeTrip"
-				:pageRef="pageRef"
+				:page-ref="pageRef"
 			></trip-full>
 			<div v-if="tripsStore.activeTrip?.hasLines" class="lines">
 				<line-view

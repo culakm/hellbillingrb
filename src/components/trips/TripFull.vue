@@ -6,16 +6,16 @@
 			<template v-if="!printPage">
 				<q-btn
 					v-if="!$q.fullscreen.isActive"
-					@click="toggleFullscreen"
 					icon="fullscreen"
 					label="Fullscreen"
+					@click="toggleFullscreen"
 				/>
 				<q-btn
 					v-else
-					@click="toggleFullscreen"
 					round
 					icon="fullscreen_exit"
 					class="fullscreen-btn"
+					@click="toggleFullscreen"
 				/>
 				<q-btn
 					v-if="tcrPage"

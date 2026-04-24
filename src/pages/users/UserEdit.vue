@@ -3,8 +3,8 @@
 		<Container>
 			<user-form
 				v-if="user"
-				@save-data="updateUserLocal"
 				:user="user"
+				@save-data="updateUserLocal"
 			></user-form>
 		</Container>
 	</q-page>

@@ -10,14 +10,14 @@
 					round
 					icon="sync"
 					color="red"
-					@click="saveData"
 					:loading="loading"
+					@click="saveData"
 				/>
 			</div>
 			<div class="col text-center">
 				<q-input
-					filled
 					v-model="data.name"
+					filled
 					input-class="text-center text-h5"
 					color="teal"
 					placeholder="Counter"
@@ -33,8 +33,8 @@
 			</div>
 			<div class="col text-center">
 				<q-btn
-					icon="add"
 					v-touch-repeat:300:300:200:50.mouse.enter.space="handleAdd"
+					icon="add"
 					color="red"
 					@click="handleAdd"
 				/>

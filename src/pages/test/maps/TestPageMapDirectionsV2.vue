@@ -3,7 +3,7 @@
 		<GoogleMap
 			ref="mapRef"
 			:api-key="apiMapKey"
-			:mapId="mapId"
+			:map-id="mapId"
 			:options="mapOptions"
 			:center="center"
 			style="width: 100%; height: 100vh"

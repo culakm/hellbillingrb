@@ -1,10 +1,10 @@
 <template>
 	<q-drawer
 		:model-value="modelValue"
-		@update:model-value="$emit('update:modelValue', $event)"
 		side="right"
 		behavior="mobile"
 		elevated
+		@update:model-value="$emit('update:modelValue', $event)"
 	>
 		<div v-if="authStore.token" style="padding: 16px">
 			<div>User: {{ authStore.email }}</div>

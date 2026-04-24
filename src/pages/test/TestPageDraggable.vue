@@ -9,7 +9,7 @@
 			v-model="activeTripReactive.lines"
 			item-key="lineId"
 			:animation="150"
-			ghostClass="ghost"
+			ghost-class="ghost"
 			@start="onStart"
 			@update="onUpdate"
 			@end="onEnd"

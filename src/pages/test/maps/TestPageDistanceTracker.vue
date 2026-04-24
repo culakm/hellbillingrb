@@ -2,9 +2,9 @@
 	<div>
 		<h1>Distance Tracker</h1>
 		<p>Distance traveled: {{ distance.toFixed(2) }} meters</p>
-		<button @click="startTracking" :disabled="tracking">Start</button>
-		<button @click="pauseTracking" :disabled="!tracking">Pause</button>
-		<button @click="stopAndReset" :disabled="!tracking && distance === 0">
+		<button :disabled="tracking" @click="startTracking">Start</button>
+		<button :disabled="!tracking" @click="pauseTracking">Pause</button>
+		<button :disabled="!tracking && distance === 0" @click="stopAndReset">
 			Stop & Reset
 		</button>
 	</div>

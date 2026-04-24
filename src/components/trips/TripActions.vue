@@ -8,13 +8,13 @@
 			<q-btn-group spread>
 				<q-btn-dropdown color="white" text-color="primary" icon="visibility">
 					<q-list>
-						<q-item clickable v-close-popup :to="tripViewLink">
+						<q-item v-close-popup clickable :to="tripViewLink">
 							<q-item-section>
 								<q-item-label>MY</q-item-label>
 							</q-item-section>
 						</q-item>
 
-						<q-item clickable v-close-popup :to="tripViewTCRLink">
+						<q-item v-close-popup clickable :to="tripViewTCRLink">
 							<q-item-section>
 								<q-item-label>TCR</q-item-label>
 							</q-item-section>

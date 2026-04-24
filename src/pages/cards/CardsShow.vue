@@ -4,42 +4,42 @@
 			<div class="line">
 				<label for="settingsRows">Rows:</label>
 				<input
-					type="number"
-					step="1"
 					id="settingsRows"
 					v-model.trim="settingsRows"
+					type="number"
+					step="1"
 				/>
 			</div>
 			<div class="line">
 				<label for="settingsFontSize">FontSize:</label>
 				<input
-					type="number"
-					step="1"
 					id="settingsFontSize"
 					v-model.trim="settingsFontSize"
+					type="number"
+					step="1"
 				/>
 			</div>
 			<div class="line">
 				<label for="settingsCellHeight">CellHeight:</label>
 				<input
-					type="number"
-					step="1"
 					id="settingsCellHeight"
 					v-model.trim="settingsCellHeight"
+					type="number"
+					step="1"
 				/>
 			</div>
 			<div class="line">
 				<label for="settingsReverse">Reverse:</label>
 				<input
 					id="settings-reverse"
+					v-model="settingsReverse"
 					name="settingsReverse"
 					type="checkbox"
-					v-model="settingsReverse"
 				/>
 			</div>
 			<base-button @click="exportToPDF">Export to PDF</base-button>
 		</div>
-		<textarea id="lala" class="styled-textarea" v-model="inputData"> </textarea>
+		<textarea id="lala" v-model="inputData" class="styled-textarea"> </textarea>
 	</div>
 </template>
 

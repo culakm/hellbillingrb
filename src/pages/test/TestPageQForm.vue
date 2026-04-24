@@ -2,42 +2,42 @@
 	<q-page class="flex flex-center bg-grey-2">
 		<Container>
 			<q-card class="q-pa-xl shadow-2">
-				<q-form @submit.prevent="submitForm" ref="formRef">
+				<q-form ref="formRef" @submit.prevent="submitForm">
 					<q-card-section class="text-center q-mb-md">
 						<div class="text-h5 text-primary q-mb-sm">Formular</div>
 					</q-card-section>
 					<q-card-section>
-						<q-input filled label="Form1 (optional)" v-model="form1" />
+						<q-input v-model="form1" filled label="Form1 (optional)" />
 						<q-input
+							v-model="name"
 							filled
 							label="Name (required)"
-							v-model="name"
 							:rules="[required]"
 							lazy-rules
 						/>
 						<q-input
+							v-model="email"
 							outlined
 							type="email"
 							label="Email"
-							v-model="email"
 							stack-label
 							class="q-mb-md"
 							:rules="emailRules"
 							autocomplete="off"
 						/>
 						<q-input
+							v-model="password"
 							outlined
 							type="password"
 							label="Password"
-							v-model="password"
 							stack-label
 							class="q-mb-md"
 							:rules="passwordRules"
 							autocomplete="off"
 						/>
 						<q-select
-							filled
 							v-model="role"
+							filled
 							label="Role"
 							:options="roleOptions"
 							outlined

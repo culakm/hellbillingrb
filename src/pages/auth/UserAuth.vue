@@ -2,16 +2,16 @@
 	<q-page class="q-pa-md bg-grey-2">
 		<Container>
 			<q-card class="q-pa-xl shadow-2">
-				<q-form @submit.prevent="submitForm" ref="formRef">
+				<q-form ref="formRef" @submit.prevent="submitForm">
 					<q-card-section class="text-center q-mb-md">
 						<div class="text-h5 text-primary q-mb-sm">Login</div>
 					</q-card-section>
 					<q-card-section>
 						<q-input
+							v-model="email"
 							outlined
 							type="email"
 							label="Email"
-							v-model="email"
 							stack-label
 							class="q-mb-md"
 							autocomplete="username"
@@ -19,10 +19,10 @@
 							lazy-rules
 						/>
 						<q-input
+							v-model="password"
 							outlined
 							type="password"
 							label="Password"
-							v-model="password"
 							stack-label
 							class="q-mb-md"
 							autocomplete="current-password"

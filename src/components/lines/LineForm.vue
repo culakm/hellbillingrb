@@ -1,25 +1,25 @@
 <template>
-	<q-form @submit.prevent="submitForm" class="line-form q-pa-xs q-gutter-xs">
+	<q-form class="line-form q-pa-xs q-gutter-xs" @submit.prevent="submitForm">
 		<q-input
+			v-model="name"
 			class="form-item-name"
 			filled
-			v-model="name"
 			label="Meno"
 			:rules="[optional]"
 		/>
 		<q-input
+			v-model="lat"
 			class="form-item-lat"
 			filled
-			v-model="lat"
 			label="Lat"
 			:rules="coordsRules"
 			autocomplete="off"
 			lazy-rules
 		/>
 		<q-input
+			v-model="lng"
 			class="form-item-lng"
 			filled
-			v-model="lng"
 			label="Lng"
 			:rules="coordsRules"
 			autocomplete="off"
@@ -29,41 +29,41 @@
 			class="form-item-latlng-copy"
 			dense
 			flat
-			@click="pasteProgrammatic"
 			icon="content_copy"
 			color="primary"
+			@click="pasteProgrammatic"
 		>
 			<q-tooltip>Paste coordinates from clipboard</q-tooltip>
 		</q-btn>
 
 		<q-input
+			v-model.number="kmTotal"
 			class="form-item-kmTotal"
 			filled
-			v-model.number="kmTotal"
 			label="kmTotal"
 			type="number"
 			step="0.01"
 			:rules="[optional]"
 		/>
 		<q-input
+			v-model="mapPage"
 			class="form-item-mapPage"
 			filled
-			v-model="mapPage"
 			label="mapPage"
 			:rules="[optional]"
 		/>
 		<q-input
+			v-model="roadNo"
 			class="form-item-roadNo"
 			filled
-			v-model="roadNo"
 			label="roadNo"
 			:rules="[optional]"
 		/>
 		<div class="form-item-tulip">
 			<q-select
+				v-model="tulip"
 				class="form-item-tulip-select"
 				filled
-				v-model="tulip"
 				label="Tulip"
 				:options="tulipOptions"
 				option-value="value"
@@ -88,14 +88,14 @@
 			/>
 		</div>
 		<q-checkbox
-			class="form-item-stop"
 			v-model="stop"
+			class="form-item-stop"
 			label="Zastaviť"
 			color="primary"
 		/>
 		<mc-q-editor
-			class="form-item-note"
 			v-model="note"
+			class="form-item-note"
 			:reset-color="resetColor"
 			@unset-reset-color="unsetResetColor"
 		/>
@@ -106,9 +106,9 @@
 					<q-btn
 						dense
 						flat
-						@click="$emit('cancel-edit')"
 						icon="close"
 						color="negative"
+						@click="$emit('cancel-edit')"
 					/>
 				</div>
 			</template>

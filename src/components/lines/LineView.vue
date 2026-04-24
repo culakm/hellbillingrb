@@ -77,8 +77,8 @@
 				:class="{ 'show-before': line.close, 'color-tulip': !isTripViewPrint }"
 			>
 				<img
-					class="tulip-img"
 					v-if="line.tulip"
+					class="tulip-img"
 					:src="tulipSrc(line.tulip)"
 					alt="tulip"
 				/>

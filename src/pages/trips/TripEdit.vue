@@ -4,8 +4,8 @@
 			<q-card-section class="row items-center justify-between">
 				<trip-form
 					v-if="activeTripReactive"
-					@save-data="updateTripLocal"
 					:trip="activeTripReactive"
+					@save-data="updateTripLocal"
 				/>
 			</q-card-section>
 			<q-separator />
@@ -35,7 +35,7 @@
 					item-key="lineId"
 					:disabled="!draggableEnabled"
 					:animation="150"
-					ghostClass="ghost"
+					ghost-class="ghost"
 					@start="onStart"
 					@end="onEnd"
 				>

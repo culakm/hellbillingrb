@@ -10,12 +10,12 @@
 			<div class="text-h5">{{ formTitle }}</div>
 		</q-card-section>
 		<q-separator />
-		<q-form @submit.prevent="submitForm" class="q-gutter-md">
+		<q-form class="q-gutter-md" @submit.prevent="submitForm">
 			<div class="row q-col-gutter-md items-start">
 				<div class="col-6">
 					<q-input
-						filled
 						v-model="name"
+						filled
 						label="Trip Name"
 						:rules="[required]"
 						autocomplete="off"
@@ -23,8 +23,8 @@
 				</div>
 				<div class="col-6">
 					<q-input
-						filled
 						v-model="description"
+						filled
 						label="Description"
 						type="textarea"
 						autogrow
@@ -32,15 +32,15 @@
 				</div>
 				<div class="col-12">
 					<q-file
-						filled
 						v-model="imageFile"
+						filled
 						label="Trip Image"
-						@update:model-value="previewImage"
 						accept="image/*"
 						counter
 						:loading="uploadProgressFlag"
+						@update:model-value="previewImage"
 					>
-						<template v-slot:prepend>
+						<template #prepend>
 							<q-icon name="attach_file" />
 						</template>
 					</q-file>

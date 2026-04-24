@@ -10,48 +10,48 @@
 			<div class="text-h5">{{ formTitle }}</div>
 		</q-card-section>
 		<q-separator />
-		<q-form @submit.prevent="submitForm" class="q-gutter-md">
+		<q-form class="q-gutter-md" @submit.prevent="submitForm">
 			<q-input
-				filled
 				v-model="name"
+				filled
 				label="Name"
 				:rules="[required]"
 				autocomplete="off"
 			/>
 			<q-input
-				filled
 				v-model="email"
+				filled
 				label="Email"
 				type="email"
 				:rules="emailRules"
 				autocomplete="off"
 			/>
 			<q-input
-				filled
 				v-model="password1"
+				filled
 				label="Password"
 				type="password"
 				:rules="!isEdit ? passwordRules : []"
 				autocomplete="off"
 			/>
 			<q-input
-				filled
 				v-model="password2"
+				filled
 				label="Confirm Password"
 				type="password"
 				:rules="!isEdit ? passwordMatchRules : passwordMatchRulesEdit"
 				autocomplete="off"
 			/>
 			<q-input
-				filled
 				v-model="description"
+				filled
 				label="Description"
 				type="textarea"
 				autogrow
 			/>
 			<q-select
-				filled
 				v-model="role"
+				filled
 				label="Role"
 				:options="roleOptions"
 				option-value="value"
