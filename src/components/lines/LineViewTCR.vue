@@ -9,39 +9,32 @@
 		<template v-if="hasCoords">
 			<div class="lat-value">{{ decimalToDMS(line.lat) }}</div>
 			<div class="lng-value">{{ decimalToDMS(line.lng, false) }}</div>
-			<div class="note" v-html="line.note"></div>
+			<!-- eslint-disable-next-line vue/no-v-html -- sanitized via DOMPurify -->
+			<div class="note" v-html="sanitizedNote"></div>
 		</template>
 
 		<template v-else>
-			<div class="note span-3" v-html="line.note"></div>
+			<!-- eslint-disable-next-line vue/no-v-html -- sanitized via DOMPurify -->
+			<div class="note span-3" v-html="sanitizedNote"></div>
 		</template>
 	</div>
 </template>
 
 <script setup>
 import { toRef, computed } from 'vue';
-import { useTripsStore } from '@/stores/trips';
 import { useLinesStore } from '@/stores/lines';
 import { useRoute } from 'vue-router';
 import { useQuasar } from 'quasar';
-import { decimalToDMS, DMSToDecimal } from '@/utils';
+import { decimalToDMS } from '@/utils';
+import { sanitizeRichText } from '@/composables/useSanitize';
 
 const props = defineProps({
 	line: {
 		type: Object,
-		required: true,
 		default: () => ({}),
 	},
 });
 
-// const lat = 18.035144142314884;
-// console.log("Decimal START!!!!!!!!!!!!!:", lat);
-// const dms = decimalToDMS(lat);
-// console.log("DMS!!!!!!!!!!!!!:", dms);
-// const decimal = DMSToDecimal(dms);
-// console.log("Decimal!!!!!!!!!!!!!:", decimal);
-
-const tripsStore = useTripsStore();
 const linesStore = useLinesStore();
 const route = useRoute();
 const $q = useQuasar();
@@ -52,6 +45,8 @@ const passFunctionality = computed(
 );
 
 const hasCoords = computed(() => props.line.lat && props.line.lng);
+
+const sanitizedNote = computed(() => sanitizeRichText(props.line.note));
 
 const passedLineLocal = async () => {
 	if (passFunctionality.value) return;

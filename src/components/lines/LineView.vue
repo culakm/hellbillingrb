@@ -9,7 +9,7 @@
 			<div class="point">
 				<div class="point-grid">
 					<div class="place-label">
-						<div class="name" v-html="line.name"></div>
+						<div class="name">{{ line.name }}</div>
 						<div class="lat">{{ decimalToDMS(line.lat) }}</div>
 						<div class="lng">{{ decimalToDMS(line.lng, false) }}</div>
 					</div>
@@ -87,7 +87,8 @@
 				<div class="road-no-label">Road No.</div>
 				<div class="road-no-value">{{ line.roadNo }}</div>
 			</div>
-			<div class="note" v-html="line.note"></div>
+			<!-- eslint-disable-next-line vue/no-v-html -- sanitized via DOMPurify -->
+			<div class="note" v-html="sanitizedNote"></div>
 		</div>
 	</div>
 </template>
@@ -98,22 +99,15 @@ import { useTripsStore } from '@/stores/trips';
 import { useLinesStore } from '@/stores/lines';
 import { useRoute } from 'vue-router';
 import { useQuasar } from 'quasar';
-import { decimalToDMS, DMSToDecimal } from '@/utils';
+import { decimalToDMS } from '@/utils';
+import { sanitizeRichText } from '@/composables/useSanitize';
 
 const props = defineProps({
 	line: {
 		type: Object,
-		required: true,
 		default: () => ({}),
 	},
 });
-
-// const lat = 18.035144142314884;
-// console.log("Decimal START!!!!!!!!!!!!!:", lat);
-// const dms = decimalToDMS(lat);
-// console.log("DMS!!!!!!!!!!!!!:", dms);
-// const decimal = DMSToDecimal(dms);
-// console.log("Decimal!!!!!!!!!!!!!:", decimal);
 
 const tripsStore = useTripsStore();
 const linesStore = useLinesStore();
@@ -125,6 +119,8 @@ const isTripView = computed(() => route.path.includes('trip/view'));
 const passFunctionality = computed(
 	() => isTripViewPrint.value || route.path.includes('trip/edit')
 );
+
+const sanitizedNote = computed(() => sanitizeRichText(props.line.note));
 
 const displayMapPage = computed(() => {
 	if (props.line.mapPage && isTripView.value) {

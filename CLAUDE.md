@@ -84,3 +84,4 @@ Roles (user/editor/admin) are stored as **custom claims** on Firebase Auth token
 - Environment variables via `.env.local` accessed as `import.meta.env.VITE_*`
 - Google Maps uses separate API keys for production and localhost
 - 24-hour auto-logout with localStorage session persistence
+- Rich-text HTML fields (e.g. `line.note`, authored via `mcQEditor`) must be rendered through `sanitizeRichText` from `@/composables/useSanitize` before `v-html` — DOMPurify-based allowlist sanitization is the only thing standing between stored HTML and the DOM
