@@ -50,7 +50,6 @@ const props = defineProps({
 	},
 	line: {
 		type: Object,
-		required: true,
 		default: () => ({ interest: [] }),
 	},
 });

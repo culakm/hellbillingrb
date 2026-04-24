@@ -1,7 +1,7 @@
 const admin = require('firebase-admin');
 admin.initializeApp();
 const { HttpsError } = require('firebase-functions/v2/https');
-async function helloWorldHandler({ data, auth }) {
+async function helloWorldHandler({ data }) {
 	console.log('helloWorldHandler starts on server');
 	try {
 		console.log('Data from client: ', data);

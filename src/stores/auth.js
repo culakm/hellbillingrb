@@ -3,6 +3,7 @@ import { ref, computed } from 'vue';
 import { defineStore } from 'pinia';
 import { auth } from '@/firebase.js';
 import {
+	// eslint-disable-next-line no-unused-vars
 	onAuthStateChanged,
 	getIdTokenResult,
 	signInWithEmailAndPassword,
@@ -88,7 +89,7 @@ export const useAuthStore = defineStore('auth', () => {
 		} catch (error) {
 			const errorOut = `Error logging in: ${error.message}`;
 			console.error(errorOut);
-			throw new Error(errorOut);
+			throw new Error(errorOut, { cause: error });
 		}
 	};
 
@@ -120,7 +121,7 @@ export const useAuthStore = defineStore('auth', () => {
 		} catch (error) {
 			const errorOut = `Error trying to login: ${error.message}`;
 			console.error(errorOut);
-			throw new Error(errorOut);
+			throw new Error(errorOut, { cause: error });
 		}
 	};
 
@@ -144,7 +145,7 @@ export const useAuthStore = defineStore('auth', () => {
 		} catch (error) {
 			const errorOut = `Error logging out: ${error.message}`;
 			console.error(errorOut);
-			throw new Error(errorOut);
+			throw new Error(errorOut, { cause: error });
 		}
 	};
 
@@ -157,7 +158,7 @@ export const useAuthStore = defineStore('auth', () => {
 		} catch (error) {
 			const errorOut = `Error during auto logout: ${error.message}`;
 			console.error(errorOut);
-			throw new Error(errorOut);
+			throw new Error(errorOut, { cause: error });
 		}
 	};
 

@@ -106,33 +106,6 @@ watch(innerText, (val) => {
 const highlightColor = ref('');
 const backColorDropdown = ref(null);
 
-const isCaretAtEnd = (editor) => {
-	const sel = window.getSelection();
-	if (editor.lastChild) {
-		let lastText;
-		if (editor.lastChild.nodeType === Node.TEXT_NODE) {
-			lastText = editor.lastChild.textContent;
-		} else if (editor.lastChild.nodeType === Node.ELEMENT_NODE) {
-			lastText = editor.lastChild.innerText || editor.lastChild.textContent;
-		}
-		if (sel.anchorNode === editor.lastChild) {
-			if (sel.focusOffset === (lastText ? lastText.length : 0)) {
-				return true;
-			}
-		} else if (
-			sel.anchorNode &&
-			sel.anchorNode.parentElement === editor.lastChild
-		) {
-			if (sel.focusOffset === (lastText ? lastText.length : 0)) {
-				return true;
-			}
-		}
-	} else {
-		console.log('Editor is empty');
-	}
-	return false;
-};
-
 const addZeroWidthSpaceToEnd = (editor) => {
 	if (editor) {
 		editor.focus();

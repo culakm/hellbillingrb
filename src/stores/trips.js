@@ -42,7 +42,7 @@ export const useTripsStore = defineStore('trips', () => {
 		} catch (error) {
 			const errorOut = `Error generating new trip ID: ${error.message}`;
 			console.error(errorOut);
-			throw new Error(errorOut);
+			throw new Error(errorOut, { cause: error });
 		}
 	};
 
@@ -89,7 +89,7 @@ export const useTripsStore = defineStore('trips', () => {
 		} catch (error) {
 			const errorOut = `Error updating trip image: ${error.message}`;
 			console.error(errorOut);
-			throw new Error(errorOut);
+			throw new Error(errorOut, { cause: error });
 		}
 	};
 
@@ -102,7 +102,7 @@ export const useTripsStore = defineStore('trips', () => {
 		} catch (error) {
 			const errorOut = `Error deleting trip image: ${error.message}`;
 			console.error(errorOut);
-			throw new Error(errorOut);
+			throw new Error(errorOut, { cause: error });
 		}
 	};
 
@@ -128,7 +128,7 @@ export const useTripsStore = defineStore('trips', () => {
 		} catch (error) {
 			const errorOut = `Error loading trips: ${error.message}`;
 			console.error(errorOut);
-			throw new Error(errorOut);
+			throw new Error(errorOut, { cause: error });
 		}
 	};
 
@@ -139,7 +139,7 @@ export const useTripsStore = defineStore('trips', () => {
 		} catch (error) {
 			const errorOut = `Error creating trip: ${error.message}`;
 			console.error(errorOut);
-			throw new Error(errorOut);
+			throw new Error(errorOut, { cause: error });
 		}
 	};
 
@@ -150,7 +150,7 @@ export const useTripsStore = defineStore('trips', () => {
 		} catch (error) {
 			const errorOut = `Error updating trip: ${error.message}`;
 			console.error(errorOut);
-			throw new Error(errorOut);
+			throw new Error(errorOut, { cause: error });
 		}
 	};
 
@@ -173,7 +173,7 @@ export const useTripsStore = defineStore('trips', () => {
 		} catch (error) {
 			const errorOut = `Error deleting trip: ${error.message}`;
 			console.error(errorOut);
-			throw new Error(errorOut);
+			throw new Error(errorOut, { cause: error });
 		}
 	};
 

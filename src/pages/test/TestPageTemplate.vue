@@ -19,7 +19,6 @@ import { httpsCallable } from 'firebase/functions';
 export default {
 	name: 'TestPage',
 	setup() {
-		const componentName = 'TestPage';
 		onMounted(async () => {
 			console.log(
 				'Attempting Firestore read to trigger App Check token generation...'

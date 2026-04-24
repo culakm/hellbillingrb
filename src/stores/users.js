@@ -13,7 +13,7 @@ const _getUserRole = async (email) => {
 	} catch (error) {
 		const errorOut = `Error fetching user role: ${error.message}`;
 		console.error(errorOut);
-		throw new Error(errorOut);
+		throw new Error(errorOut, { cause: error });
 	}
 };
 
@@ -59,7 +59,9 @@ export const useUsersStore = defineStore('users', () => {
 			users.value = await Promise.all(userPromises);
 		} catch (error) {
 			console.error(`Error loading users: ${error.message}`);
-			throw new Error(`Error loading users: ${error.message}`);
+			throw new Error(`Error loading users: ${error.message}`, {
+				cause: error,
+			});
 		}
 	};
 
@@ -73,7 +75,7 @@ export const useUsersStore = defineStore('users', () => {
 		} catch (error) {
 			const errorOut = `Error creating users: ${error.message}`;
 			console.error(errorOut);
-			throw new Error(errorOut);
+			throw new Error(errorOut, { cause: error });
 		}
 	};
 
@@ -91,7 +93,7 @@ export const useUsersStore = defineStore('users', () => {
 		} catch (error) {
 			const errorOut = `Error updating user: ${error.message}`;
 			console.error(errorOut);
-			throw new Error(errorOut);
+			throw new Error(errorOut, { cause: error });
 		}
 	};
 
@@ -103,7 +105,7 @@ export const useUsersStore = defineStore('users', () => {
 		} catch (error) {
 			const errorOut = `Error deleting user: ${error.message}`;
 			console.error(errorOut);
-			throw new Error(errorOut);
+			throw new Error(errorOut, { cause: error });
 		}
 	};
 
@@ -130,7 +132,7 @@ export const useUsersStore = defineStore('users', () => {
 		} catch (error) {
 			const errorOut = `Error fetching user by email: ${error.message}`;
 			console.error(errorOut);
-			throw new Error(errorOut);
+			throw new Error(errorOut, { cause: error });
 		}
 	};
 
@@ -147,7 +149,7 @@ export const useUsersStore = defineStore('users', () => {
 		} catch (error) {
 			const errorOut = `Error fetching user by ID from store: ${error.message}`;
 			console.error(errorOut);
-			throw new Error(errorOut);
+			throw new Error(errorOut, { cause: error });
 		}
 	};
 

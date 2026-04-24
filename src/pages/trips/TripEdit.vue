@@ -74,7 +74,6 @@ import MapsDialog from '@/components/maps/MapsDialog.vue';
 
 const authStore = useAuthStore();
 const tripsStore = useTripsStore();
-// vsetko co je activeTrip bolo prehodene na activeTripReactive pre lepsiu reaktivitu !!!
 const { activeTrip: activeTripReactive } = storeToRefs(tripsStore);
 const linesStore = useLinesStore();
 const route = useRoute();
@@ -136,13 +135,6 @@ const deleteLinesLocal = async () => {
 		$q.loading.show();
 		try {
 			await linesStore.deleteLines(activeTripReactive.value.tripId);
-			// s tymto to blblo, ak sa po delete nastavovali nove markers, tak sa to neaktualizovalo, preto sa teraz po delete reloadne cely trip, aby sa to nastavilo spravne
-			// asi to nie je uplne v poriadku ale delete sa nepouziva tak casto, mozno to tam nebude vobec
-			// activeTripReactive.value.lines = [];
-			// activeTripReactive.value.linesCount = 0;
-			// activeTripReactive.value.hasLines = false;
-			// activeTripReactive.value.mapMarkers = [];
-			// Instead of just clearing the array, reload the trip to ensure reactivity
 			await tripsStore.setActiveTrip(activeTripReactive.value.tripId);
 			$q.loading.hide();
 		} catch (err) {
@@ -193,11 +185,11 @@ const lineIsEdited = () => {
 	draggableEnabled.value = !draggableEnabled.value;
 };
 
-const onStart = (e) => {
+const onStart = () => {
 	dragging.value = true;
 };
 
-const onEnd = async (e) => {
+const onEnd = async () => {
 	dragging.value = false;
 	activeTripReactive.value.lines.forEach((line, index) => {
 		line.order = index + 1;

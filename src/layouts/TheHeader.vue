@@ -55,9 +55,9 @@
 export default {
 	name: 'TheHeader',
 	props: {
-		toggleRightDrawer: Function,
-		logoutLocal: Function,
-		authStore: Object,
+		toggleRightDrawer: { type: Function, required: true },
+		logoutLocal: { type: Function, required: true },
+		authStore: { type: Object, required: true },
 	},
 };
 </script>

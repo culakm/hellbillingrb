@@ -3,7 +3,6 @@ admin.initializeApp();
 const { HttpsError } = require('firebase-functions/v2/https');
 const db = admin.firestore();
 const authRoleCheck = require('../auth/auth-role-check');
-const { user } = require('firebase-functions/v1/auth');
 
 async function createUserHandler({ data, auth }) {
 	try {

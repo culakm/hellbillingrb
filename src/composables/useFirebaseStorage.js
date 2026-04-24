@@ -16,7 +16,7 @@ export async function fetchFileUrl(fileName, path) {
 	} catch (error) {
 		const errorOut = `Error fetching file URL: ${fileName}: ${error.message}`;
 		console.error(errorOut);
-		throw new Error(errorOut);
+		throw new Error(errorOut, { cause: error });
 	}
 }
 
@@ -27,7 +27,7 @@ export async function deleteStorageObject(fileName, path) {
 	} catch (error) {
 		const errorOut = `Failed to delete file ${fileName}: ${error.message}`;
 		console.error(errorOut);
-		throw new Error(errorOut);
+		throw new Error(errorOut, { cause: error });
 	}
 }
 
@@ -56,6 +56,6 @@ export async function uploadStorageObject(file, path) {
 	} catch (error) {
 		const errorOut = `Failed to upload file: ${file.name}: ${error.message}`;
 		console.error(errorOut);
-		throw new Error(errorOut);
+		throw new Error(errorOut, { cause: error });
 	}
 }

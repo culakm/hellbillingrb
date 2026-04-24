@@ -17,7 +17,7 @@ import { GoogleMap } from 'vue3-google-map';
 import { ref, reactive, computed, watch, getCurrentInstance } from 'vue';
 const instance = getCurrentInstance();
 const apiMapKey = instance.appContext.config.globalProperties.$apiMapKey;
-const mapId = instance.appContext.config.globalProperties.$apiMapId;
+const _mapId = instance.appContext.config.globalProperties.$apiMapId;
 const mapRef = ref(null);
 // const GMAPS_API_KEY = computed(() => env.public.GMAPS_API_KEY);
 const gmap = ref(null);

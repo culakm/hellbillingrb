@@ -1,5 +1,5 @@
 // nedynamicky importovany component
-import UserAuth from '@/pages/auth/UserAuth.vue';
+// import UserAuth from '@/pages/auth/UserAuth.vue';
 
 const routes = [
 	{

@@ -84,10 +84,6 @@ const removeMarker = (marker) => {
 	markers.value = markers.value.filter((m) => m !== marker);
 };
 
-const sendMarkers = async () => {
-	emit('save-markers', markers.value);
-};
-
 const closeMap = async (save = true) => {
 	if (!save) {
 		markers.value = markers.value.filter((marker) =>

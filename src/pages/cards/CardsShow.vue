@@ -53,7 +53,6 @@ import '@/assets/fonts/Montserrat-Bold-normal.js';
 export default {
 	name: 'CardsShow',
 	setup() {
-		const componentName = 'CardsShow';
 		const settingsFontSize = ref(12);
 		const settingsRows = ref(5);
 		const settingsCellHeight = ref(35);
@@ -112,7 +111,7 @@ export default {
 			// words = eval(inputData.value);
 			try {
 				words = JSON.parse(inputData.value);
-			} catch (e) {
+			} catch {
 				alert('Invalid input format. Please provide valid JSON.');
 				return;
 			}
@@ -127,7 +126,6 @@ export default {
 			doc.setFont('Montserrat-Bold');
 			const margin = 5;
 			const pageWidth = 297;
-			const pageHeight = 210;
 
 			const rowsPerPage = settingsRows.value || 5;
 			const colsPerPage = 4;

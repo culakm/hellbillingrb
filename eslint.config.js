@@ -35,6 +35,7 @@ export default [
 			],
 			'preserve-caught-error': 'warn',
 			'vue/multi-word-component-names': 'off',
+			// 'vue/no-v-html': 'off',
 		},
 	},
 

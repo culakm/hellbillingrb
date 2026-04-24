@@ -62,7 +62,7 @@ const checkEmulators = async () => {
 			response = await fetch('http://localhost:4000/emulator/v1/projects');
 		}
 		return response.status === 200;
-	} catch (e) {
+	} catch {
 		return false;
 	}
 };

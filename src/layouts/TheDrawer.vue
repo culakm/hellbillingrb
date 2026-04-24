@@ -14,9 +14,9 @@
 </template>
 
 <script setup>
-const props = defineProps({
+defineProps({
 	modelValue: Boolean,
-	authStore: Object,
+	authStore: { type: Object, default: null },
 });
-const emit = defineEmits(['update:modelValue']);
+defineEmits(['update:modelValue']);
 </script>

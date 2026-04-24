@@ -13,7 +13,6 @@ import { useRouter } from 'vue-router';
 import { useQuasar } from 'quasar';
 import TripForm from '@/components/trips/TripForm.vue';
 
-const componentName = 'TripCreate';
 const authStore = useAuthStore();
 const tripsStore = useTripsStore();
 const router = useRouter();

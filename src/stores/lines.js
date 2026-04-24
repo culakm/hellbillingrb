@@ -53,7 +53,7 @@ export const useLinesStore = defineStore('lines', () => {
 		} catch (error) {
 			const errorOut = `Error generating new line ID for trip ID ${localTripId}: ${error.message}`;
 			console.error(errorOut);
-			throw new Error(errorOut);
+			throw new Error(errorOut, { cause: error });
 		}
 	};
 
@@ -83,7 +83,7 @@ export const useLinesStore = defineStore('lines', () => {
 		} catch (error) {
 			const errorOut = `Error fetching lines for trip ID ${localTripId}: ${error.message}`;
 			console.error(errorOut);
-			throw new Error(errorOut);
+			throw new Error(errorOut, { cause: error });
 		}
 	};
 
@@ -100,7 +100,7 @@ export const useLinesStore = defineStore('lines', () => {
 		} catch (error) {
 			const errorOut = `Error updating lines: ${error.message}`;
 			console.error(errorOut);
-			throw new Error(errorOut);
+			throw new Error(errorOut, { cause: error });
 		}
 	};
 
@@ -117,7 +117,7 @@ export const useLinesStore = defineStore('lines', () => {
 		} catch (error) {
 			const errorOut = `Error deleting lines: ${error.message}`;
 			console.error(errorOut);
-			throw new Error(errorOut);
+			throw new Error(errorOut, { cause: error });
 		}
 	};
 
@@ -135,7 +135,7 @@ export const useLinesStore = defineStore('lines', () => {
 		} catch (error) {
 			const errorOut = `Error creating line: ${error.message}`;
 			console.error(errorOut);
-			throw new Error(errorOut);
+			throw new Error(errorOut, { cause: error });
 		}
 	};
 
@@ -159,7 +159,7 @@ export const useLinesStore = defineStore('lines', () => {
 		} catch (error) {
 			const errorOut = `Error editing line: ${error.message}`;
 			console.error(errorOut);
-			throw new Error(errorOut);
+			throw new Error(errorOut, { cause: error });
 		}
 	};
 
@@ -174,7 +174,7 @@ export const useLinesStore = defineStore('lines', () => {
 		} catch (error) {
 			const errorOut = `Error deleting line: ${error.message}`;
 			console.error(errorOut);
-			throw new Error(errorOut);
+			throw new Error(errorOut, { cause: error });
 		}
 	};
 
@@ -188,7 +188,7 @@ export const useLinesStore = defineStore('lines', () => {
 		} catch (error) {
 			const errorOut = `Error updating passed line status: ${error.message}`;
 			console.error(errorOut);
-			throw new Error(errorOut);
+			throw new Error(errorOut, { cause: error });
 		}
 	};
 

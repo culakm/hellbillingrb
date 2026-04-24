@@ -12,7 +12,7 @@
 
 <script setup>
 import LineView from '../../components/lines/LineView.vue';
-import { ref, onMounted } from 'vue';
+import { onMounted } from 'vue';
 import { useTripsStore } from '@/stores/trips';
 import { useQuasar } from 'quasar';
 const tripsStore = useTripsStore();
