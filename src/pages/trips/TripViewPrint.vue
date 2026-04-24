@@ -1,17 +1,42 @@
 <template>
 	<main>
 		<div data-html2canvas-ignore class="row items-center q-gutter-md q-mb-md">
-			<q-btn color="primary" icon="picture_as_pdf" label="Export to PDF" @click="exportToPDF" />
+			<q-btn
+				color="primary"
+				icon="picture_as_pdf"
+				label="Export to PDF"
+				@click="exportToPDF"
+			/>
 			<q-toggle v-model="printHeader" label="Print Header" color="primary" />
 		</div>
 
-		<div :id="printHeader ? 'element-to-pdf' : null" :class="{ 'print-area': printHeader }">
+		<div
+			:id="printHeader ? 'element-to-pdf' : null"
+			:class="{ 'print-area': printHeader }"
+		>
 			<div class="roadbook-header pagebreak-after">
-				<trip-full v-if="tripsStore.activeTrip" :trip="tripsStore.activeTrip"></trip-full>
+				<trip-full
+					v-if="tripsStore.activeTrip"
+					:trip="tripsStore.activeTrip"
+				></trip-full>
 			</div>
-			<div v-if="tripsStore.activeTrip?.hasLines" :id="printHeader ? null : 'element-to-pdf'" class="roadbook" :class="{ 'print-area': !printHeader }">
-				<template v-for="(line, index) in tripsStore.activeTrip.lines" :key="line.lineId">
-					<div class="roadbook-item-wrap" :class="{ 'pagebreak-after': isEvery7th(index), offset: isEvery7thPlus1(index) }">
+			<div
+				v-if="tripsStore.activeTrip?.hasLines"
+				:id="printHeader ? null : 'element-to-pdf'"
+				class="roadbook"
+				:class="{ 'print-area': !printHeader }"
+			>
+				<template
+					v-for="(line, index) in tripsStore.activeTrip.lines"
+					:key="line.lineId"
+				>
+					<div
+						class="roadbook-item-wrap"
+						:class="{
+							'pagebreak-after': isEvery7th(index),
+							offset: isEvery7thPlus1(index),
+						}"
+					>
 						<line-view :line="line"></line-view>
 					</div>
 				</template>
@@ -21,14 +46,14 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
-import { useTripsStore } from "@/stores/trips";
-import { useRoute } from "vue-router";
-import { useQuasar } from "quasar";
-import TripFull from "@/components/trips/TripFull.vue";
-import LineView from "@/components/lines/LineView.vue";
-import html2pdf from "html2pdf.js";
-import { tripFileName } from "@/utils";
+import { ref, computed, onMounted } from 'vue';
+import { useTripsStore } from '@/stores/trips';
+import { useRoute } from 'vue-router';
+import { useQuasar } from 'quasar';
+import TripFull from '@/components/trips/TripFull.vue';
+import LineView from '@/components/lines/LineView.vue';
+import html2pdf from 'html2pdf.js';
+import { tripFileName } from '@/utils';
 
 const tripsStore = useTripsStore();
 const route = useRoute();
@@ -47,22 +72,22 @@ const tripByIdLocal = async (tripId) => {
 		$q.loading.hide();
 	} catch (err) {
 		$q.loading.hide();
-		$q.dialog({ title: "Error", message: err.message || err });
+		$q.dialog({ title: 'Error', message: err.message || err });
 	}
 };
 
 const exportToPDF = () => {
-	const element = document.getElementById("element-to-pdf");
+	const element = document.getElementById('element-to-pdf');
 	const opt = {
 		margin: 10,
-		filename: tripNamePrint.value + ".pdf",
-		image: { type: "jpeg", quality: 0.98 },
+		filename: tripNamePrint.value + '.pdf',
+		image: { type: 'jpeg', quality: 0.98 },
 		html2canvas: { scale: 2, useCORS: true },
-		jsPDF: { format: "letter", orientation: "portrait" },
+		jsPDF: { format: 'letter', orientation: 'portrait' },
 		pagebreak: {
-			mode: ["avoid-all", "css"],
-			before: ".pagebreak-before",
-			after: ".pagebreak-after",
+			mode: ['avoid-all', 'css'],
+			before: '.pagebreak-before',
+			after: '.pagebreak-after',
 		},
 	};
 	html2pdf().set(opt).from(element).save();
@@ -133,7 +158,7 @@ onMounted(async () => {
 }
 
 .print-area {
-	font-family: "Montserrat", sans-serif !important;
+	font-family: 'Montserrat', sans-serif !important;
 	width: 100%;
 	margin: 0;
 	padding: 0;

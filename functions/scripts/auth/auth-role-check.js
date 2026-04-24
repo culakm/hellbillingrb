@@ -1,4 +1,4 @@
-const { HttpsError } = require("firebase-functions/v2/https");
+const { HttpsError } = require('firebase-functions/v2/https');
 const admin = require('firebase-admin');
 
 const authRoleCheck = async (auth, requiredRole) => {

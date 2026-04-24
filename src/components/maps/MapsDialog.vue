@@ -1,7 +1,11 @@
 <template>
 	<!-- Simple overlay background -->
 	<div class="fixed fullscreen">
-		<q-card class="fixed" :style="cardStyle" style="width: 80%; height: 80%; overflow: hidden">
+		<q-card
+			class="fixed"
+			:style="cardStyle"
+			style="width: 80%; height: 80%; overflow: hidden"
+		>
 			<q-bar class="bg-primary text-white" v-touch-pan.mouse="onPan">
 				<div>Map window</div>
 				<q-space />
@@ -10,7 +14,14 @@
 			</q-bar>
 
 			<q-card-section class="q-pa-none" style="height: calc(100% - 32px)">
-				<GoogleMap :api-key="apiMapKey" :mapId="mapId" style="width: 100%; height: 100%" :center="center" :zoom="15" @click="addMarker">
+				<GoogleMap
+					:api-key="apiMapKey"
+					:mapId="mapId"
+					style="width: 100%; height: 100%"
+					:center="center"
+					:zoom="15"
+					@click="addMarker"
+				>
 					<AdvancedMarker
 						v-for="(marker, index) in markers"
 						:key="index"
@@ -27,17 +38,19 @@
 </template>
 
 <script setup>
-import { GoogleMap, AdvancedMarker } from "vue3-google-map";
-import { ref, getCurrentInstance, computed, onMounted, onUnmounted } from "vue";
+import { GoogleMap, AdvancedMarker } from 'vue3-google-map';
+import { ref, getCurrentInstance, computed, onMounted, onUnmounted } from 'vue';
 const loadedMarkers = defineProps({
-	markers: {
+	initialMarkers: {
 		type: Array,
 		default: () => [],
 	},
 });
-const emit = defineEmits(["save-markers"]);
+const emit = defineEmits(['save-markers']);
 // deep copy
-const markersOrig = JSON.parse(JSON.stringify(loadedMarkers.markers || []));
+const markersOrig = JSON.parse(
+	JSON.stringify(loadedMarkers.initialMarkers || [])
+);
 
 const instance = getCurrentInstance();
 const apiMapKey = instance.appContext.config.globalProperties.$apiMapKey;
@@ -47,12 +60,14 @@ const cardPos = ref({ x: 100, y: 100 });
 const markers = ref([]);
 
 onMounted(() => {
-	markers.value = JSON.parse(JSON.stringify(loadedMarkers.markers || []));
-	window.addEventListener("keydown", handleEscClose);
+	markers.value = JSON.parse(
+		JSON.stringify(loadedMarkers.initialMarkers || [])
+	);
+	window.addEventListener('keydown', handleEscClose);
 });
 
 onUnmounted(() => {
-	window.removeEventListener("keydown", handleEscClose);
+	window.removeEventListener('keydown', handleEscClose);
 });
 
 const addMarker = ({ latLng }) => {
@@ -70,29 +85,35 @@ const removeMarker = (marker) => {
 };
 
 const sendMarkers = async () => {
-	emit("save-markers", markers.value);
+	emit('save-markers', markers.value);
 };
 
 const closeMap = async (save = true) => {
 	if (!save) {
-		markers.value = markers.value.filter((marker) => markersOrig.some((m) => Number(m.position.lat) === Number(marker.position.lat) && Number(m.position.lng) === Number(marker.position.lng)));
-		emit("save-markers", markers.value, false);
+		markers.value = markers.value.filter((marker) =>
+			markersOrig.some(
+				(m) =>
+					Number(m.position.lat) === Number(marker.position.lat) &&
+					Number(m.position.lng) === Number(marker.position.lng)
+			)
+		);
+		emit('save-markers', markers.value, false);
 	} else {
-		emit("save-markers", markers.value, true);
+		emit('save-markers', markers.value, true);
 	}
 };
 
 const handleEscClose = (event) => {
-	if (event.key === "Escape" || event.key === "Esc") {
+	if (event.key === 'Escape' || event.key === 'Esc') {
 		closeMap();
 	}
 };
 
 const cardStyle = computed(() => ({
-	left: cardPos.value.x + "px",
-	top: cardPos.value.y + "px",
+	left: cardPos.value.x + 'px',
+	top: cardPos.value.y + 'px',
 	transform: `translate(${cardPos.value.x}px, ${cardPos.value.y}px)`,
-	"z-index": 3000,
+	'z-index': 3000,
 }));
 
 const onPan = (ev) => {

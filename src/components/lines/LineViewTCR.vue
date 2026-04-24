@@ -1,5 +1,9 @@
 <template>
-	<div class="roadbook-item" :class="{ passed: line.passed === true && passFunctionality === false }" @click="passedLineLocal()">
+	<div
+		class="roadbook-item"
+		:class="{ passed: line.passed === true && passFunctionality === false }"
+		@click="passedLineLocal()"
+	>
 		<div class="order">{{ line.order }}</div>
 
 		<template v-if="hasCoords">
@@ -15,12 +19,12 @@
 </template>
 
 <script setup>
-import { toRef, computed, onMounted } from "vue";
-import { useTripsStore } from "@/stores/trips";
-import { useLinesStore } from "@/stores/lines";
-import { useRoute } from "vue-router";
-import { useQuasar } from "quasar";
-import { decimalToDMS, DMSToDecimal } from "@/utils";
+import { toRef, computed } from 'vue';
+import { useTripsStore } from '@/stores/trips';
+import { useLinesStore } from '@/stores/lines';
+import { useRoute } from 'vue-router';
+import { useQuasar } from 'quasar';
+import { decimalToDMS, DMSToDecimal } from '@/utils';
 
 const props = defineProps({
 	line: {
@@ -42,17 +46,12 @@ const linesStore = useLinesStore();
 const route = useRoute();
 const $q = useQuasar();
 
-const isTripViewPrint = computed(() => route.path.includes("trip/view/print"));
-const isTripView = computed(() => route.path.includes("trip/view"));
-const passFunctionality = computed(() => isTripViewPrint.value || route.path.includes("trip/edit"));
+const passFunctionality = computed(
+	() =>
+		route.path.includes('trip/view/print') || route.path.includes('trip/edit')
+);
 
 const hasCoords = computed(() => props.line.lat && props.line.lng);
-
-onMounted(() => {
-	if (props.line.mapPage && isTripView.value) {
-		props.line.mapPage = props.line.mapPage.replace(/,/g, " ");
-	}
-});
 
 const passedLineLocal = async () => {
 	if (passFunctionality.value) return;
@@ -60,15 +59,14 @@ const passedLineLocal = async () => {
 	const passed = !props.line.passed;
 	try {
 		await linesStore.passedLine(props.line.lineId, passed);
-		props.line.passed = passed;
 		$q.loading.hide();
 	} catch (err) {
-		$q.dialog({ title: "Error", message: err.message || err });
+		$q.dialog({ title: 'Error', message: err.message || err });
 		$q.loading.hide();
 	}
 };
 
-const line = toRef(props, "line");
+const line = toRef(props, 'line');
 </script>
 
 <style scoped>

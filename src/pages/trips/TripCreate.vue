@@ -7,13 +7,13 @@
 </template>
 
 <script setup>
-import { useAuthStore } from "@/stores/auth";
-import { useTripsStore } from "@/stores/trips";
-import { useRouter } from "vue-router";
-import { useQuasar } from "quasar";
-import TripForm from "@/components/trips/TripForm.vue";
+import { useAuthStore } from '@/stores/auth';
+import { useTripsStore } from '@/stores/trips';
+import { useRouter } from 'vue-router';
+import { useQuasar } from 'quasar';
+import TripForm from '@/components/trips/TripForm.vue';
 
-const componentName = "TripCreate";
+const componentName = 'TripCreate';
 const authStore = useAuthStore();
 const tripsStore = useTripsStore();
 const router = useRouter();
@@ -26,14 +26,14 @@ const createTripLocal = async (tripData) => {
 		await tripsStore.createTrip(tripData);
 		$q.loading.hide();
 		$q.dialog({
-			title: "Success",
-			message: "Trip created successfully.",
+			title: 'Success',
+			message: 'Trip created successfully.',
 		}).onOk(() => {
-			router.replace("/trips");
+			router.replace('/trips');
 		});
 	} catch (err) {
 		$q.loading.hide();
-		$q.dialog({ title: "Error", message: err.message || err });
+		$q.dialog({ title: 'Error', message: err.message || err });
 		return;
 	}
 };

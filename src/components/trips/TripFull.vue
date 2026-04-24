@@ -4,26 +4,51 @@
 			<q-icon name="directions_car" size="32px" class="q-mr-sm text-primary" />
 			<span class="text-h6">{{ trip.name }}</span>
 			<template v-if="!printPage">
-				<q-btn v-if="!$q.fullscreen.isActive" @click="toggleFullscreen" icon="fullscreen" label="Fullscreen" />
-				<q-btn v-else @click="toggleFullscreen" round icon="fullscreen_exit" class="fullscreen-btn" />
-				<q-btn v-if="tcrPage" label="Download PDF" color="primary" icon="picture_as_pdf" :disable="trip.linesCount === 0" @click="downloadTCRPdf(trip.lines, trip.name)" />
+				<q-btn
+					v-if="!$q.fullscreen.isActive"
+					@click="toggleFullscreen"
+					icon="fullscreen"
+					label="Fullscreen"
+				/>
+				<q-btn
+					v-else
+					@click="toggleFullscreen"
+					round
+					icon="fullscreen_exit"
+					class="fullscreen-btn"
+				/>
+				<q-btn
+					v-if="tcrPage"
+					label="Download PDF"
+					color="primary"
+					icon="picture_as_pdf"
+					:disable="trip.linesCount === 0"
+					@click="downloadTCRPdf(trip.lines, trip.name)"
+				/>
 			</template>
 		</q-card-section>
 		<q-separator />
 		<q-card-section>
 			<div class="text-body1 q-mb-sm">{{ trip.description }}</div>
 			<div class="text-caption text-grey">Lines: {{ trip.linesCount }}</div>
-			<q-img v-if="trip.imageName" :src="imageUrl" alt="Trip image" class="q-mt-md" style="max-width: 100%; max-height: 220px; border-radius: 8px" fit="contain" />
+			<q-img
+				v-if="trip.imageName"
+				:src="imageUrl"
+				alt="Trip image"
+				class="q-mt-md"
+				style="max-width: 100%; max-height: 220px; border-radius: 8px"
+				fit="contain"
+			/>
 		</q-card-section>
 	</q-card>
 </template>
 
 <script setup>
-import { ref, toRef, computed, onMounted } from "vue";
-import { fetchFileUrl } from "@/composables/useFirebaseStorage";
-import { usePdfExport } from "@/composables/usePdfExport";
-import { useRoute } from "vue-router";
-import { useQuasar } from "quasar";
+import { ref, toRef, computed, onMounted } from 'vue';
+import { fetchFileUrl } from '@/composables/useFirebaseStorage';
+import { usePdfExport } from '@/composables/usePdfExport';
+import { useRoute } from 'vue-router';
+import { useQuasar } from 'quasar';
 
 const props = defineProps({
 	trip: {
@@ -41,15 +66,15 @@ const props = defineProps({
 const route = useRoute();
 const $q = useQuasar();
 const { downloadTCRPdf } = usePdfExport();
-const imageUrl = ref("");
-const trip = toRef(props, "trip");
+const imageUrl = ref('');
+const trip = toRef(props, 'trip');
 
 const printPage = computed(() => {
-	return route.path.includes("trip/view/print");
+	return route.path.includes('trip/view/print');
 });
 
 const tcrPage = computed(() => {
-	return route.path.includes("trip/viewTCR");
+	return route.path.includes('trip/viewTCR');
 });
 
 const fetchImageUrlLocal = async () => {
@@ -61,7 +86,7 @@ const fetchImageUrlLocal = async () => {
 		$q.loading.hide();
 	} catch (err) {
 		$q.loading.hide();
-		$q.dialog({ title: "Error", message: err.message || err });
+		$q.dialog({ title: 'Error', message: err.message || err });
 	}
 };
 
@@ -70,7 +95,7 @@ const toggleFullscreen = () => {
 	if (target && target.requestFullscreen) {
 		$q.fullscreen.toggle(target);
 	} else {
-		console.error("pageRef is not a valid DOM element for fullscreen");
+		console.error('pageRef is not a valid DOM element for fullscreen');
 	}
 };
 

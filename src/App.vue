@@ -1,5 +1,5 @@
 <template>
-  <router-view />
+	<router-view />
 </template>
 
 <script>
@@ -9,27 +9,29 @@ import { useRouter, useRoute } from 'vue-router';
 
 export default {
 	name: 'App',
-    setup() {
+	setup() {
 		const authStore = useAuthStore();
-        const router = useRouter();
-        const route = useRoute();
+		const router = useRouter();
+		const route = useRoute();
 
-        const didAutoLogoutLocal = computed(() => authStore.didAutoLogout);
-        const isTripViewPrint = computed(() => route.path.includes("trip/view/print"));
-        const tryLogin = () => authStore.tryLogin();
+		const didAutoLogoutLocal = computed(() => authStore.didAutoLogout);
+		const isTripViewPrint = computed(() =>
+			route.path.includes('trip/view/print')
+		);
+		const tryLogin = () => authStore.tryLogin();
 
-        // const handleAuthStateChange = () => store.dispatch('handleAuthStateChange');
+		// const handleAuthStateChange = () => store.dispatch('handleAuthStateChange');
 
-        onMounted(() => {
-            tryLogin();
-            // handleAuthStateChange();
-        });
+		onMounted(() => {
+			tryLogin();
+			// handleAuthStateChange();
+		});
 
-        watch(didAutoLogoutLocal, (newValue, oldValue) => {
-            if (newValue && newValue !== oldValue) {
-                router.replace("/");
-            }
-        });
-    }
+		watch(didAutoLogoutLocal, (newValue, oldValue) => {
+			if (newValue && newValue !== oldValue) {
+				router.replace('/');
+			}
+		});
+	},
 };
 </script>

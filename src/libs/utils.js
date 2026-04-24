@@ -1,5 +1,7 @@
 export function loadErrorMessage(componentName, errorMessage) {
-	const error = `Component ${componentName}, ERROR: ${errorMessage}` || 'Something went wrong!';
+	const error = errorMessage
+		? `Component ${componentName}, ERROR: ${errorMessage}`
+		: 'Something went wrong!';
 	console.error(error);
 	return error;
 }

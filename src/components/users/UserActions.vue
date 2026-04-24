@@ -9,17 +9,23 @@
 		<q-item-section side>
 			<q-btn-group spread>
 				<q-btn dense flat icon="edit" color="primary" :to="userEditLink" />
-				<q-btn dense flat icon="delete" color="negative" @click="deleteUserLocal" />
+				<q-btn
+					dense
+					flat
+					icon="delete"
+					color="negative"
+					@click="deleteUserLocal"
+				/>
 			</q-btn-group>
 		</q-item-section>
 	</q-item>
 </template>
 
 <script setup>
-import { useAuthStore } from "@/stores/auth";
-import { useUsersStore } from "@/stores/users";
-import { useRouter } from "vue-router";
-import { useQuasar } from "quasar";
+import { useAuthStore } from '@/stores/auth';
+import { useUsersStore } from '@/stores/users';
+import { useRouter } from 'vue-router';
+import { useQuasar } from 'quasar';
 
 const props = defineProps({
 	user: {
@@ -39,14 +45,14 @@ const userEditLink = `/user/edit/${user.userId}`;
 const deleteUserLocal = async () => {
 	if (authStore.userId === user.userId) {
 		$q.dialog({
-			title: "Error",
-			message: "You cannot delete yourself!",
+			title: 'Error',
+			message: 'You cannot delete yourself!',
 		});
 		return;
 	}
 
 	$q.dialog({
-		title: "Confirm",
+		title: 'Confirm',
 		message: `Are you sure you want to delete user: ${user.name}?`,
 		cancel: true,
 		persistent: true,
@@ -57,14 +63,14 @@ const deleteUserLocal = async () => {
 				await usersStore.deleteUser(user.userId);
 				$q.loading.hide();
 				$q.dialog({
-					title: "Success",
-					message: "User deleted successfully.",
+					title: 'Success',
+					message: 'User deleted successfully.',
 				}).onOk(() => {
-					router.replace("/users");
+					router.replace('/users');
 				});
 			} catch (err) {
 				$q.loading.hide();
-				$q.dialog({ title: "Error", message: err.message || err });
+				$q.dialog({ title: 'Error', message: err.message || err });
 			}
 		})
 		.onCancel(() => {

@@ -8,19 +8,19 @@ import { fileURLToPath, URL } from 'node:url';
 export default defineConfig({
 	plugins: [
 		vue({
-			template: { transformAssetUrls }
+			template: { transformAssetUrls },
 		}),
 		vueDevTools(),
 		quasar({
-			sassVariables: '@/css/quasar-variables.sass'
-		})
+			sassVariables: '@/css/quasar-variables.sass',
+		}),
 	],
 	server: {
-		port: 5175  // http://localhost:5173 - default port
+		port: 5175, // http://localhost:5173 - default port
 	},
 	resolve: {
 		alias: {
-			'@': fileURLToPath(new URL('./src', import.meta.url))
-		}
-	}
+			'@': fileURLToPath(new URL('./src', import.meta.url)),
+		},
+	},
 });

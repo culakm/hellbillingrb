@@ -11,7 +11,7 @@ export default {
 		app.provide('utils', {
 			loadErrorMessage,
 			handleError,
-			printNumber
+			printNumber,
 		});
-	}
+	},
 };

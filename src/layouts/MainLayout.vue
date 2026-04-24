@@ -1,12 +1,16 @@
 <template>
 	<q-layout view="hHh lpR fFf">
-		<TheHeader :toggleRightDrawer="toggleRightDrawer" :logoutLocal="logoutLocal" :authStore="authStore" />
+		<TheHeader
+			:toggleRightDrawer="toggleRightDrawer"
+			:logoutLocal="logoutLocal"
+			:authStore="authStore"
+		/>
 		<TheDrawer v-model="rightDrawerOpen" :authStore="authStore" />
 		<q-page-container>
 			<router-view />
 		</q-page-container>
 		<TheFooter />
-  </q-layout>
+	</q-layout>
 </template>
 
 <script>
@@ -21,16 +25,16 @@ export default {
 	components: {
 		TheHeader,
 		TheDrawer,
-		TheFooter
+		TheFooter,
 	},
-	setup () {
+	setup() {
 		const componentName = 'MainLayout';
 		const authStore = useAuthStore();
 		const router = useRouter();
 
 		const rightDrawerOpen = ref(false);
 
-		function toggleRightDrawer () {
+		function toggleRightDrawer() {
 			rightDrawerOpen.value = !rightDrawerOpen.value;
 		}
 
@@ -39,7 +43,9 @@ export default {
 				authStore.logout();
 				router.replace('/');
 			} catch (error) {
-				console.error(`Extra error, Component ${componentName}, ERROR: ${error.message}`);
+				console.error(
+					`Extra error, Component ${componentName}, ERROR: ${error.message}`
+				);
 			}
 		}
 
@@ -48,7 +54,7 @@ export default {
 			logoutLocal,
 			rightDrawerOpen,
 			toggleRightDrawer,
-		}
-	}
-}
+		};
+	},
+};
 </script>

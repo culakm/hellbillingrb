@@ -21,21 +21,40 @@
 						</q-item>
 					</q-list>
 				</q-btn-dropdown>
-				<q-btn dense flat icon="visibility" color="primary" :to="tripViewLink" />
+				<q-btn
+					dense
+					flat
+					icon="visibility"
+					color="primary"
+					:to="tripViewLink"
+				/>
 				<q-btn dense flat icon="edit" color="primary" :to="tripEditLink" />
-				<q-btn dense flat icon="print" color="secondary" :to="tripPrintLink" target="_blank" />
-				<q-btn dense flat icon="delete" color="negative" @click="deleteTripLocal" />
+				<q-btn
+					dense
+					flat
+					icon="print"
+					color="secondary"
+					:to="tripPrintLink"
+					target="_blank"
+				/>
+				<q-btn
+					dense
+					flat
+					icon="delete"
+					color="negative"
+					@click="deleteTripLocal"
+				/>
 			</q-btn-group>
 		</q-item-section>
 	</q-item>
 </template>
 
 <script setup>
-import { computed } from "vue";
-import { useTripsStore } from "@/stores/trips";
-import { deleteStorageObject } from "@/composables/useFirebaseStorage";
-import { useRouter } from "vue-router";
-import { useQuasar } from "quasar";
+import { computed } from 'vue';
+import { useTripsStore } from '@/stores/trips';
+import { deleteStorageObject } from '@/composables/useFirebaseStorage';
+import { useRouter } from 'vue-router';
+import { useQuasar } from 'quasar';
 
 const props = defineProps({
 	tripId: {
@@ -49,12 +68,12 @@ const props = defineProps({
 	description: {
 		type: String,
 		required: false,
-		default: "",
+		default: '',
 	},
 	imageName: {
 		type: String,
 		required: false,
-		default: "",
+		default: '',
 	},
 });
 
@@ -69,7 +88,7 @@ const tripEditLink = computed(() => `/trip/edit/${props.tripId}`);
 
 const deleteTripLocal = async () => {
 	$q.dialog({
-		title: "Confirm",
+		title: 'Confirm',
 		message: `Are you sure you want to delete trip: ${props.name}?`,
 		cancel: true,
 		persistent: true,
@@ -78,12 +97,15 @@ const deleteTripLocal = async () => {
 			const path = `trips/${props.tripId}/${props.imageName}`;
 			$q.loading.show();
 			try {
-				await Promise.all([tripsStore.deleteTrip(props.tripId), deleteStorageObject(props.imageName, path)]);
+				await Promise.all([
+					tripsStore.deleteTrip(props.tripId),
+					deleteStorageObject(props.imageName, path),
+				]);
 				$q.loading.hide();
-				router.replace("/trips");
+				router.replace('/trips');
 			} catch (err) {
 				$q.loading.hide();
-				$q.dialog({ title: "Error", message: err.message || err });
+				$q.dialog({ title: 'Error', message: err.message || err });
 			}
 		})
 		.onCancel(() => {

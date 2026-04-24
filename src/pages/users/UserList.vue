@@ -7,17 +7,21 @@
 			</q-card-section>
 			<q-separator />
 			<q-list v-if="usersStore.hasUsers" bordered separator>
-				<user-actions v-for="user in usersStore.users" :key="user.userId" :user="user"></user-actions>
+				<user-actions
+					v-for="user in usersStore.users"
+					:key="user.userId"
+					:user="user"
+				></user-actions>
 			</q-list>
 		</q-card>
 	</q-page>
 </template>
 
 <script setup>
-import { onMounted } from "vue";
-import { useUsersStore } from "@/stores/users";
-import { useQuasar } from "quasar";
-import UserActions from "@/components/users/UserActions.vue";
+import { onMounted } from 'vue';
+import { useUsersStore } from '@/stores/users';
+import { useQuasar } from 'quasar';
+import UserActions from '@/components/users/UserActions.vue';
 
 const usersStore = useUsersStore();
 const $q = useQuasar();
@@ -27,7 +31,7 @@ const loadUsersLocal = async () => {
 	try {
 		await usersStore.loadUsers();
 	} catch (err) {
-		$q.dialog({ title: "Error", message: err.message || err });
+		$q.dialog({ title: 'Error', message: err.message || err });
 		$q.loading.hide();
 	}
 	$q.loading.hide();

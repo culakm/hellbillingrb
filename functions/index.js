@@ -1,4 +1,4 @@
-const { onCall } = require("firebase-functions/v2/https");
+const { onCall } = require('firebase-functions/v2/https');
 
 // #### User management, functions
 // normalne je to onCall(async (request) => { ... })
@@ -26,17 +26,26 @@ exports.getUserRole = onCall(async ({ data, auth }) => {
 });
 
 // #### Trip management, triggers
-const { onDocumentCreated, onDocumentDeleted } = require("firebase-functions/v2/firestore");
+const {
+	onDocumentCreated,
+	onDocumentDeleted,
+} = require('firebase-functions/v2/firestore');
 
-exports.incrementLineCounter = onDocumentCreated("trips/{tripId}/lines/{lineId}", async (event) => {
-	const incrementLineCounterHandler = require('./scripts/trips/on-add-line.js');
-	return await incrementLineCounterHandler(event);
-});
+exports.incrementLineCounter = onDocumentCreated(
+	'trips/{tripId}/lines/{lineId}',
+	async (event) => {
+		const incrementLineCounterHandler = require('./scripts/trips/on-add-line.js');
+		return await incrementLineCounterHandler(event);
+	}
+);
 
-exports.decrementLineCounter = onDocumentDeleted("trips/{tripId}/lines/{lineId}", async (event) => {
-	const decrementLineCounterHandler = require('./scripts/trips/on-delete-line.js');
-	return await decrementLineCounterHandler(event);
-});
+exports.decrementLineCounter = onDocumentDeleted(
+	'trips/{tripId}/lines/{lineId}',
+	async (event) => {
+		const decrementLineCounterHandler = require('./scripts/trips/on-delete-line.js');
+		return await decrementLineCounterHandler(event);
+	}
+);
 
 exports.helloWorld = onCall(async ({ data, auth }) => {
 	const helloWorldHandler = require('./scripts/services/hello-world.js');

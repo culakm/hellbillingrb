@@ -1,10 +1,10 @@
-const admin = require("firebase-admin");
+const admin = require('firebase-admin');
 admin.initializeApp();
-const { FieldValue } = require("firebase-admin/firestore");
+const { FieldValue } = require('firebase-admin/firestore');
 
 async function decrementLineCounterHandler(event) {
 	const tripId = event.params.tripId;
-	const tripRef = admin.firestore().collection("trips").doc(tripId);
+	const tripRef = admin.firestore().collection('trips').doc(tripId);
 
 	try {
 		//load the trip linesCoutn value

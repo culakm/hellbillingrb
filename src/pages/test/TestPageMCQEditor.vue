@@ -4,8 +4,8 @@
 </template>
 
 <script setup>
-import McQEditor from "@/components/ui/mcQEditor.vue";
-import { ref } from "vue";
+import McQEditor from '@/components/ui/mcQEditor.vue';
+import { ref } from 'vue';
 
-const note = ref("");
+const note = ref('');
 </script>

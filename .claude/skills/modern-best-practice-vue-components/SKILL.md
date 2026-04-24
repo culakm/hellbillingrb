@@ -20,9 +20,9 @@ Order sections: `<template>`, then `<script setup>`, then `<style scoped>`.
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref } from 'vue';
 
-const message = ref("Hello");
+const message = ref('Hello');
 </script>
 
 <style scoped>
@@ -66,8 +66,9 @@ const props = defineProps({
 	},
 	status: {
 		type: String,
-		default: "idle",
-		validator: (value) => ["idle", "loading", "error", "success"].includes(value),
+		default: 'idle',
+		validator: (value) =>
+			['idle', 'loading', 'error', 'success'].includes(value),
 	},
 });
 ```
@@ -83,10 +84,10 @@ const props = defineProps({
 Declare all emitted events with `defineEmits()`.
 
 ```js
-const emit = defineEmits(["update", "delete"]);
+const emit = defineEmits(['update', 'delete']);
 
 const handleClick = () => {
-	emit("update", payload);
+	emit('update', payload);
 };
 ```
 
@@ -99,7 +100,7 @@ const handleClick = () => {
 - Access `.value` in script; it is unwrapped automatically in templates.
 
 ```js
-import { ref, computed } from "vue";
+import { ref, computed } from 'vue';
 
 const items = ref([]);
 const count = computed(() => items.value.length);
@@ -114,13 +115,13 @@ const count = computed(() => items.value.length);
 - Use `onCleanup` inside `watchEffect` to abort stale async work.
 
 ```js
-import { ref, watch, watchEffect } from "vue";
+import { ref, watch, watchEffect } from 'vue';
 
-const query = ref("");
+const query = ref('');
 
 // Specific source
 watch(query, (newVal) => {
-	console.log("query changed:", newVal);
+	console.log('query changed:', newVal);
 });
 
 // Auto-tracked with cleanup
@@ -144,7 +145,7 @@ Useful options for `watch`:
 Import and call inside `<script setup>`:
 
 ```js
-import { onMounted, onUnmounted } from "vue";
+import { onMounted, onUnmounted } from 'vue';
 
 onMounted(() => {
 	/* DOM ready */
@@ -175,10 +176,10 @@ defineExpose({
 Prefer setup store syntax in Composition API projects. State = `ref()`, getters = `computed()`, actions = plain functions. **Return everything.**
 
 ```js
-import { ref, computed } from "vue";
-import { defineStore } from "pinia";
+import { ref, computed } from 'vue';
+import { defineStore } from 'pinia';
 
-export const useItemsStore = defineStore("items", () => {
+export const useItemsStore = defineStore('items', () => {
 	const items = ref([]);
 	const count = computed(() => items.value.length);
 
@@ -200,8 +201,8 @@ Use `storeToRefs()` when destructuring state and getters to preserve reactivity.
 
 ```vue
 <script setup>
-import { storeToRefs } from "pinia";
-import { useItemsStore } from "@/stores/items";
+import { storeToRefs } from 'pinia';
+import { useItemsStore } from '@/stores/items';
 
 const store = useItemsStore();
 const { items, count } = storeToRefs(store);

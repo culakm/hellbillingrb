@@ -9,16 +9,36 @@
 	>
 		<template #backColor>
 			<q-btn class="backColor" dense flat size="sm">
-				<q-icon name="format_color_fill" :color="highlightColor === 'white' ? 'black' : highlightColor" @click="applyHighlight" />
+				<q-icon
+					name="format_color_fill"
+					:color="highlightColor === 'white' ? 'black' : highlightColor"
+					@click="applyHighlight"
+				/>
 				<q-tooltip>Apply highlight color on selected text</q-tooltip>
 			</q-btn>
 		</template>
 
 		<template #backColorDropdown>
-			<q-btn-dropdown ref="backColorDropdown" class="backColorDropdown" dense no-wrap unelevated size="sm">
+			<q-btn-dropdown
+				ref="backColorDropdown"
+				class="backColorDropdown"
+				dense
+				no-wrap
+				unelevated
+				size="sm"
+			>
 				<div class="row q-pa-sm q-gutter-sm">
 					<q-btn
-						v-for="c in ['none', 'red', 'blue', 'teal', 'green', 'yellow', 'orange', 'brown']"
+						v-for="c in [
+							'none',
+							'red',
+							'blue',
+							'teal',
+							'green',
+							'yellow',
+							'orange',
+							'brown',
+						]"
 						:key="c"
 						size="sm"
 						:style="{ backgroundColor: c }"
@@ -44,19 +64,19 @@
 </template>
 
 <script setup>
-import { ref, watch } from "vue";
+import { ref, watch } from 'vue';
 
 const props = defineProps({
 	modelValue: {
 		type: String,
-		default: "",
+		default: '',
 	},
 	resetColor: {
 		type: Boolean,
 		default: false,
 	},
 });
-const emit = defineEmits(["update:modelValue", "unset-reset-color"]);
+const emit = defineEmits(['update:modelValue', 'unset-reset-color']);
 // local copy bound to q-editor
 const innerText = ref(props.modelValue);
 
@@ -65,25 +85,25 @@ watch(
 	() => props.modelValue,
 	(val) => {
 		if (val !== innerText.value) innerText.value = val;
-	},
+	}
 );
 
 watch(
 	() => props.resetColor,
 	(val) => {
 		if (val) {
-			highlightColor.value = "none";
-			emit("unset-reset-color");
+			highlightColor.value = 'none';
+			emit('unset-reset-color');
 		}
-	},
+	}
 );
 
 // emit changes to parent when user edits
 watch(innerText, (val) => {
-	if (val !== props.modelValue) emit("update:modelValue", val);
+	if (val !== props.modelValue) emit('update:modelValue', val);
 });
 
-const highlightColor = ref("");
+const highlightColor = ref('');
 const backColorDropdown = ref(null);
 
 const isCaretAtEnd = (editor) => {
@@ -99,13 +119,16 @@ const isCaretAtEnd = (editor) => {
 			if (sel.focusOffset === (lastText ? lastText.length : 0)) {
 				return true;
 			}
-		} else if (sel.anchorNode && sel.anchorNode.parentElement === editor.lastChild) {
+		} else if (
+			sel.anchorNode &&
+			sel.anchorNode.parentElement === editor.lastChild
+		) {
 			if (sel.focusOffset === (lastText ? lastText.length : 0)) {
 				return true;
 			}
 		}
 	} else {
-		console.log("Editor is empty");
+		console.log('Editor is empty');
 	}
 	return false;
 };
@@ -133,12 +156,13 @@ const addZeroWidthSpaceToEnd = (editor) => {
 };
 
 const applyHighlight = () => {
-	const color = highlightColor.value || "none";
+	const color = highlightColor.value || 'none';
 	const sel = window.getSelection();
-	const hasSelection = sel && sel.rangeCount > 0 && !sel.getRangeAt(0).collapsed;
-	const editor = document.querySelector(".q-editor__content");
+	const hasSelection =
+		sel && sel.rangeCount > 0 && !sel.getRangeAt(0).collapsed;
+	const editor = document.querySelector('.q-editor__content');
 
-	if (!hasSelection && color === "none") {
+	if (!hasSelection && color === 'none') {
 		addZeroWidthSpaceToEnd(editor);
 		if (editor) {
 			innerText.value = editor.innerHTML;
@@ -151,11 +175,11 @@ const applyHighlight = () => {
 	const range = sel.getRangeAt(0);
 
 	// pre farby nastavi farbu a obali vybraty text spanom
-	if (color !== "none") {
-		const span = document.createElement("span");
+	if (color !== 'none') {
+		const span = document.createElement('span');
 		span.style.backgroundColor = color;
 		range.surroundContents(span);
-		const zwspNode = document.createTextNode("\u200B");
+		const zwspNode = document.createTextNode('\u200B');
 		editor.appendChild(zwspNode);
 	}
 	// pre "none" odstrani span a vlozi cisty text naspat
@@ -171,7 +195,10 @@ const applyHighlight = () => {
 	}
 	// vymaze vsetky prazdne span s background-color
 	if (editor) {
-		const updatedText = editor.innerHTML.replace(/<span style="background-color: [^;]*;"><\/span>/g, "");
+		const updatedText = editor.innerHTML.replace(
+			/<span style="background-color: [^;]*;"><\/span>/g,
+			''
+		);
 		innerText.value = updatedText;
 		if (sel) sel.removeAllRanges();
 	}

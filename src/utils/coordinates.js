@@ -1,9 +1,9 @@
 export function decimalToDMS(decimal, isLatitude = true, precision = 1) {
-	if (decimal === null || decimal === undefined || decimal === "") return null;
-	if (typeof decimal === "string") {
+	if (decimal === null || decimal === undefined || decimal === '') return null;
+	if (typeof decimal === 'string') {
 		decimal = parseFloat(decimal);
 	}
-	if (typeof decimal !== "number" || isNaN(decimal)) return null;
+	if (typeof decimal !== 'number' || isNaN(decimal)) return null;
 
 	const sign = decimal < 0 ? -1 : 1;
 	const absDeg = Math.abs(decimal);
@@ -12,22 +12,22 @@ export function decimalToDMS(decimal, isLatitude = true, precision = 1) {
 	const minutes = Math.floor(minutesFloat);
 	const seconds = ((minutesFloat - minutes) * 60).toFixed(precision);
 
-	const minPadded = minutes.toString().padStart(2, "0");
-	const secPadded = seconds.padStart(3 + precision, "0"); // 03.2 pre precision=1
+	const minPadded = minutes.toString().padStart(2, '0');
+	const secPadded = seconds.padStart(3 + precision, '0'); // 03.2 pre precision=1
 
-	const direction = isLatitude ? (sign > 0 ? "N" : "S") : sign > 0 ? "E" : "W";
+	const direction = isLatitude ? (sign > 0 ? 'N' : 'S') : sign > 0 ? 'E' : 'W';
 
 	return `${degrees}°${minPadded}'${secPadded}"${direction}`;
 }
 
 export function DMSToDecimal(dms) {
-	if (typeof dms !== "string" && typeof dms !== "number") return null;
+	if (typeof dms !== 'string' && typeof dms !== 'number') return null;
 
 	const str = String(dms).trim().toUpperCase();
 
 	// Smer
 	let sign = 1;
-	if (str.includes("S") || str.includes("W")) sign = -1;
+	if (str.includes('S') || str.includes('W')) sign = -1;
 
 	// Extrahuj **všetky čísla** z reťazca (ignoruj symboly)
 	const numbers = str.match(/\d+\.?\d*/g) || [];

@@ -1,6 +1,6 @@
-const admin = require("firebase-admin");
+const admin = require('firebase-admin');
 admin.initializeApp();
-const { FieldValue } = require("firebase-admin/firestore");
+const { FieldValue } = require('firebase-admin/firestore');
 
 async function incrementLineCounterHandler(event) {
 	const tripId = event.params.tripId;

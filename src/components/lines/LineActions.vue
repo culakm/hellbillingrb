@@ -7,25 +7,41 @@
 						<line-view :line="line" />
 					</div>
 					<div class="column q-gutter-y-sm">
-						<q-btn dense flat icon="edit" color="primary" @click="setEditedLine" />
-						<q-btn dense flat icon="delete" color="negative" @click="deleteLineLocal" />
+						<q-btn
+							dense
+							flat
+							icon="edit"
+							color="primary"
+							@click="setEditedLine"
+						/>
+						<q-btn
+							dense
+							flat
+							icon="delete"
+							color="negative"
+							@click="deleteLineLocal"
+						/>
 					</div>
 				</div>
 			</template>
 			<template v-else>
-				<line-form @save-line="editLineLocal" @cancel-edit="cancelEditLocal" :line="line" />
+				<line-form
+					@save-line="editLineLocal"
+					@cancel-edit="cancelEditLocal"
+					:line="line"
+				/>
 			</template>
 		</q-card-section>
 	</q-card>
 </template>
 
 <script setup>
-import { ref, toRef } from "vue";
-import { useQuasar } from "quasar";
-import { useTripsStore } from "@/stores/trips";
-import { useLinesStore } from "@/stores/lines";
-import LineView from "./LineView.vue";
-import LineForm from "./LineForm.vue";
+import { ref, toRef } from 'vue';
+import { useQuasar } from 'quasar';
+import { useTripsStore } from '@/stores/trips';
+import { useLinesStore } from '@/stores/lines';
+import LineView from './LineView.vue';
+import LineForm from './LineForm.vue';
 
 const props = defineProps({
 	tripId: {
@@ -38,7 +54,7 @@ const props = defineProps({
 		default: () => ({ interest: [] }),
 	},
 });
-const emit = defineEmits(["line-is-edited"]);
+const emit = defineEmits(['line-is-edited']);
 const $q = useQuasar();
 const linesStore = useLinesStore();
 const tripsStore = useTripsStore();
@@ -51,11 +67,17 @@ const editLineLocal = async (lineData) => {
 		lineData.tripId = props.tripId;
 		await linesStore.editLine(lineData);
 		// Update the line in tripsStore.activeTrip.lines as well
-		const idx = tripsStore.activeTrip.lines.findIndex((l) => l.lineId === lineData.lineId);
-		if (idx !== -1) tripsStore.activeTrip.lines.splice(idx, 1, { ...tripsStore.activeTrip.lines[idx], ...lineData });
+		const idx = tripsStore.activeTrip.lines.findIndex(
+			(l) => l.lineId === lineData.lineId
+		);
+		if (idx !== -1)
+			tripsStore.activeTrip.lines.splice(idx, 1, {
+				...tripsStore.activeTrip.lines[idx],
+				...lineData,
+			});
 		$q.loading.hide();
 	} catch (err) {
-		$q.dialog({ title: "Error", message: err.message || err });
+		$q.dialog({ title: 'Error', message: err.message || err });
 		$q.loading.hide();
 	}
 	setEditedLine();
@@ -66,26 +88,28 @@ const deleteLineLocal = async () => {
 	try {
 		tripsStore.activeTrip.linesCount--;
 		await linesStore.deleteLine(props.tripId, props.line.lineId);
-		const idx = tripsStore.activeTrip.lines.findIndex((l) => l.lineId === props.line.lineId);
+		const idx = tripsStore.activeTrip.lines.findIndex(
+			(l) => l.lineId === props.line.lineId
+		);
 		if (idx !== -1) tripsStore.activeTrip.lines.splice(idx, 1);
 		$q.loading.hide();
 	} catch (err) {
-		$q.dialog({ title: "Error", message: err.message || err });
+		$q.dialog({ title: 'Error', message: err.message || err });
 		$q.loading.hide();
 	}
 };
 
 const setEditedLine = () => {
 	isEdited.value = !isEdited.value;
-	emit("line-is-edited");
+	emit('line-is-edited');
 };
 
 const cancelEditLocal = () => {
 	isEdited.value = false;
-	emit("line-is-edited");
+	emit('line-is-edited');
 };
 
-const line = toRef(props, "line");
+const line = toRef(props, 'line');
 </script>
 
 <style scoped>

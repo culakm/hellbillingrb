@@ -1,14 +1,15 @@
-const admin = require("firebase-admin");
+const admin = require('firebase-admin');
 admin.initializeApp();
-const { HttpsError } = require("firebase-functions/v2/https");
+const { HttpsError } = require('firebase-functions/v2/https');
 async function helloWorldHandler({ data, auth }) {
 	console.log('helloWorldHandler starts on server');
 	try {
 		console.log('Data from client: ', data);
 		const inputParameter = data.inputParameter;
-		return { message: `Vstup do funkcie z clienta je: "${inputParameter}", a toto cele je vratene zo servera!` };
-	}
-	catch (error) {
+		return {
+			message: `Vstup do funkcie z clienta je: "${inputParameter}", a toto cele je vratene zo servera!`,
+		};
+	} catch (error) {
 		const errorMessage = `Error getting helloWorld, ${error}`;
 		console.error(errorMessage);
 		throw new HttpsError('internal', errorMessage);

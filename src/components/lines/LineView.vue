@@ -1,5 +1,9 @@
 <template>
-	<div class="roadbook-item" :class="{ passed: line.passed === true && passFunctionality === false }" @click="passedLineLocal()">
+	<div
+		class="roadbook-item"
+		:class="{ passed: line.passed === true && passFunctionality === false }"
+		@click="passedLineLocal()"
+	>
 		<div class="roadbook-item-place">
 			<div class="order">{{ line.order }}</div>
 			<div class="point">
@@ -16,13 +20,25 @@
 							</div>
 						</div>
 						<div class="interest">
-							<div v-if="line.culture" class="svgicon" :class="{ 'color-culture': !isTripViewPrint }">
+							<div
+								v-if="line.culture"
+								class="svgicon"
+								:class="{ 'color-culture': !isTripViewPrint }"
+							>
 								<img src="/img/interest_c_transparent.svg" alt="culture" />
 							</div>
-							<div v-if="line.history" class="svgicon" :class="{ 'color-history': !isTripViewPrint }">
+							<div
+								v-if="line.history"
+								class="svgicon"
+								:class="{ 'color-history': !isTripViewPrint }"
+							>
 								<img src="/img/interest_h_transparent.svg" alt="history" />
 							</div>
-							<div v-if="line.sport" class="svgicon" :class="{ 'color-sport': !isTripViewPrint }">
+							<div
+								v-if="line.sport"
+								class="svgicon"
+								:class="{ 'color-sport': !isTripViewPrint }"
+							>
 								<img src="/img/interest_s_transparent.svg" alt="sport" />
 							</div>
 						</div>
@@ -31,21 +47,41 @@
 			</div>
 			<div class="map-page">
 				<div class="map-page-label">Map Page</div>
-				<div class="map-page-value">{{ line.mapPage }}</div>
+				<div class="map-page-value">{{ displayMapPage }}</div>
 			</div>
 			<div class="distance">
 				<div class="km-total">
-					{{ typeof line.kmTotal === "number" && line.kmTotal >= 0 ? line.kmTotal + " Km" : "--" }}
+					{{
+						typeof line.kmTotal === 'number' && line.kmTotal >= 0
+							? line.kmTotal + ' Km'
+							: '--'
+					}}
 				</div>
 				<div class="km-start-end">
-					{{ line.order === 1 ? "DSS" : line.order === tripsStore.activeTrip.linesCount ? "ASS" : "" }}
+					{{
+						line.order === 1
+							? 'DSS'
+							: line.order === tripsStore.activeTrip.linesCount
+								? 'ASS'
+								: ''
+					}}
 				</div>
-				<div class="km-part">{{ line.kmPart > 0 ? line.kmPart + " Km" : "--" }}</div>
+				<div class="km-part">
+					{{ line.kmPart > 0 ? line.kmPart + ' Km' : '--' }}
+				</div>
 			</div>
 		</div>
 		<div class="roadbook-item-road">
-			<div class="tulip" :class="{ 'show-before': line.close, 'color-tulip': !isTripViewPrint }">
-				<img class="tulip-img" v-if="line.tulip" :src="tulipSrc(line.tulip)" alt="tulip" />
+			<div
+				class="tulip"
+				:class="{ 'show-before': line.close, 'color-tulip': !isTripViewPrint }"
+			>
+				<img
+					class="tulip-img"
+					v-if="line.tulip"
+					:src="tulipSrc(line.tulip)"
+					alt="tulip"
+				/>
 			</div>
 			<div class="road-no">
 				<div class="road-no-label">Road No.</div>
@@ -57,12 +93,12 @@
 </template>
 
 <script setup>
-import { toRef, computed, onMounted } from "vue";
-import { useTripsStore } from "@/stores/trips";
-import { useLinesStore } from "@/stores/lines";
-import { useRoute } from "vue-router";
-import { useQuasar } from "quasar";
-import { decimalToDMS, DMSToDecimal } from "@/utils";
+import { toRef, computed } from 'vue';
+import { useTripsStore } from '@/stores/trips';
+import { useLinesStore } from '@/stores/lines';
+import { useRoute } from 'vue-router';
+import { useQuasar } from 'quasar';
+import { decimalToDMS, DMSToDecimal } from '@/utils';
 
 const props = defineProps({
 	line: {
@@ -84,14 +120,17 @@ const linesStore = useLinesStore();
 const route = useRoute();
 const $q = useQuasar();
 
-const isTripViewPrint = computed(() => route.path.includes("trip/view/print"));
-const isTripView = computed(() => route.path.includes("trip/view"));
-const passFunctionality = computed(() => isTripViewPrint.value || route.path.includes("trip/edit"));
+const isTripViewPrint = computed(() => route.path.includes('trip/view/print'));
+const isTripView = computed(() => route.path.includes('trip/view'));
+const passFunctionality = computed(
+	() => isTripViewPrint.value || route.path.includes('trip/edit')
+);
 
-onMounted(() => {
+const displayMapPage = computed(() => {
 	if (props.line.mapPage && isTripView.value) {
-		props.line.mapPage = props.line.mapPage.replace(/,/g, " ");
+		return props.line.mapPage.replace(/,/g, ' ');
 	}
+	return props.line.mapPage;
 });
 
 const passedLineLocal = async () => {
@@ -100,25 +139,24 @@ const passedLineLocal = async () => {
 	const passed = !props.line.passed;
 	try {
 		await linesStore.passedLine(props.line.lineId, passed);
-		props.line.passed = passed;
 		$q.loading.hide();
 	} catch (err) {
-		$q.dialog({ title: "Error", message: err.message || err });
+		$q.dialog({ title: 'Error', message: err.message || err });
 		$q.loading.hide();
 	}
 };
 
 const tulipSrc = (tulip) => `/img/${tulip}.svg`;
 
-const line = toRef(props, "line");
+const line = toRef(props, 'line');
 </script>
 
 <style scoped>
 .roadbook-item {
 	display: grid;
 	grid-template-areas:
-		"place"
-		"road";
+		'place'
+		'road';
 	border: 2px solid #111;
 	padding: 0;
 	margin: 0;
@@ -161,8 +199,8 @@ const line = toRef(props, "line");
 	height: 100%;
 	display: grid;
 	grid-template-areas:
-		"place-label"
-		"tags";
+		'place-label'
+		'tags';
 }
 
 .roadbook-item-place > div.point .point-grid .place-label {
@@ -297,7 +335,7 @@ const line = toRef(props, "line");
 }
 
 .tulip.show-before::before {
-	content: "!";
+	content: '!';
 	position: absolute;
 	left: 1.5rem;
 	top: 50%;

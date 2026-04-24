@@ -7,10 +7,10 @@
 </template>
 
 <script setup>
-import { useUsersStore } from "@/stores/users";
-import { useRouter } from "vue-router";
-import { useQuasar } from "quasar";
-import UserForm from "@/components/users/UserForm.vue";
+import { useUsersStore } from '@/stores/users';
+import { useRouter } from 'vue-router';
+import { useQuasar } from 'quasar';
+import UserForm from '@/components/users/UserForm.vue';
 
 const usersStore = useUsersStore();
 const router = useRouter();
@@ -23,7 +23,7 @@ const createUserLocal = async (userData) => {
 		if (userExists) {
 			$q.loading.hide();
 			$q.dialog({
-				title: "Error",
+				title: 'Error',
 				message: `User with email ${userExists.email} already exists!`,
 			});
 			return;
@@ -31,14 +31,14 @@ const createUserLocal = async (userData) => {
 		await usersStore.createUser(userData);
 		$q.loading.hide();
 		$q.dialog({
-			title: "Success",
-			message: "User created successfully.",
+			title: 'Success',
+			message: 'User created successfully.',
 		}).onOk(() => {
-			router.replace("/users");
+			router.replace('/users');
 		});
 	} catch (err) {
 		$q.loading.hide();
-		$q.dialog({ title: "Error", message: err.message || err });
+		$q.dialog({ title: 'Error', message: err.message || err });
 		return;
 	}
 };

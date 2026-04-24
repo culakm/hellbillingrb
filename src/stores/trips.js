@@ -1,11 +1,22 @@
-import { ref, computed } from "vue";
-import { defineStore } from "pinia";
-import { db } from "../firebase.js";
-import { collection, doc, getDoc, getDocs, setDoc, updateDoc, query, where, orderBy, writeBatch } from "firebase/firestore";
-import { useAuthStore } from "@/stores/auth";
-import { useLinesStore } from "@/stores/lines";
+import { ref, computed } from 'vue';
+import { defineStore } from 'pinia';
+import { db } from '../firebase.js';
+import {
+	collection,
+	doc,
+	getDoc,
+	getDocs,
+	setDoc,
+	updateDoc,
+	query,
+	where,
+	orderBy,
+	writeBatch,
+} from 'firebase/firestore';
+import { useAuthStore } from '@/stores/auth';
+import { useLinesStore } from '@/stores/lines';
 
-export const useTripsStore = defineStore("trips", () => {
+export const useTripsStore = defineStore('trips', () => {
 	const authStore = useAuthStore();
 	const linesStore = useLinesStore();
 
@@ -26,7 +37,7 @@ export const useTripsStore = defineStore("trips", () => {
 	// Actions
 	const getNewTripId = async () => {
 		try {
-			const newDocRef = doc(collection(db, "trips"));
+			const newDocRef = doc(collection(db, 'trips'));
 			return newDocRef.id;
 		} catch (error) {
 			const errorOut = `Error generating new trip ID: ${error.message}`;
@@ -72,9 +83,9 @@ export const useTripsStore = defineStore("trips", () => {
 
 	const updateTripImage = async (tripId, imageName) => {
 		try {
-			const tripRef = doc(db, "trips", tripId);
+			const tripRef = doc(db, 'trips', tripId);
 			await setDoc(tripRef, { imageName }, { merge: true });
-			activeTrip.imageName = imageName;
+			if (activeTrip.value) activeTrip.value.imageName = imageName;
 		} catch (error) {
 			const errorOut = `Error updating trip image: ${error.message}`;
 			console.error(errorOut);
@@ -84,9 +95,9 @@ export const useTripsStore = defineStore("trips", () => {
 
 	const deleteTripImage = async (tripId) => {
 		try {
-			const tripRef = doc(db, "trips", tripId);
-			await updateDoc(tripRef, { imageName: "" });
-			activeTrip.imageName = "";
+			const tripRef = doc(db, 'trips', tripId);
+			await updateDoc(tripRef, { imageName: '' });
+			if (activeTrip.value) activeTrip.value.imageName = '';
 			return tripId;
 		} catch (error) {
 			const errorOut = `Error deleting trip image: ${error.message}`;
@@ -97,12 +108,16 @@ export const useTripsStore = defineStore("trips", () => {
 
 	const loadTrips = async (userId = null) => {
 		try {
-			const tripsCollectionRef = collection(db, "trips");
+			const tripsCollectionRef = collection(db, 'trips');
 			let tripsQuery;
 			if (userId) {
-				tripsQuery = query(tripsCollectionRef, orderBy("name", "asc"), where("userId", "==", userId));
+				tripsQuery = query(
+					tripsCollectionRef,
+					orderBy('name', 'asc'),
+					where('userId', '==', userId)
+				);
 			} else {
-				tripsQuery = query(tripsCollectionRef, orderBy("name", "asc"));
+				tripsQuery = query(tripsCollectionRef, orderBy('name', 'asc'));
 			}
 			const querySnapshot = await getDocs(tripsQuery);
 			const loadedTrips = querySnapshot.docs.map((docSnap) => ({
@@ -119,7 +134,7 @@ export const useTripsStore = defineStore("trips", () => {
 
 	const createTrip = async (tripData) => {
 		try {
-			await setDoc(doc(db, "trips", tripData.tripId), tripData);
+			await setDoc(doc(db, 'trips', tripData.tripId), tripData);
 			trips.value.push(tripData);
 		} catch (error) {
 			const errorOut = `Error creating trip: ${error.message}`;
@@ -130,7 +145,7 @@ export const useTripsStore = defineStore("trips", () => {
 
 	const updateTrip = async (tripData) => {
 		try {
-			await setDoc(doc(db, "trips", tripData.tripId), tripData);
+			await setDoc(doc(db, 'trips', tripData.tripId), tripData);
 			activeTrip.value = { ...activeTrip.value, ...tripData };
 		} catch (error) {
 			const errorOut = `Error updating trip: ${error.message}`;
@@ -141,12 +156,12 @@ export const useTripsStore = defineStore("trips", () => {
 
 	const deleteTrip = async (tripId) => {
 		try {
-			const tripDocRef = doc(db, "trips", tripId);
+			const tripDocRef = doc(db, 'trips', tripId);
 			const docSnap = await getDoc(tripDocRef);
 			if (!docSnap.exists()) {
 				throw new Error(`Trip document ${tripId} does not exist`);
 			}
-			const linesCollectionRef = collection(db, "trips", tripId, "lines");
+			const linesCollectionRef = collection(db, 'trips', tripId, 'lines');
 			const linesSnapshot = await getDocs(linesCollectionRef);
 			const batch = writeBatch(db);
 			linesSnapshot.docs.forEach((lineDoc) => batch.delete(lineDoc.ref));

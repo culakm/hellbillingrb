@@ -1,6 +1,6 @@
-const admin = require("firebase-admin");
+const admin = require('firebase-admin');
 admin.initializeApp();
-const { HttpsError } = require("firebase-functions/v2/https");
+const { HttpsError } = require('firebase-functions/v2/https');
 const authRoleCheck = require('../auth/auth-role-check');
 
 async function getUserRoleHandler({ data, auth }) {
@@ -9,10 +9,9 @@ async function getUserRoleHandler({ data, auth }) {
 		const user = await admin.auth().getUserByEmail(data.email);
 		const customClaims = user.customClaims || {};
 		return {
-			role: customClaims.role || 'user'
+			role: customClaims.role || 'user',
 		};
-	}
-	catch (error) {
+	} catch (error) {
 		const errorMessage = `Error getting user role, ${error}`;
 		console.error(errorMessage);
 		throw new HttpsError('internal', errorMessage);

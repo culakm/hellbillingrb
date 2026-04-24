@@ -3,7 +3,7 @@ const serviceAccount = require('./service-account.json');
 
 // Initialize Firebase Admin
 admin.initializeApp({
-	credential: admin.credential.cert(serviceAccount)
+	credential: admin.credential.cert(serviceAccount),
 });
 
 // Get the UID from command line arguments
@@ -18,7 +18,7 @@ if (!uid) {
 async function setAdminClaim() {
 	try {
 		await admin.auth().setCustomUserClaims(uid, {
-			role: 'admin'
+			role: 'admin',
 		});
 
 		// Verify the claims were set

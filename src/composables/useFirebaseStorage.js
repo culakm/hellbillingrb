@@ -1,6 +1,11 @@
-import { ref } from "vue";
-import { storage } from "../firebase.js";
-import { ref as storageRef, uploadBytesResumable, getDownloadURL, deleteObject } from "firebase/storage";
+import { ref } from 'vue';
+import { storage } from '../firebase.js';
+import {
+	ref as storageRef,
+	uploadBytesResumable,
+	getDownloadURL,
+	deleteObject,
+} from 'firebase/storage';
 
 export const uploadProgress = ref(0);
 
@@ -34,10 +39,12 @@ export async function uploadStorageObject(file, path) {
 		let lastProgressUpdate = 0;
 		const PROGRESS_THROTTLE = 500;
 
-		uploadTask.on("state_changed", (snapshot) => {
+		uploadTask.on('state_changed', (snapshot) => {
 			const now = Date.now();
 			if (now - lastProgressUpdate >= PROGRESS_THROTTLE) {
-				const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+				const progress = Math.round(
+					(snapshot.bytesTransferred / snapshot.totalBytes) * 100
+				);
 				uploadProgress.value = progress;
 				lastProgressUpdate = now;
 			}

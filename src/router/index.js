@@ -1,6 +1,6 @@
-import { createRouter, createWebHistory } from "vue-router";
-import { useAuthStore } from "@/stores/auth";
-import routes from "./routes";
+import { createRouter, createWebHistory } from 'vue-router';
+import { useAuthStore } from '@/stores/auth';
+import routes from './routes';
 
 const router = createRouter({
 	history: createWebHistory(),
@@ -10,9 +10,9 @@ const router = createRouter({
 router.beforeEach((to, _, next) => {
 	const authStore = useAuthStore();
 	if (to.meta.requiresAuth && !authStore.isAuthenticated) {
-		next("/auth");
+		next('/auth');
 	} else if (to.meta.requiresUnauth && authStore.isAuthenticated) {
-		next("/");
+		next('/');
 	} else {
 		next();
 	}

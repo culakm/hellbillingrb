@@ -1,15 +1,14 @@
-const admin = require("firebase-admin");
+const admin = require('firebase-admin');
 admin.initializeApp();
-const { HttpsError } = require("firebase-functions/v2/https");
+const { HttpsError } = require('firebase-functions/v2/https');
 async function firstUserRoleHandler({ auth }) {
 	console.log('firstUserRoleHandler starts on server');
 	try {
-		admin.auth().setCustomUserClaims(auth.uid, { role: "admin" });
+		admin.auth().setCustomUserClaims(auth.uid, { role: 'admin' });
 		const message = `User id: "${auth.uid}", email: "${auth.email}", role: "admin" successfully set.`;
 		console.log(message);
-		return { message: message};
-	}
-	catch (error) {
+		return { message: message };
+	} catch (error) {
 		const errorMessage = `Error getting firstUserRole, ${error}`;
 		console.error(errorMessage);
 		throw new HttpsError('internal', errorMessage);

@@ -1,0 +1,8 @@
+dist
+node_modules
+functions/node_modules
+hb_emulator_data
+.firebase
+package-lock.json
+public
+*.log

@@ -34,7 +34,7 @@ npm run fb-web-down      # Disable Firebase Hosting
 ## Firebase Emulator Ports
 
 | Service   | Port |
-|-----------|------|
+| --------- | ---- |
 | Auth      | 9100 |
 | Firestore | 8081 |
 | Functions | 5002 |

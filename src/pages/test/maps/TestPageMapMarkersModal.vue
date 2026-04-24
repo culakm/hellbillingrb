@@ -3,8 +3,16 @@
 		<q-btn label="Open movable map" color="primary" @click="dialogVis = true" />
 
 		<!-- Simple overlay background -->
-		<div v-if="dialogVis" class="fixed fullscreen" @click.self="dialogVis = false">
-			<q-card class="fixed" :style="cardStyle" style="width: 80%; height: 80%; overflow: hidden">
+		<div
+			v-if="dialogVis"
+			class="fixed fullscreen"
+			@click.self="dialogVis = false"
+		>
+			<q-card
+				class="fixed"
+				:style="cardStyle"
+				style="width: 80%; height: 80%; overflow: hidden"
+			>
 				<q-bar class="bg-primary text-white" v-touch-pan.mouse="onPan">
 					<div>Map window</div>
 					<q-space />
@@ -12,7 +20,14 @@
 				</q-bar>
 
 				<q-card-section class="q-pa-none" style="height: calc(100% - 32px)">
-					<GoogleMap :api-key="apiMapKey" :mapId="mapId" style="width: 100%; height: 100%" :center="center" :zoom="15" @click="addMarker">
+					<GoogleMap
+						:api-key="apiMapKey"
+						:mapId="mapId"
+						style="width: 100%; height: 100%"
+						:center="center"
+						:zoom="15"
+						@click="addMarker"
+					>
 						<AdvancedMarker
 							v-for="(marker, index) in markers"
 							:key="index"
@@ -31,8 +46,8 @@
 </template>
 
 <script setup>
-import { GoogleMap, AdvancedMarker } from "vue3-google-map";
-import { ref, getCurrentInstance, computed } from "vue";
+import { GoogleMap, AdvancedMarker } from 'vue3-google-map';
+import { ref, getCurrentInstance, computed } from 'vue';
 
 const instance = getCurrentInstance();
 const apiMapKey = instance.appContext.config.globalProperties.$apiMapKey;
@@ -42,10 +57,10 @@ const center = { lat: 48.890079, lng: 18.036729 };
 const dialogVis = ref(false);
 const cardPos = ref({ x: 100, y: 100 });
 const cardStyle = computed(() => ({
-	left: cardPos.value.x + "px",
-	top: cardPos.value.y + "px",
+	left: cardPos.value.x + 'px',
+	top: cardPos.value.y + 'px',
 	transform: `translate(${cardPos.value.x}px, ${cardPos.value.y}px)`,
-	"z-index": 3000,
+	'z-index': 3000,
 }));
 
 const onPan = (ev) => {
@@ -64,6 +79,6 @@ const addMarker = ({ latLng }) => {
 		position: { lat: latLng.lat(), lng: latLng.lng() },
 		title: `Marker at ${latLng.lat()}, ${latLng.lng()}`,
 	});
-	console.log("Markers:", markers.value);
+	console.log('Markers:', markers.value);
 };
 </script>

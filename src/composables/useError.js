@@ -16,6 +16,6 @@ export function useError(componentName = 'UnknownComponent') {
 	return {
 		error,
 		setError,
-		clearError
+		clearError,
 	};
 }
