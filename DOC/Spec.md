@@ -101,7 +101,7 @@ Role is stored as a **custom claim** on the Firebase Auth token, not in the Fire
 | `roadNo`   | string  | no         | Road number continuing from this point                       |
 | `interest` | array   | no         | Points of interest tags: `"culture"`, `"sport"`, `"history"` |
 | `stop`     | boolean | no         | Recommended stop flag                                        |
-| `note`     | string  | no         | Free-text note for route description                         |
+| `note`     | string  | no         | Rich-text HTML note for route description                    |
 | `passed`   | boolean | no         | Flag indicating the waypoint has been passed                 |
 | `close`    | boolean | calculated | `true` if distance to next line is < 2 km                    |
 
@@ -237,6 +237,12 @@ write: authenticated users only
 - Role assigned via custom claims (not editable by client)
 - 24-hour session expiry with automatic logout
 - Auth state persisted in localStorage
+
+### 7.5 HTML Sanitization (XSS Prevention)
+
+- Rich-text fields stored as HTML (e.g. `line.note`, authored via `mcQEditor`) are sanitized with **DOMPurify** before being rendered via `v-html`
+- Sanitization is centralized in `sanitizeRichText` (`src/composables/useSanitize.js`), which applies an allowlist of inline formatting tags and attributes — anything outside the allowlist (scripts, event handlers, unsafe attributes, etc.) is stripped
+- All `v-html` usage on rich-text content must go through `sanitizeRichText`; plain user-controlled strings (e.g. `line.name`) must be rendered as text rather than via `v-html`
 
 ---
 

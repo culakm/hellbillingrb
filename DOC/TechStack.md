@@ -44,6 +44,10 @@
 
 - **vue-draggable-plus** (`^0.6.1`) — sortable list support (line reordering)
 
+### HTML Sanitization
+
+- **DOMPurify** (`^3.3.3`) — XSS-safe sanitization for rich-text HTML before `v-html` rendering. Wrapped by `sanitizeRichText` in `src/composables/useSanitize.js`, which applies an allowlist of inline formatting tags and attributes. Used for fields authored in `mcQEditor` (e.g. `line.note`).
+
 ### Dev Tooling
 
 - **Vite** (`^7.3.0`) — build tool, dev server on port `5175`
