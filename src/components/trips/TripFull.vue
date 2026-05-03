@@ -18,8 +18,16 @@
 					@click="toggleFullscreen"
 				/>
 				<q-btn
-					v-if="tcrPage"
+					v-if="!tcrPage"
 					label="Download PDF"
+					color="primary"
+					icon="picture_as_pdf"
+					:disable="trip.linesCount === 0"
+					@click="downloadPdfLocal"
+				/>
+				<q-btn
+					v-if="tcrPage"
+					label="Download TCR PDF"
 					color="primary"
 					icon="picture_as_pdf"
 					:disable="trip.linesCount === 0"
@@ -65,7 +73,7 @@ const props = defineProps({
 
 const route = useRoute();
 const $q = useQuasar();
-const { downloadTCRPdf } = usePdfExport();
+const { downloadPdf, downloadTCRPdf } = usePdfExport();
 const imageUrl = ref('');
 const trip = toRef(props, 'trip');
 
@@ -87,6 +95,17 @@ const fetchImageUrlLocal = async () => {
 	} catch (err) {
 		$q.loading.hide();
 		$q.dialog({ title: 'Error', message: err.message || err });
+	}
+};
+
+const downloadPdfLocal = async () => {
+	$q.loading.show();
+	try {
+		await downloadPdf(trip.value.lines, trip.value.name);
+	} catch (err) {
+		$q.dialog({ title: 'Error', message: err.message || err });
+	} finally {
+		$q.loading.hide();
 	}
 };
 
