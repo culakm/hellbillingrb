@@ -83,5 +83,5 @@ Roles (user/editor/admin) are stored as **custom claims** on Firebase Auth token
 - Routes use `meta.requiresAuth` / `meta.requiresUnauth` enforced by navigation guards
 - Environment variables via `.env.local` accessed as `import.meta.env.VITE_*`
 - Google Maps uses separate API keys for production and localhost
-- 24-hour auto-logout with localStorage session persistence
+- Auth state is restored from Firebase via `onAuthStateChanged` in `src/stores/auth.js`; the router guard `await`s `authStore.authReady` before evaluating `meta.requiresAuth`, so page `onMounted` data loads can assume `auth.currentUser` is populated. `main.js` calls `useAuthStore()` between `app.use(pinia)` and `app.use(router)` to wire the listener before the first guard runs. 24-hour idle auto-logout still applies.
 - Rich-text HTML fields (e.g. `line.note`, authored via `mcQEditor`) must be rendered through `sanitizeRichText` from `@/composables/useSanitize` before `v-html` — DOMPurify-based allowlist sanitization is the only thing standing between stored HTML and the DOM
