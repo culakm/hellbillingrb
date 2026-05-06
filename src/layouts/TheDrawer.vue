@@ -6,7 +6,7 @@
 		elevated
 		@update:model-value="$emit('update:modelValue', $event)"
 	>
-		<div v-if="authStore.token" style="padding: 16px">
+		<div v-if="authStore.isAuthenticated" style="padding: 16px">
 			<div>User: {{ authStore.email }}</div>
 			<div>Role: {{ authStore.role }}</div>
 		</div>

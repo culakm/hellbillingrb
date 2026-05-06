@@ -7,8 +7,9 @@ const router = createRouter({
 	routes,
 });
 
-router.beforeEach((to, _, next) => {
+router.beforeEach(async (to, _, next) => {
 	const authStore = useAuthStore();
+	await authStore.authReady;
 	if (to.meta.requiresAuth && !authStore.isAuthenticated) {
 		next('/auth');
 	} else if (to.meta.requiresUnauth && authStore.isAuthenticated) {

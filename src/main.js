@@ -4,6 +4,7 @@ import App from './App.vue';
 import router from '@/router';
 import utilsPlugin from './plugins/utilsPlugin.js';
 import Container from './components/ui/Container.vue';
+import { useAuthStore } from '@/stores/auth';
 
 import { Quasar, Loading, Dialog, AppFullscreen } from 'quasar';
 import '@quasar/extras/material-icons/material-icons.css';
@@ -13,6 +14,8 @@ const pinia = createPinia();
 const app = createApp(App);
 
 app.use(pinia);
+// Wire onAuthStateChanged before router guards run on first navigation.
+useAuthStore();
 app.use(router);
 app.use(utilsPlugin);
 app.use(Quasar, { plugins: { Loading, Dialog, AppFullscreen } });
