@@ -15,30 +15,18 @@
 					</div>
 					<div class="tags">
 						<div v-if="line.stop" class="stop">
-							<div class="svgicon" :class="{ 'color-stop': !isTripViewPrint }">
+							<div class="svgicon color-stop">
 								<img src="/img/interest_stop_transparent.svg" alt="stop" />
 							</div>
 						</div>
 						<div class="interest">
-							<div
-								v-if="line.culture"
-								class="svgicon"
-								:class="{ 'color-culture': !isTripViewPrint }"
-							>
+							<div v-if="line.culture" class="svgicon color-culture">
 								<img src="/img/interest_c_transparent.svg" alt="culture" />
 							</div>
-							<div
-								v-if="line.history"
-								class="svgicon"
-								:class="{ 'color-history': !isTripViewPrint }"
-							>
+							<div v-if="line.history" class="svgicon color-history">
 								<img src="/img/interest_h_transparent.svg" alt="history" />
 							</div>
-							<div
-								v-if="line.sport"
-								class="svgicon"
-								:class="{ 'color-sport': !isTripViewPrint }"
-							>
+							<div v-if="line.sport" class="svgicon color-sport">
 								<img src="/img/interest_s_transparent.svg" alt="sport" />
 							</div>
 						</div>
@@ -73,8 +61,8 @@
 		</div>
 		<div class="roadbook-item-road">
 			<div
-				class="tulip"
-				:class="{ 'show-before': line.close, 'color-tulip': !isTripViewPrint }"
+				class="tulip color-tulip"
+				:class="{ 'show-before': line.close }"
 			>
 				<img
 					v-if="line.tulip"
@@ -114,11 +102,8 @@ const linesStore = useLinesStore();
 const route = useRoute();
 const $q = useQuasar();
 
-const isTripViewPrint = computed(() => route.path.includes('trip/view/print'));
 const isTripView = computed(() => route.path.includes('trip/view'));
-const passFunctionality = computed(
-	() => isTripViewPrint.value || route.path.includes('trip/edit')
-);
+const passFunctionality = computed(() => route.path.includes('trip/edit'));
 
 const sanitizedNote = computed(() => sanitizeRichText(props.line.note));
 

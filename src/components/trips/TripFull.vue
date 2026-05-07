@@ -3,37 +3,35 @@
 		<q-card-section class="row items-center q-gutter-md">
 			<q-icon name="directions_car" size="32px" class="q-mr-sm text-primary" />
 			<span class="text-h6">{{ trip.name }}</span>
-			<template v-if="!printPage">
-				<q-btn
-					v-if="!$q.fullscreen.isActive"
-					icon="fullscreen"
-					label="Fullscreen"
-					@click="toggleFullscreen"
-				/>
-				<q-btn
-					v-else
-					round
-					icon="fullscreen_exit"
-					class="fullscreen-btn"
-					@click="toggleFullscreen"
-				/>
-				<q-btn
-					v-if="!tcrPage"
-					label="Download PDF"
-					color="primary"
-					icon="picture_as_pdf"
-					:disable="trip.linesCount === 0"
-					@click="downloadPdfLocal"
-				/>
-				<q-btn
-					v-if="tcrPage"
-					label="Download TCR PDF"
-					color="primary"
-					icon="picture_as_pdf"
-					:disable="trip.linesCount === 0"
-					@click="downloadTCRPdf(trip.lines, trip.name)"
-				/>
-			</template>
+			<q-btn
+				v-if="!$q.fullscreen.isActive"
+				icon="fullscreen"
+				label="Fullscreen"
+				@click="toggleFullscreen"
+			/>
+			<q-btn
+				v-else
+				round
+				icon="fullscreen_exit"
+				class="fullscreen-btn"
+				@click="toggleFullscreen"
+			/>
+			<q-btn
+				v-if="!tcrPage"
+				label="Download PDF"
+				color="primary"
+				icon="picture_as_pdf"
+				:disable="trip.linesCount === 0"
+				@click="downloadPdfLocal"
+			/>
+			<q-btn
+				v-if="tcrPage"
+				label="Download TCR PDF"
+				color="primary"
+				icon="picture_as_pdf"
+				:disable="trip.linesCount === 0"
+				@click="downloadTCRPdf(trip.lines, trip.name)"
+			/>
 		</q-card-section>
 		<q-separator />
 		<q-card-section>
@@ -76,10 +74,6 @@ const $q = useQuasar();
 const { downloadPdf, downloadTCRPdf } = usePdfExport();
 const imageUrl = ref('');
 const trip = toRef(props, 'trip');
-
-const printPage = computed(() => {
-	return route.path.includes('trip/view/print');
-});
 
 const tcrPage = computed(() => {
 	return route.path.includes('trip/viewTCR');

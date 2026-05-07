@@ -32,14 +32,6 @@
 				<q-btn
 					dense
 					flat
-					icon="print"
-					color="secondary"
-					:to="tripPrintLink"
-					target="_blank"
-				/>
-				<q-btn
-					dense
-					flat
 					icon="delete"
 					color="negative"
 					@click="deleteTripLocal"
@@ -83,7 +75,6 @@ const $q = useQuasar();
 
 const tripViewLink = computed(() => `/trip/view/${props.tripId}`);
 const tripViewTCRLink = computed(() => `/trip/viewTCR/${props.tripId}`);
-const tripPrintLink = computed(() => `/trip/view/print/${props.tripId}`);
 const tripEditLink = computed(() => `/trip/edit/${props.tripId}`);
 
 const deleteTripLocal = async () => {

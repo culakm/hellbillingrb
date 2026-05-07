@@ -43,20 +43,6 @@ const routes = [
 				props: false,
 				meta: { requiresAuth: true },
 			},
-			{
-				name: 'trip-view-print',
-				path: '/trip/view/print/:tripId',
-				component: () => import('@/pages/trips/TripViewPrint.vue'),
-				props: false,
-				meta: { requiresAuth: true },
-			},
-
-			{
-				name: 'cards',
-				path: '/cards',
-				component: () => import('@/pages/cards/CardsShow.vue'),
-				meta: { requiresAuth: true },
-			},
 
 			{
 				name: 'users',

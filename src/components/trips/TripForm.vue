@@ -90,13 +90,6 @@
 					label="View"
 					:to="tripViewLink"
 				/>
-				<q-btn
-					v-if="tripId"
-					color="secondary"
-					label="Print"
-					:to="tripPrintLink"
-					target="_blank"
-				/>
 			</div>
 		</q-form>
 	</q-card>
@@ -161,9 +154,6 @@ const uploadProgressFlag = computed(() => {
 });
 
 const tripViewLink = computed(() => (tripId ? `/trip/view/${tripId}` : ''));
-const tripPrintLink = computed(() =>
-	tripId ? `/trip/view/print/${tripId}` : ''
-);
 
 onMounted(async () => {
 	if (!tripId) {

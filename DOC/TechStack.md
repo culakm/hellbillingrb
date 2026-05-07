@@ -33,12 +33,8 @@
 
 ### PDF Generation
 
-- **jsPDF** (`^3.0.1`) — programmatic PDF creation
-- **jspdf-autotable** (`^5.0.2`) — table plugin for jsPDF
-- **html2pdf.js** (`^0.10.3`) — HTML-to-PDF rendering (canvas-based)
-- **pdfMake** (`^0.3.7`) — alternative declarative PDF generation library (used in `src/composables/usePdfExport.js`)
-- **html-to-pdfmake** (`^2.5.16`) — converts HTML strings to pdfMake document definition format
-- Custom embedded fonts: `Montserrat-Bold`, `Montserrat-Regular` (pre-encoded JS files in `src/assets/fonts/`)
+- **pdfMake** (`^0.3.7`) — declarative PDF generation library (used in `src/composables/usePdfExport.js`)
+- **html-to-pdfmake** (`^2.5.33`) — converts HTML strings to pdfMake document definition format
 
 ### Drag & Drop
 

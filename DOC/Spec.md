@@ -125,7 +125,7 @@ Role is stored as a **custom claim** on the Firebase Auth token, not in the Fire
 | State management | Pinia (setup-style stores)                                     |
 | UI library       | Quasar                                                         |
 | Maps             | vue3-google-map (Google Maps JavaScript API, Advanced Markers) |
-| PDF export       | jsPDF + jspdf-autotable, html2pdf.js, pdfMake                  |
+| PDF export       | pdfMake + html-to-pdfmake                                      |
 | Drag & drop      | vue-draggable-plus                                             |
 | Language         | JavaScript (ES Modules, no TypeScript)                         |
 
@@ -165,7 +165,6 @@ Role is stored as a **custom claim** on the Firebase Auth token, not in the Fire
 | `/trips/:id/edit`  | TripEdit      | yes         | editor+ | Edit trip + manage lines                    |
 | `/trips/:id`       | TripView      | yes         | all     | View trip detail                            |
 | `/trips/:id/tcr`   | TripViewTCR   | yes         | all     | Alternative trip view (TCR format)          |
-| `/trips/:id/print` | TripViewPrint | yes         | all     | Print-friendly view with PDF export         |
 | `/users`           | UserList      | yes         | admin   | List all users                              |
 | `/users/create`    | UserCreate    | yes         | admin   | Create new user                             |
 | `/users/:id/edit`  | UserEdit      | yes         | admin   | Edit user                                   |
@@ -268,15 +267,8 @@ write: authenticated users only
 ### 9.1 Capabilities
 
 - Generate printable roadbook PDF from trip data
-- Table-based layout using **jsPDF** + **jspdf-autotable**
-- HTML-to-PDF rendering via **html2pdf.js** for complex layouts
-- Declarative PDF generation via **pdfMake** + **html-to-pdfmake** for HTML content conversion (used in `usePdfExport` composable)
-- Custom embedded fonts: **Montserrat Bold** and **Montserrat Regular**
-
-### 9.2 Print View
-
-- Dedicated `/trips/:id/print` route with print-optimized layout
-- Includes all line data: waypoint name, km, tulip, road number, interests, notes
+- Declarative PDF generation via **pdfMake** + **html-to-pdfmake** (used in `usePdfExport` composable)
+- Two output formats: standard roadbook (`downloadPdf`) and TCR (`downloadTCRPdf`)
 
 ---
 

@@ -39,10 +39,7 @@ const linesStore = useLinesStore();
 const route = useRoute();
 const $q = useQuasar();
 
-const passFunctionality = computed(
-	() =>
-		route.path.includes('trip/view/print') || route.path.includes('trip/edit')
-);
+const passFunctionality = computed(() => route.path.includes('trip/edit'));
 
 const hasCoords = computed(() => props.line.lat && props.line.lng);
 
