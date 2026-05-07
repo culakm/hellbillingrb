@@ -36,7 +36,7 @@
 				v-if="authStore.isAuthenticated"
 				style="background: primary; color: white"
 				class="q-mr-md"
-				label="Logout"
+				label="Log out"
 				@click="logoutLocal"
 			/>
 			<q-btn
@@ -51,13 +51,10 @@
 	</q-header>
 </template>
 
-<script>
-export default {
-	name: 'TheHeader',
-	props: {
-		toggleRightDrawer: { type: Function, required: true },
-		logoutLocal: { type: Function, required: true },
-		authStore: { type: Object, required: true },
-	},
-};
+<script setup>
+defineProps({
+	toggleRightDrawer: { type: Function, required: true },
+	logoutLocal: { type: Function, required: true },
+	authStore: { type: Object, required: true },
+});
 </script>

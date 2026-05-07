@@ -5,7 +5,11 @@
 			:logout-local="logoutLocal"
 			:auth-store="authStore"
 		/>
-		<TheDrawer v-model="rightDrawerOpen" :auth-store="authStore" />
+		<TheDrawer
+			v-model="rightDrawerOpen"
+			:logout-local="logoutLocal"
+			:auth-store="authStore"
+		/>
 		<q-page-container>
 			<router-view />
 		</q-page-container>
@@ -13,7 +17,7 @@
 	</q-layout>
 </template>
 
-<script>
+<script setup>
 import { ref } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import { useRouter } from 'vue-router';
@@ -21,40 +25,24 @@ import TheHeader from './TheHeader.vue';
 import TheDrawer from './TheDrawer.vue';
 import TheFooter from './TheFooter.vue';
 
-export default {
-	components: {
-		TheHeader,
-		TheDrawer,
-		TheFooter,
-	},
-	setup() {
-		const componentName = 'MainLayout';
-		const authStore = useAuthStore();
-		const router = useRouter();
+const componentName = 'MainLayout';
+const authStore = useAuthStore();
+const router = useRouter();
 
-		const rightDrawerOpen = ref(false);
+const rightDrawerOpen = ref(false);
 
-		function toggleRightDrawer() {
-			rightDrawerOpen.value = !rightDrawerOpen.value;
-		}
+function toggleRightDrawer() {
+	rightDrawerOpen.value = !rightDrawerOpen.value;
+}
 
-		async function logoutLocal() {
-			try {
-				authStore.logout();
-				router.replace('/');
-			} catch (error) {
-				console.error(
-					`Extra error, Component ${componentName}, ERROR: ${error.message}`
-				);
-			}
-		}
-
-		return {
-			authStore,
-			logoutLocal,
-			rightDrawerOpen,
-			toggleRightDrawer,
-		};
-	},
-};
+async function logoutLocal() {
+	try {
+		await authStore.logout();
+		await router.replace('/');
+	} catch (error) {
+		const errorOut = `Component ${componentName}, ERROR: ${error.message}`;
+		console.error(errorOut);
+		throw new Error(errorOut, { cause: error });
+	}
+}
 </script>
