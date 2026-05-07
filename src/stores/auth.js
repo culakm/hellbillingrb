@@ -88,7 +88,7 @@ export const useAuthStore = defineStore('auth', () => {
 			email.value = responseData.user.email;
 			role.value = tokenResult.claims.role ?? null;
 		} catch (error) {
-			const errorOut = `Error logging in: ${error.message}`;
+			const errorOut = 'Incorrect email or password. Please try again.';
 			console.error(errorOut);
 			throw new Error(errorOut, { cause: error });
 		}

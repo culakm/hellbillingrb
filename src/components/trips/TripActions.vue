@@ -1,19 +1,18 @@
 <template>
-	<q-item class="q-py-sm">
-		<q-item-section>
+	<q-item class="q-py-sm trip-link">
+		<q-item-section class="cursor-pointer" @click="router.push(tripEditLink)">
 			<div class="text-subtitle1">{{ name }}</div>
 			<div class="text-caption text-grey-7">{{ description }}</div>
 		</q-item-section>
 		<q-item-section side>
-			<q-btn-group spread>
-				<q-btn-dropdown color="white" text-color="primary" icon="visibility">
+			<q-btn-group spread class="single-buttons">
+				<q-btn-dropdown text-color="primary" icon="visibility">
 					<q-list>
 						<q-item v-close-popup clickable :to="tripViewLink">
 							<q-item-section>
-								<q-item-label>MY</q-item-label>
+								<q-item-label>Full</q-item-label>
 							</q-item-section>
 						</q-item>
-
 						<q-item v-close-popup clickable :to="tripViewTCRLink">
 							<q-item-section>
 								<q-item-label>TCR</q-item-label>
@@ -21,14 +20,6 @@
 						</q-item>
 					</q-list>
 				</q-btn-dropdown>
-				<q-btn
-					dense
-					flat
-					icon="visibility"
-					color="primary"
-					:to="tripViewLink"
-				/>
-				<q-btn dense flat icon="edit" color="primary" :to="tripEditLink" />
 				<q-btn
 					dense
 					flat
@@ -104,3 +95,15 @@ const deleteTripLocal = async () => {
 		});
 };
 </script>
+
+<style scoped>
+.trip-link {
+	transition: background-color 0.2s ease;
+}
+.trip-link:hover {
+	background-color: rgba(0, 0, 0, 0.04);
+}
+.single-buttons {
+	background-color: white;
+}
+</style>
