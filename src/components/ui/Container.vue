@@ -1,5 +1,5 @@
 <template>
-	<div class="q-pa-xl flex flex-center">
+	<div class="q-pa-xs flex flex-center">
 		<slot></slot>
 	</div>
 </template>

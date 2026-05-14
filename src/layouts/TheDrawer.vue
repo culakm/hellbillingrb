@@ -7,12 +7,6 @@
 		@update:model-value="emit('update:modelValue', $event)"
 	>
 		<q-list bordered>
-			<q-item v-if="authStore.isAdmin" v-ripple clickable to="/users">
-				<q-item-section avatar>
-					<q-icon color="primary" name="bluetooth" />
-				</q-item-section>
-				<q-item-section>Users</q-item-section>
-			</q-item>
 			<q-item v-if="authStore.isAuthenticated" v-ripple clickable>
 				<q-item-section avatar>
 					<q-icon color="primary" name="bluetooth" />
@@ -20,12 +14,6 @@
 				<q-item-section>
 					{{ authStore.email }}: {{ authStore.role }}
 				</q-item-section>
-			</q-item>
-			<q-item v-else v-ripple clickable to="/auth">
-				<q-item-section avatar>
-					<q-icon color="primary" name="bluetooth" />
-				</q-item-section>
-				<q-item-section>Log in</q-item-section>
 			</q-item>
 			<q-item
 				v-if="authStore.isAuthenticated"

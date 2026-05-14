@@ -83,19 +83,30 @@ const editLineLocal = async (lineData) => {
 };
 
 const deleteLineLocal = async () => {
-	$q.loading.show();
-	try {
-		tripsStore.activeTrip.linesCount--;
-		await linesStore.deleteLine(props.tripId, props.line.lineId);
-		const idx = tripsStore.activeTrip.lines.findIndex(
-			(l) => l.lineId === props.line.lineId
-		);
-		if (idx !== -1) tripsStore.activeTrip.lines.splice(idx, 1);
-		$q.loading.hide();
-	} catch (err) {
-		$q.dialog({ title: 'Error', message: err.message || err });
-		$q.loading.hide();
-	}
+	$q.dialog({
+		title: 'Confirm',
+		message: `Are you sure you want to delete this line?`,
+		cancel: true,
+		persistent: true,
+	})
+		.onOk(async () => {
+			$q.loading.show();
+			try {
+				tripsStore.activeTrip.linesCount--;
+				await linesStore.deleteLine(props.tripId, props.line.lineId);
+				const idx = tripsStore.activeTrip.lines.findIndex(
+					(l) => l.lineId === props.line.lineId
+				);
+				if (idx !== -1) tripsStore.activeTrip.lines.splice(idx, 1);
+				$q.loading.hide();
+			} catch (err) {
+				$q.dialog({ title: 'Error', message: err.message || err });
+				$q.loading.hide();
+			}
+		})
+		.onCancel(() => {
+			return;
+		});
 };
 
 const setEditedLine = () => {

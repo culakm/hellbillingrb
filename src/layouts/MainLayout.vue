@@ -1,7 +1,9 @@
 <template>
-	<q-layout view="hHh lpR fFf">
+	<q-layout view="hHh LpR fFf">
+		<TheLeftDrawer v-model="leftDrawerOpen" :auth-store="authStore" />
 		<TheHeader
 			:toggle-right-drawer="toggleRightDrawer"
+			:toggle-left-drawer="toggleLeftDrawer"
 			:logout-local="logoutLocal"
 			:auth-store="authStore"
 		/>
@@ -23,6 +25,7 @@ import { useAuthStore } from '@/stores/auth';
 import { useRouter } from 'vue-router';
 import TheHeader from './TheHeader.vue';
 import TheDrawer from './TheDrawer.vue';
+import TheLeftDrawer from './TheLeftDrawer.vue';
 import TheFooter from './TheFooter.vue';
 
 const componentName = 'MainLayout';
@@ -30,9 +33,13 @@ const authStore = useAuthStore();
 const router = useRouter();
 
 const rightDrawerOpen = ref(false);
-
 function toggleRightDrawer() {
 	rightDrawerOpen.value = !rightDrawerOpen.value;
+}
+
+const leftDrawerOpen = ref(true);
+function toggleLeftDrawer() {
+	leftDrawerOpen.value = !leftDrawerOpen.value;
 }
 
 async function logoutLocal() {

@@ -1,25 +1,39 @@
 <template>
-	<q-item class="q-py-sm trip-link">
+	<q-item class="q-py-xs trip-link">
 		<q-item-section class="cursor-pointer" @click="router.push(tripEditLink)">
 			<div class="text-subtitle1">{{ name }}</div>
 			<div class="text-caption text-grey-7">{{ description }}</div>
 		</q-item-section>
 		<q-item-section side>
 			<q-btn-group spread class="single-buttons">
-				<q-btn-dropdown text-color="primary" icon="visibility">
-					<q-list>
-						<q-item v-close-popup clickable :to="tripViewLink">
-							<q-item-section>
-								<q-item-label>Full</q-item-label>
-							</q-item-section>
-						</q-item>
-						<q-item v-close-popup clickable :to="tripViewTCRLink">
-							<q-item-section>
-								<q-item-label>TCR</q-item-label>
-							</q-item-section>
-						</q-item>
-					</q-list>
-				</q-btn-dropdown>
+				<div
+					class="inline-block"
+					@mouseenter="openMenu"
+					@mouseleave="scheduleClose"
+				>
+					<q-btn flat text-color="primary" icon="visibility" />
+					<q-menu
+						v-model="menu"
+						anchor="bottom left"
+						self="top left"
+						:offset="[0, 8]"
+						@mouseenter="openMenu"
+						@mouseleave="scheduleClose"
+					>
+						<q-list style="min-width: 180px">
+							<q-item v-close-popup clickable :to="tripViewLink">
+								<q-item-section>
+									<q-item-label>Full</q-item-label>
+								</q-item-section>
+							</q-item>
+							<q-item v-close-popup clickable :to="tripViewTCRLink">
+								<q-item-section>
+									<q-item-label>TCR</q-item-label>
+								</q-item-section>
+							</q-item>
+						</q-list>
+					</q-menu>
+				</div>
 				<q-btn
 					dense
 					flat
@@ -33,11 +47,28 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { useTripsStore } from '@/stores/trips';
 import { deleteStorageObject } from '@/composables/useFirebaseStorage';
 import { useRouter } from 'vue-router';
 import { useQuasar } from 'quasar';
+const menu = ref(false);
+let closeTimer = null;
+
+function openMenu() {
+	if (closeTimer) {
+		clearTimeout(closeTimer);
+		closeTimer = null;
+	}
+	menu.value = true;
+}
+
+function scheduleClose() {
+	closeTimer = setTimeout(() => {
+		menu.value = false;
+		closeTimer = null;
+	}, 150);
+}
 
 const props = defineProps({
 	tripId: {

@@ -1,6 +1,13 @@
 <template>
-	<q-header elevated class="bg-primary text-white" height-hint="98">
+	<q-header class="bg-primary text-white" height-hint="98">
 		<q-toolbar>
+			<q-btn
+				v-if="authStore.isAdmin"
+				dense
+				flat
+				icon="menu"
+				@click="toggleLeftDrawer"
+			/>
 			<router-link to="/" class="main-header__brand">
 				<img
 					src="/kompas_transparent.png"
@@ -12,41 +19,13 @@
 				<router-link to="/">Hellbilling</router-link>
 			</q-toolbar-title>
 			<q-btn
-				v-if="authStore.isAdmin"
-				style="background: primary; color: white"
-				class="q-mr-md"
-				label="Test"
-				to="/test"
-			/>
-			<q-btn
-				v-if="authStore.isAdmin"
-				style="background: primary; color: white"
-				class="q-mr-md"
-				label="Users"
-				to="/users"
-			/>
-			<q-btn
 				v-if="authStore.isAuthenticated"
-				style="background: primary; color: white"
-				class="q-mr-md"
-				label="Trips"
-				to="/trips"
+				dense
+				flat
+				:label="authStore.email"
+				@click="toggleRightDrawer"
 			/>
-			<q-btn
-				v-if="authStore.isAuthenticated"
-				style="background: primary; color: white"
-				class="q-mr-md"
-				label="Log out"
-				@click="logoutLocal"
-			/>
-			<q-btn
-				v-else
-				style="background: primary; color: white"
-				class="q-mr-md"
-				label="Login"
-				to="/auth"
-			/>
-			<q-btn dense flat icon="menu" @click="toggleRightDrawer" />
+			<q-btn v-else dense flat label="Login" to="/auth" />
 		</q-toolbar>
 	</q-header>
 </template>
@@ -54,6 +33,7 @@
 <script setup>
 defineProps({
 	toggleRightDrawer: { type: Function, required: true },
+	toggleLeftDrawer: { type: Function, required: true },
 	logoutLocal: { type: Function, required: true },
 	authStore: { type: Object, required: true },
 });

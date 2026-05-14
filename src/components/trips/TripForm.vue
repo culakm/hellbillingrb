@@ -1,98 +1,87 @@
 <template>
-	<q-card
-		class="q-pa-md shadow-2 rounded-borders"
-		style="width: 100%; margin: auto"
+	<q-card-section
+		class="bg-primary text-white flex items-center q-mb-md rounded-borders full-width"
 	>
-		<q-card-section
-			class="bg-primary text-white flex items-center q-mb-md rounded-borders"
-		>
-			<q-icon name="directions_car" size="32px" class="q-mr-sm" />
-			<div class="text-h5">{{ formTitle }}</div>
-		</q-card-section>
-		<q-separator />
-		<q-form class="q-gutter-md" @submit.prevent="submitForm">
-			<div class="row q-col-gutter-md items-start">
-				<div class="col-6">
-					<q-input
-						v-model="name"
-						filled
-						label="Trip Name"
-						:rules="[required]"
-						autocomplete="off"
-					/>
-				</div>
-				<div class="col-6">
-					<q-input
-						v-model="description"
-						filled
-						label="Description"
-						type="textarea"
-						autogrow
-					/>
-				</div>
-				<div class="col-12">
-					<q-file
-						v-model="imageFile"
-						filled
-						label="Trip Image"
-						accept="image/*"
-						counter
-						:loading="uploadProgressFlag"
-						@update:model-value="previewImage"
+		<q-icon name="directions_car" size="32px" class="q-mr-sm" />
+		<div class="text-h5">{{ formTitle }}</div>
+	</q-card-section>
+	<q-form class="q-mb-md full-width" @submit.prevent="submitForm">
+		<div class="row q-col-gutter-md items-start">
+			<div class="col-6">
+				<q-input
+					v-model="name"
+					filled
+					label="Trip Name"
+					:rules="[required]"
+					autocomplete="off"
+				/>
+			</div>
+			<div class="col-6">
+				<q-input
+					v-model="description"
+					filled
+					label="Description"
+					type="textarea"
+					autogrow
+				/>
+			</div>
+			<div class="col-12">
+				<q-file
+					v-model="imageFile"
+					filled
+					label="Trip Image"
+					accept="image/*"
+					counter
+					:loading="uploadProgressFlag"
+					@update:model-value="previewImage"
+				>
+					<template #prepend>
+						<q-icon name="attach_file" />
+					</template>
+				</q-file>
+				<div class="q-mt-sm">
+					<q-banner
+						v-if="!imageSrc"
+						class="bg-grey-2 text-grey-7 q-pa-sm rounded-borders"
+						dense
 					>
-						<template #prepend>
-							<q-icon name="attach_file" />
-						</template>
-					</q-file>
-					<div class="q-mt-sm">
-						<q-banner
-							v-if="!imageSrc"
-							class="bg-grey-2 text-grey-7 q-pa-sm rounded-borders"
-							dense
-						>
-							<q-icon name="image_not_supported" class="q-mr-sm" />
-							No image selected
-						</q-banner>
-						<div v-else class="column items-center">
-							<q-img
-								:src="imageSrc"
-								alt="trip image"
-								style="
-									max-width: 100%;
-									max-height: 200px;
-									border-radius: 8px;
-									box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-								"
-								fit="contain"
-							/>
-							<q-btn
-								class="q-mt-sm"
-								color="negative"
-								icon="delete"
-								label="Delete Image"
-								@click.prevent="deleteImageCurrent"
-							/>
-						</div>
+						<q-icon name="image_not_supported" class="q-mr-sm" />
+						No image selected
+					</q-banner>
+					<div v-else class="column items-center">
+						<q-img
+							:src="imageSrc"
+							alt="trip image"
+							style="
+								max-width: 100%;
+								max-height: 200px;
+								border-radius: 8px;
+								box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+							"
+							fit="contain"
+						/>
+						<q-btn
+							class="q-mt-sm"
+							color="negative"
+							icon="delete"
+							label="Delete Image"
+							@click.prevent="deleteImageCurrent"
+						/>
 					</div>
 				</div>
 			</div>
-			<div class="row q-gutter-sm justify-end q-mt-md">
-				<q-btn
-					v-if="!trip || !trip.tripId"
-					color="primary"
-					label="Add Trip"
-					type="submit"
-				/>
-				<q-btn v-else color="primary" label="Save Trip" type="submit" />
-				<q-btn
-					v-if="tripId"
-					color="secondary"
-					label="View"
-					:to="tripViewLink"
-				/>
-			</div>
-		</q-form>
-	</q-card>
+		</div>
+		<div class="row q-gutter-sm justify-end q-mt-md">
+			<q-btn
+				v-if="!trip || !trip.tripId"
+				color="primary"
+				label="Add Trip"
+				type="submit"
+			/>
+			<q-btn v-else color="primary" label="Save Trip" type="submit" />
+			<q-btn v-if="tripId" color="secondary" label="View" :to="tripViewLink" />
+		</div>
+	</q-form>
 </template>
 
 <script setup>
@@ -131,6 +120,13 @@ const imageNameOriginal = ref('');
 
 const imageFile = ref(null);
 
+const kmTotal = computed(() => {
+	const lines = tripsStore.activeTrip.lines;
+	if (!Array.isArray(lines) || lines.length === 0) return 0;
+	const lastLine = lines[lines.length - 1];
+	return lastLine?.kmTotal ?? 0;
+});
+
 const imageSrc = computed(() =>
 	imagePreview.value ? imagePreview.value : imageUrl.value
 );
@@ -138,10 +134,12 @@ let tripId = props.trip.tripId || null;
 const formTitle = computed(() => {
 	if (tripId) {
 		return (
-			'Edit Trip: ' +
-			name.value +
-			' Lines Count: ' +
-			(tripsStore.activeTrip.linesCount ?? 0)
+			tripsStore.activeTrip.name +
+			' ' +
+			(tripsStore.activeTrip.linesCount ?? 0) +
+			' lines, ' +
+			kmTotal.value +
+			' km'
 		);
 	} else {
 		return 'Create Trip';

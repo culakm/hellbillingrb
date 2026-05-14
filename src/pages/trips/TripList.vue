@@ -1,35 +1,43 @@
 <template>
-	<q-page class="q-pa-md bg-grey-2">
-		<q-card>
-			<q-card-section class="row items-center justify-between">
-				<div class="row items-center col">
-					<div class="text-h6">Trips: {{ filteredTrips.length }}</div>
-					<q-toggle
-						v-if="authStore.isAdmin"
-						v-model="allTripsFlag"
-						label="All users' trips"
-						class="q-ml-md"
-					/>
-				</div>
-				<div class="col-auto q-ml-auto">
-					<q-btn color="primary" label="Add Trip" icon="add" to="/trip/add" />
-				</div>
-			</q-card-section>
-			<q-separator />
-			<q-list v-if="tripsStore.hasTrips" bordered separator>
-				<trip-actions
-					v-for="trip in filteredTrips"
-					:key="trip.tripId"
-					:trip-id="trip.tripId"
-					:name="trip.name"
-					:description="trip.description"
-					:image-name="trip.imageName"
+	<q-page class="q-pa-xs q-pr-lg">
+		<q-card-section class="q-py-none row items-center justify-between">
+			<div class="row items-center col">
+				<div class="text-h6">Trips: {{ filteredTrips.length }}</div>
+				<q-toggle
+					v-if="authStore.isAdmin"
+					v-model="allTripsFlag"
+					label="All users' trips"
+					class="q-ml-md"
 				/>
-			</q-list>
-			<q-card-section v-else>
-				<div class="text-grey">No trips found</div>
-			</q-card-section>
-		</q-card>
+				<q-input v-model="filter" class="q-ml-md" dense>
+					<template #prepend>
+						<q-icon name="search" />
+					</template>
+				</q-input>
+			</div>
+			<div class="col-auto q-ml-auto">
+				<q-btn color="primary" label="Add Trip" icon="add" to="/trip/add" />
+			</div>
+		</q-card-section>
+		<q-card-section
+			v-if="tripsStore.hasTrips"
+			class="q-pa-xs"
+			bordered
+			separator
+		>
+			<trip-actions
+				v-for="trip in filteredTrips"
+				:key="trip.tripId"
+				class="q-pr-md q-pl-md"
+				:trip-id="trip.tripId"
+				:name="trip.name"
+				:description="trip.description"
+				:image-name="trip.imageName"
+			/>
+		</q-card-section>
+		<q-card-section v-else>
+			<div class="text-grey">No trips found</div>
+		</q-card-section>
 	</q-page>
 </template>
 
@@ -45,6 +53,7 @@ const tripsStore = useTripsStore();
 const $q = useQuasar();
 
 const allTripsFlag = ref(false);
+const filter = ref('');
 
 const loadTripsLocal = async () => {
 	$q.loading.show();
@@ -75,10 +84,21 @@ watch(allTripsFlag, (newValue) => {
 });
 
 const filteredTrips = computed(() => {
-	if (authStore.isAdmin && allTripsFlag.value) {
-		return tripsStore.trips;
-	} else {
-		return tripsStore.trips.filter((trip) => trip.userId === authStore.userId);
+	const search = filter.value.trim().toLowerCase();
+
+	const visibleTrips =
+		authStore.isAdmin && allTripsFlag.value
+			? tripsStore.trips
+			: tripsStore.trips.filter((trip) => trip.userId === authStore.userId);
+
+	if (!search) {
+		return visibleTrips;
 	}
+
+	return visibleTrips.filter((trip) => {
+		const name = (trip.name ?? '').toLowerCase();
+		const description = (trip.description ?? '').toLowerCase();
+		return name.includes(search) || description.includes(search);
+	});
 });
 </script>
