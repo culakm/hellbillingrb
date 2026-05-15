@@ -4,6 +4,7 @@
 			<q-card-section class="row items-center justify-between">
 				<trip-form
 					v-if="activeTripReactive"
+					:key="activeTripReactive.tripId"
 					:trip="activeTripReactive"
 					@save-data="updateTripLocal"
 				/>
@@ -43,7 +44,6 @@
 						v-for="line in activeTripReactive.lines"
 						:key="line.lineId"
 						:line="line"
-						:trip-id="activeTripReactive.tripId"
 						@line-is-edited="lineIsEdited"
 					/>
 				</VueDraggable>
@@ -119,7 +119,6 @@ const markers2Lines = async (markers, save = true) => {
 			note: null,
 			passed: false,
 		};
-		activeTripReactive.value.linesCount++;
 		await createLineLocal(lineData);
 	}
 };

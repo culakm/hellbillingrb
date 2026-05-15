@@ -85,7 +85,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { useTripsStore } from '@/stores/trips';
 import {
 	uploadProgress,
@@ -109,9 +109,10 @@ const tripsStore = useTripsStore();
 const $q = useQuasar();
 
 // Form fields
-const name = ref(props.trip.name || '');
-const description = ref(props.trip.description || '');
+const name = ref('');
+const description = ref('');
 const imageName = ref('');
+const tripId = ref(null);
 
 const imageUrl = ref('');
 const imageData = ref(null);
@@ -121,7 +122,7 @@ const imageNameOriginal = ref('');
 const imageFile = ref(null);
 
 const kmTotal = computed(() => {
-	const lines = tripsStore.activeTrip.lines;
+	const lines = props.trip.lines;
 	if (!Array.isArray(lines) || lines.length === 0) return 0;
 	const lastLine = lines[lines.length - 1];
 	return lastLine?.kmTotal ?? 0;
@@ -130,13 +131,12 @@ const kmTotal = computed(() => {
 const imageSrc = computed(() =>
 	imagePreview.value ? imagePreview.value : imageUrl.value
 );
-let tripId = props.trip.tripId || null;
 const formTitle = computed(() => {
-	if (tripId) {
+	if (tripId.value) {
 		return (
-			tripsStore.activeTrip.name +
+			name.value +
 			' ' +
-			(tripsStore.activeTrip.linesCount ?? 0) +
+			(props.trip.linesCount ?? 0) +
 			' lines, ' +
 			kmTotal.value +
 			' km'
@@ -151,23 +151,12 @@ const uploadProgressFlag = computed(() => {
 	return val > 0 && val < 100;
 });
 
-const tripViewLink = computed(() => (tripId ? `/trip/view/${tripId}` : ''));
-
-onMounted(async () => {
-	if (!tripId) {
-		tripId = await tripsStore.getNewTripId();
-	}
-	name.value = props.trip.name || '';
-	description.value = props.trip.description || '';
-	imageName.value = props.trip.imageName || '';
-	if (imageName.value) {
-		await fetchImageUrlLocal();
-		imageNameOriginal.value = imageName.value;
-	}
-});
+const tripViewLink = computed(() =>
+	tripId.value ? `/trip/view/${tripId.value}` : ''
+);
 
 const fetchImageUrlLocal = async () => {
-	const path = `trips/${tripId}/${props.trip.imageName}`;
+	const path = `trips/${tripId.value}/${props.trip.imageName}`;
 	try {
 		imageUrl.value = await fetchFileUrl(props.trip.imageName, path);
 	} catch (err) {
@@ -176,16 +165,37 @@ const fetchImageUrlLocal = async () => {
 };
 
 const deleteImageLocal = async () => {
-	const path = `trips/${tripId}/${props.trip.imageName}`;
+	const path = `trips/${tripId.value}/${props.trip.imageName}`;
 	try {
 		await Promise.all([
-			tripsStore.deleteTripImage(tripId, props.trip.imageName),
+			tripsStore.deleteTripImage(tripId.value, props.trip.imageName),
 			deleteStorageObject(props.trip.imageName, path),
 		]);
 	} catch (err) {
 		$q.dialog({ title: 'Error', message: err.message || err });
 	}
 };
+
+const syncFromProps = async () => {
+	name.value = props.trip.name || '';
+	description.value = props.trip.description || '';
+	imageName.value = props.trip.imageName || '';
+	tripId.value = props.trip.tripId || null;
+	imageData.value = null;
+	imagePreview.value = null;
+	imageUrl.value = '';
+	imageNameOriginal.value = '';
+	imageFile.value = null;
+	if (!tripId.value) {
+		tripId.value = await tripsStore.getNewTripId();
+	}
+	if (imageName.value) {
+		await fetchImageUrlLocal();
+		imageNameOriginal.value = imageName.value;
+	}
+};
+
+watch(() => props.trip, syncFromProps, { immediate: true });
 
 const previewImage = (input) => {
 	let file;
@@ -211,10 +221,10 @@ const uploadImageLocal = async () => {
 	const file = imageData.value;
 	$q.loading.show();
 	try {
-		const path = `trips/${tripId}/${imageData.value.name}`;
+		const path = `trips/${tripId.value}/${imageData.value.name}`;
 		const [downloadURL] = await Promise.all([
 			await uploadStorageObject(file, path),
-			tripsStore.updateTripImage(tripId, imageData.value.name),
+			tripsStore.updateTripImage(tripId.value, imageData.value.name),
 		]);
 		imageUrl.value = downloadURL;
 		$q.loading.hide();
@@ -243,7 +253,7 @@ const submitForm = async () => {
 		await uploadImageLocal();
 	}
 	const tripData = {
-		tripId: tripId,
+		tripId: tripId.value,
 		name: name.value,
 		description: description.value,
 		imageName: imageName.value,

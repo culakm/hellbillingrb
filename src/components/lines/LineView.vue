@@ -49,7 +49,7 @@
 					{{
 						line.order === 1
 							? 'DSS'
-							: line.order === tripsStore.activeTrip.linesCount
+							: line.order === linesCount
 								? 'ASS'
 								: ''
 					}}
@@ -83,7 +83,6 @@
 
 <script setup>
 import { toRef, computed } from 'vue';
-import { useTripsStore } from '@/stores/trips';
 import { useLinesStore } from '@/stores/lines';
 import { useRoute } from 'vue-router';
 import { useQuasar } from 'quasar';
@@ -95,9 +94,12 @@ const props = defineProps({
 		type: Object,
 		default: () => ({}),
 	},
+	linesCount: {
+		type: Number,
+		default: 0,
+	},
 });
 
-const tripsStore = useTripsStore();
 const linesStore = useLinesStore();
 const route = useRoute();
 const $q = useQuasar();

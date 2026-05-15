@@ -11,6 +11,7 @@
 					v-for="line in tripsStore.activeTrip.lines"
 					:key="line.lineId"
 					:line="line"
+					:lines-count="tripsStore.activeTrip.linesCount"
 				></line-view>
 			</div>
 		</q-card>

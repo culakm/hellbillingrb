@@ -4,7 +4,7 @@
 			<template v-if="!isEdited">
 				<div class="row items-center no-wrap">
 					<div class="col">
-						<line-view :line="line" />
+						<line-view :line="line" :lines-count="tripsStore.activeTrip.linesCount" />
 					</div>
 					<div class="column q-gutter-y-sm">
 						<q-btn
@@ -44,10 +44,6 @@ import LineView from './LineView.vue';
 import LineForm from './LineForm.vue';
 
 const props = defineProps({
-	tripId: {
-		type: String,
-		required: true,
-	},
 	line: {
 		type: Object,
 		default: () => ({ interest: [] }),
@@ -63,7 +59,7 @@ const isEdited = ref(false);
 const editLineLocal = async (lineData) => {
 	$q.loading.show();
 	try {
-		lineData.tripId = props.tripId;
+		lineData.tripId = tripsStore.activeTrip.tripId;
 		await linesStore.editLine(lineData);
 		// Update the line in tripsStore.activeTrip.lines as well
 		const idx = tripsStore.activeTrip.lines.findIndex(
@@ -92,8 +88,7 @@ const deleteLineLocal = async () => {
 		.onOk(async () => {
 			$q.loading.show();
 			try {
-				tripsStore.activeTrip.linesCount--;
-				await linesStore.deleteLine(props.tripId, props.line.lineId);
+				await linesStore.deleteLine(tripsStore.activeTrip.tripId, props.line.lineId);
 				const idx = tripsStore.activeTrip.lines.findIndex(
 					(l) => l.lineId === props.line.lineId
 				);

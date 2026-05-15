@@ -118,7 +118,6 @@
 
 <script setup>
 import { ref, computed, nextTick } from 'vue';
-import { useTripsStore } from '@/stores/trips';
 import { useQuasar } from 'quasar';
 import McQEditor from '@/components/ui/mcQEditor.vue';
 import { decimalToDMS, DMSToDecimal } from '@/utils';
@@ -136,7 +135,6 @@ const props = defineProps({
 	},
 });
 const emit = defineEmits(['save-line', 'cancel-edit']);
-const tripsStore = useTripsStore();
 const $q = useQuasar();
 
 const tulipOptions = [
@@ -224,8 +222,6 @@ const submitForm = async () => {
 		note: note.value,
 		passed: false,
 	};
-
-	tripsStore.activeTrip.linesCount++;
 
 	order.value = null;
 	lat.value = '';

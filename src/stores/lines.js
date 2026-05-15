@@ -13,6 +13,7 @@ import {
 	orderBy,
 	writeBatch,
 } from 'firebase/firestore';
+import { useTripsStore } from '@/stores/trips';
 
 export const useLinesStore = defineStore('lines', () => {
 	// State
@@ -41,6 +42,14 @@ export const useLinesStore = defineStore('lines', () => {
 
 	// Getters
 	const linesCount = computed(() => lines.value.length);
+
+	const syncActiveTripLinesCount = () => {
+		const tripsStore = useTripsStore();
+		if (tripsStore.activeTrip?.tripId === tripId.value) {
+			tripsStore.activeTrip.linesCount = lines.value.length;
+			tripsStore.activeTrip.hasLines = lines.value.length > 0;
+		}
+	};
 
 	// Actions
 	const getNewLineId = async (localTripId) => {
@@ -97,6 +106,7 @@ export const useLinesStore = defineStore('lines', () => {
 			lines.value = newLines;
 			sortLines();
 			recalculateLineExtraValues();
+			syncActiveTripLinesCount();
 		} catch (error) {
 			const errorOut = `Error updating lines: ${error.message}`;
 			console.error(errorOut);
@@ -113,6 +123,7 @@ export const useLinesStore = defineStore('lines', () => {
 			await batch.commit();
 			if (tripId.value === localTripId) {
 				lines.value = [];
+				syncActiveTripLinesCount();
 			}
 		} catch (error) {
 			const errorOut = `Error deleting lines: ${error.message}`;
@@ -131,6 +142,7 @@ export const useLinesStore = defineStore('lines', () => {
 				lines.value.push(lineData);
 				sortLines();
 				recalculateLineExtraValues();
+				syncActiveTripLinesCount();
 			}
 		} catch (error) {
 			const errorOut = `Error creating line: ${error.message}`;
@@ -170,6 +182,7 @@ export const useLinesStore = defineStore('lines', () => {
 				lines.value = lines.value.filter((line) => line.lineId !== localLineId);
 				sortLines();
 				recalculateLineExtraValues();
+				syncActiveTripLinesCount();
 			}
 		} catch (error) {
 			const errorOut = `Error deleting line: ${error.message}`;

@@ -1,8 +1,8 @@
 <template>
 	<q-item class="q-py-xs trip-link">
 		<q-item-section class="cursor-pointer" @click="router.push(tripEditLink)">
-			<div class="text-subtitle1">{{ name }}</div>
-			<div class="text-caption text-grey-7">{{ description }}</div>
+			<div class="text-subtitle1">{{ trip.name }} - {{ trip.tripId }}</div>
+			<div class="text-caption text-grey-7">{{ trip.description }}</div>
 		</q-item-section>
 		<q-item-section side>
 			<q-btn-group spread class="single-buttons">
@@ -16,11 +16,11 @@
 						v-model="menu"
 						anchor="bottom left"
 						self="top left"
-						:offset="[0, 8]"
+						:offset="[70, -15]"
 						@mouseenter="openMenu"
 						@mouseleave="scheduleClose"
 					>
-						<q-list style="min-width: 180px">
+						<q-list style="min-width: 100px">
 							<q-item v-close-popup clickable :to="tripViewLink">
 								<q-item-section>
 									<q-item-label>Full</q-item-label>
@@ -47,7 +47,7 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useTripsStore } from '@/stores/trips';
 import { deleteStorageObject } from '@/composables/useFirebaseStorage';
 import { useRouter } from 'vue-router';
@@ -71,48 +71,37 @@ function scheduleClose() {
 }
 
 const props = defineProps({
-	tripId: {
-		type: [String, Number],
+	trip: {
+		type: Object,
 		required: true,
 	},
-	name: {
-		type: String,
-		required: true,
-	},
-	description: {
-		type: String,
-		required: false,
-		default: '',
-	},
-	imageName: {
-		type: String,
-		required: false,
-		default: '',
-	},
+});
+
+onMounted(() => {
+	console.log('TripActions mounted for tripId:', props.trip.tripId);
 });
 
 const tripsStore = useTripsStore();
 const router = useRouter();
 const $q = useQuasar();
 
-const tripViewLink = computed(() => `/trip/view/${props.tripId}`);
-const tripViewTCRLink = computed(() => `/trip/viewTCR/${props.tripId}`);
-const tripEditLink = computed(() => `/trip/edit/${props.tripId}`);
-
+const tripViewLink = computed(() => `/trip/view/${props.trip.tripId}`);
+const tripViewTCRLink = computed(() => `/trip/viewTCR/${props.trip.tripId}`);
+const tripEditLink = computed(() => `/trip/edit/${props.trip.tripId}`);
 const deleteTripLocal = async () => {
 	$q.dialog({
 		title: 'Confirm',
-		message: `Are you sure you want to delete trip: ${props.name}?`,
+		message: `Are you sure you want to delete trip: ${props.trip.name}?`,
 		cancel: true,
 		persistent: true,
 	})
 		.onOk(async () => {
-			const path = `trips/${props.tripId}/${props.imageName}`;
+			const path = `trips/${props.trip.tripId}/${props.trip.imageName}`;
 			$q.loading.show();
 			try {
 				await Promise.all([
-					tripsStore.deleteTrip(props.tripId),
-					deleteStorageObject(props.imageName, path),
+					tripsStore.deleteTrip(props.trip.tripId),
+					deleteStorageObject(props.trip.imageName, path),
 				]);
 				$q.loading.hide();
 				router.replace('/trips');

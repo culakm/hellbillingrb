@@ -16,7 +16,13 @@
 				</q-input>
 			</div>
 			<div class="col-auto q-ml-auto">
-				<q-btn color="primary" label="Add Trip" icon="add" to="/trip/add" />
+				<q-btn
+					color="primary"
+					label="Add Trip"
+					icon="add"
+					to="/trip/add"
+					no-caps
+				/>
 			</div>
 		</q-card-section>
 		<q-card-section
@@ -29,10 +35,7 @@
 				v-for="trip in filteredTrips"
 				:key="trip.tripId"
 				class="q-pr-md q-pl-md"
-				:trip-id="trip.tripId"
-				:name="trip.name"
-				:description="trip.description"
-				:image-name="trip.imageName"
+				:trip="trip"
 			/>
 		</q-card-section>
 		<q-card-section v-else>

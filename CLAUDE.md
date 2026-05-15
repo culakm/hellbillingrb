@@ -18,6 +18,10 @@ HellBillingRB is a web app for creating and managing car journey roadbooks. User
 - **pdfMake + html-to-pdfmake** for PDF export (used in `usePdfExport` composable)
 - **vue-draggable-plus** for line drag-and-drop reordering
 
+## Shell
+
+Use **bash via the Bash tool** for shell commands in this repo, not PowerShell. The snippets below are POSIX/bash syntax and run as-is. (See global `~/.claude/CLAUDE.md` for the project-wide rule.)
+
 ## Commands
 
 ```bash
