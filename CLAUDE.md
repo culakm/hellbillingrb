@@ -20,7 +20,9 @@ HellBillingRB is a web app for creating and managing car journey roadbooks. User
 
 ## Shell
 
-Use **bash via the Bash tool** for shell commands in this repo, not PowerShell. The snippets below are POSIX/bash syntax and run as-is. (See global `~/.claude/CLAUDE.md` for the project-wide rule.)
+Prefer dedicated tools over shell whenever they fit: **Glob** for finding files (not `find`/`ls`/`Get-ChildItem`), **Grep** for searching contents (not `grep`/`rg`), **Read** for viewing files (not `cat`/`head`/`tail`), **Edit**/**Write** for modifying files (not `sed`/`awk`/redirects).
+
+When shell is genuinely needed (npm/git/firebase, etc.), use **bash via the Bash tool**, not PowerShell. The snippets below are POSIX/bash syntax and run as-is. (See global `~/.claude/CLAUDE.md` for the project-wide rule.)
 
 ## Commands
 
