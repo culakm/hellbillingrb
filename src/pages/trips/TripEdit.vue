@@ -66,6 +66,7 @@ import { useQuasar } from 'quasar';
 import { useAuthStore } from '@/stores/auth';
 import { useTripsStore } from '@/stores/trips';
 import { useLinesStore } from '@/stores/lines';
+import { useUsersStore } from '@/stores/users';
 import { VueDraggable } from 'vue-draggable-plus';
 import TripForm from '@/components/trips/TripForm.vue';
 import LineForm from '@/components/lines/LineForm.vue';
@@ -76,6 +77,7 @@ const authStore = useAuthStore();
 const tripsStore = useTripsStore();
 const { activeTrip: activeTripReactive } = storeToRefs(tripsStore);
 const linesStore = useLinesStore();
+const usersStore = useUsersStore();
 const route = useRoute();
 const router = useRouter();
 const $q = useQuasar();
@@ -84,8 +86,26 @@ const dialogVis = ref(false);
 const draggableEnabled = ref(true);
 const dragging = ref(false);
 
-onMounted(() => {
-	tripByIdLocal(route.params.tripId);
+const loadUsersIfNeeded = async () => {
+	const trip = tripsStore.activeTrip;
+	if (
+		!authStore.isAdmin ||
+		!trip?.userId ||
+		trip.userId === authStore.userId ||
+		usersStore.hasUsers
+	) {
+		return;
+	}
+	try {
+		await usersStore.loadUsers();
+	} catch (err) {
+		$q.dialog({ title: 'Error', message: err.message || err });
+	}
+};
+
+onMounted(async () => {
+	await tripByIdLocal(route.params.tripId);
+	await loadUsersIfNeeded();
 });
 
 const openMapsDialog = () => {
@@ -154,7 +174,7 @@ const tripByIdLocal = async (tripId) => {
 };
 
 const updateTripLocal = async (tripData) => {
-	tripData.userId = authStore.userId;
+	tripData.userId = activeTripReactive.value.userId;
 	$q.loading.show();
 	try {
 		await tripsStore.updateTrip(tripData);

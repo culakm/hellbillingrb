@@ -32,6 +32,12 @@
 				:disable="trip.linesCount === 0"
 				@click="downloadTCRPdf(trip.lines, trip.name)"
 			/>
+			<div
+				v-if="ownerLabel"
+				class="text-caption text-italic text-grey-8 q-ml-auto"
+			>
+				Owner: {{ ownerLabel }}
+			</div>
 		</q-card-section>
 		<q-separator />
 		<q-card-section>
@@ -51,6 +57,8 @@
 
 <script setup>
 import { ref, toRef, computed, onMounted } from 'vue';
+import { useAuthStore } from '@/stores/auth';
+import { useUsersStore } from '@/stores/users';
 import { fetchFileUrl } from '@/composables/useFirebaseStorage';
 import { usePdfExport } from '@/composables/usePdfExport';
 import { useRoute } from 'vue-router';
@@ -71,9 +79,15 @@ const props = defineProps({
 
 const route = useRoute();
 const $q = useQuasar();
+const authStore = useAuthStore();
+const usersStore = useUsersStore();
 const { downloadPdf, downloadTCRPdf } = usePdfExport();
 const imageUrl = ref('');
 const trip = toRef(props, 'trip');
+
+const ownerLabel = computed(() =>
+	usersStore.labelForOwner(props.trip?.userId, authStore.userId)
+);
 
 const tcrPage = computed(() => {
 	return route.path.includes('trip/viewTCR');

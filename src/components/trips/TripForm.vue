@@ -4,6 +4,12 @@
 	>
 		<q-icon name="directions_car" size="32px" class="q-mr-sm" />
 		<div class="text-h5">{{ formTitle }}</div>
+		<div
+			v-if="ownerLabel"
+			class="text-caption text-italic q-ml-auto"
+		>
+			Owner: {{ ownerLabel }}
+		</div>
 	</q-card-section>
 	<q-form class="q-mb-md full-width" @submit.prevent="submitForm">
 		<div class="row q-col-gutter-md items-start">
@@ -86,7 +92,9 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue';
+import { useAuthStore } from '@/stores/auth';
 import { useTripsStore } from '@/stores/trips';
+import { useUsersStore } from '@/stores/users';
 import {
 	uploadProgress,
 	fetchFileUrl,
@@ -105,8 +113,14 @@ const props = defineProps({
 });
 const emit = defineEmits(['save-data']);
 
+const authStore = useAuthStore();
 const tripsStore = useTripsStore();
+const usersStore = useUsersStore();
 const $q = useQuasar();
+
+const ownerLabel = computed(() =>
+	usersStore.labelForOwner(props.trip?.userId, authStore.userId)
+);
 
 // Form fields
 const name = ref('');

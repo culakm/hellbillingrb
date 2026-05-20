@@ -49,10 +49,12 @@ import { ref, computed, watch, onMounted } from 'vue';
 import { useQuasar } from 'quasar';
 import { useAuthStore } from '@/stores/auth';
 import { useTripsStore } from '@/stores/trips';
+import { useUsersStore } from '@/stores/users';
 import TripActions from '@/components/trips/TripActions.vue';
 
 const authStore = useAuthStore();
 const tripsStore = useTripsStore();
+const usersStore = useUsersStore();
 const $q = useQuasar();
 
 const allTripsFlag = ref(false);
@@ -74,16 +76,28 @@ const loadTripsLocal = async () => {
 	$q.loading.hide();
 };
 
+const loadUsersIfNeeded = async () => {
+	if (authStore.isAdmin && allTripsFlag.value && !usersStore.hasUsers) {
+		try {
+			await usersStore.loadUsers();
+		} catch (err) {
+			$q.dialog({ title: 'Error', message: err.message || err });
+		}
+	}
+};
+
 onMounted(async () => {
 	const savedFlag = localStorage.getItem('allTripsFlag');
 	if (authStore.isAdmin && savedFlag !== null) {
 		allTripsFlag.value = savedFlag === 'true';
 	}
 	await loadTripsLocal();
+	await loadUsersIfNeeded();
 });
 
 watch(allTripsFlag, (newValue) => {
 	localStorage.setItem('allTripsFlag', newValue);
+	loadUsersIfNeeded();
 });
 
 const filteredTrips = computed(() => {

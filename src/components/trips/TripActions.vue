@@ -1,8 +1,17 @@
 <template>
 	<q-item class="q-py-xs trip-link">
-		<q-item-section class="cursor-pointer" @click="router.push(tripEditLink)">
+		<q-item-section
+			class="cursor-pointer relative-position"
+			@click="router.push(tripEditLink)"
+		>
 			<div class="text-subtitle1">{{ trip.name }} - {{ trip.tripId }}</div>
 			<div class="text-caption text-grey-7">{{ trip.description }}</div>
+			<div
+				v-if="ownerLabel"
+				class="absolute-top-right text-caption text-grey-8 text-italic q-pa-xs"
+			>
+				Owner: {{ ownerLabel }}
+			</div>
 		</q-item-section>
 		<q-item-section side>
 			<q-btn-group spread class="single-buttons">
@@ -48,7 +57,9 @@
 
 <script setup>
 import { computed, onMounted, ref } from 'vue';
+import { useAuthStore } from '@/stores/auth';
 import { useTripsStore } from '@/stores/trips';
+import { useUsersStore } from '@/stores/users';
 import { deleteStorageObject } from '@/composables/useFirebaseStorage';
 import { useRouter } from 'vue-router';
 import { useQuasar } from 'quasar';
@@ -77,17 +88,19 @@ const props = defineProps({
 	},
 });
 
-onMounted(() => {
-	console.log('TripActions mounted for tripId:', props.trip.tripId);
-});
-
+const authStore = useAuthStore();
 const tripsStore = useTripsStore();
+const usersStore = useUsersStore();
 const router = useRouter();
 const $q = useQuasar();
 
 const tripViewLink = computed(() => `/trip/view/${props.trip.tripId}`);
 const tripViewTCRLink = computed(() => `/trip/viewTCR/${props.trip.tripId}`);
 const tripEditLink = computed(() => `/trip/edit/${props.trip.tripId}`);
+
+const ownerLabel = computed(() =>
+	usersStore.labelForOwner(props.trip?.userId, authStore.userId)
+);
 const deleteTripLocal = async () => {
 	$q.dialog({
 		title: 'Confirm',

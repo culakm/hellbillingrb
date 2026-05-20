@@ -20,13 +20,17 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
+import { useAuthStore } from '@/stores/auth';
 import { useTripsStore } from '@/stores/trips';
+import { useUsersStore } from '@/stores/users';
 import { useRoute } from 'vue-router';
 import { useQuasar } from 'quasar';
 import TripFull from '@/components/trips/TripFull.vue';
 import LineView from '@/components/lines/LineView.vue';
 
+const authStore = useAuthStore();
 const tripsStore = useTripsStore();
+const usersStore = useUsersStore();
 const route = useRoute();
 const $q = useQuasar();
 
@@ -43,8 +47,26 @@ const tripByIdLocal = async (tripId) => {
 	}
 };
 
-onMounted(() => {
-	tripByIdLocal(route.params.tripId);
+const loadUsersIfNeeded = async () => {
+	const trip = tripsStore.activeTrip;
+	if (
+		!authStore.isAdmin ||
+		!trip?.userId ||
+		trip.userId === authStore.userId ||
+		usersStore.hasUsers
+	) {
+		return;
+	}
+	try {
+		await usersStore.loadUsers();
+	} catch (err) {
+		$q.dialog({ title: 'Error', message: err.message || err });
+	}
+};
+
+onMounted(async () => {
+	await tripByIdLocal(route.params.tripId);
+	await loadUsersIfNeeded();
 });
 </script>
 

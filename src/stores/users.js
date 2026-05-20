@@ -136,6 +136,12 @@ export const useUsersStore = defineStore('users', () => {
 		}
 	};
 
+	const labelForOwner = (ownerId, currentUserId) => {
+		if (!ownerId || ownerId === currentUserId) return null;
+		const owner = users.value.find((u) => u.userId === ownerId);
+		return owner?.name ?? `unknown, ${ownerId}`;
+	};
+
 	const userById = async (userId) => {
 		if (!userId) {
 			return null;
@@ -172,5 +178,6 @@ export const useUsersStore = defineStore('users', () => {
 		deleteUser,
 		userByEmail,
 		userById,
+		labelForOwner,
 	};
 });
