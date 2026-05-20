@@ -56,7 +56,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import { useTripsStore } from '@/stores/trips';
 import { useUsersStore } from '@/stores/users';
