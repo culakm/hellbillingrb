@@ -19,7 +19,7 @@ const routes = [
 			{
 				name: 'trip-add',
 				path: '/trip/add',
-				component: () => import('@/pages/trips/TripCreate.vue'),
+				component: () => import('@/pages/trips/TripEdit.vue'),
 				meta: { requiresAuth: true },
 			},
 			{

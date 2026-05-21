@@ -161,7 +161,7 @@ Role is stored as a **custom claim** on the Firebase Auth token, not in the Fire
 | `/`                | Index         | no          | —       | Public landing page                         |
 | `/auth`            | UserAuth      | unauth only | —       | Login page (redirects if already logged in) |
 | `/trips`           | TripList      | yes         | all     | List of trips                               |
-| `/trips/create`    | TripCreate    | yes         | editor+ | Create new trip                             |
+| `/trips/create`    | TripEdit      | yes         | editor+ | Create new trip                             |
 | `/trips/:id/edit`  | TripEdit      | yes         | editor+ | Edit trip + manage lines                    |
 | `/trips/:id`       | TripView      | yes         | all     | View trip detail                            |
 | `/trips/:id/tcr`   | TripViewTCR   | yes         | all     | Alternative trip view (TCR format)          |
