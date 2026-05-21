@@ -1,6 +1,6 @@
 <template>
-	<q-page class="q-pa-md bg-grey-2">
-		<q-card ref="pageRef">
+	<q-page class="q-pa-md">
+		<div ref="pageRef">
 			<trip-full
 				v-if="tripsStore.activeTrip"
 				:trip="tripsStore.activeTrip"
@@ -14,7 +14,7 @@
 					:lines-count="tripsStore.activeTrip.linesCount"
 				></line-view>
 			</div>
-		</q-card>
+		</div>
 	</q-page>
 </template>
 

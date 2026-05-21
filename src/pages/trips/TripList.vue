@@ -1,46 +1,34 @@
 <template>
-	<q-page class="q-pa-xs q-pr-lg">
-		<q-card-section class="q-py-none row items-center justify-between">
-			<div class="row items-center col">
-				<div class="text-h6">Trips: {{ filteredTrips.length }}</div>
-				<q-toggle
-					v-if="authStore.isAdmin"
-					v-model="allTripsFlag"
-					label="All users' trips"
-					class="q-ml-md"
-				/>
-				<q-input v-model="filter" class="q-ml-md" dense>
-					<template #prepend>
-						<q-icon name="search" />
-					</template>
-				</q-input>
-			</div>
-			<div class="col-auto q-ml-auto">
-				<q-btn
-					color="primary"
-					label="Add Trip"
-					icon="add"
-					to="/trip/add"
-					no-caps
-				/>
-			</div>
-		</q-card-section>
-		<q-card-section
-			v-if="tripsStore.hasTrips"
-			class="q-pa-xs"
-			bordered
-			separator
-		>
+	<q-page class="q-pa-md">
+		<div class="row items-center q-mb-md q-gutter-sm">
+			<div class="text-h6">Trips: {{ filteredTrips.length }}</div>
+			<q-toggle
+				v-if="authStore.isAdmin"
+				v-model="allTripsFlag"
+				label="All users' trips"
+			/>
+			<q-input v-model="filter" dense>
+				<template #prepend>
+					<q-icon name="search" />
+				</template>
+			</q-input>
+			<q-space />
+			<q-btn
+				color="primary"
+				label="Add Trip"
+				icon="add"
+				to="/trip/add"
+				no-caps
+			/>
+		</div>
+		<q-list v-if="tripsStore.hasTrips" separator>
 			<trip-actions
 				v-for="trip in filteredTrips"
 				:key="trip.tripId"
-				class="q-pr-md q-pl-md"
 				:trip="trip"
 			/>
-		</q-card-section>
-		<q-card-section v-else>
-			<div class="text-grey">No trips found</div>
-		</q-card-section>
+		</q-list>
+		<div v-else class="text-grey">No trips found</div>
 	</q-page>
 </template>
 

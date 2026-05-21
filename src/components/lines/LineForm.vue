@@ -252,10 +252,6 @@ const submitForm = async () => {
 	grid-template-columns: auto auto auto auto auto 3rem;
 }
 
-[class^='form-item'] {
-	/* padding: 0.3rem; */
-}
-
 .form-item-lat {
 	grid-area: form-item-lat;
 }

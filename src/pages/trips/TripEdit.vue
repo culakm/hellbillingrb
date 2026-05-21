@@ -1,58 +1,53 @@
 <template>
-	<q-page class="q-pa-md bg-grey-2">
-		<q-card>
-			<q-card-section class="row items-center justify-between">
-				<trip-form
-					v-if="activeTripReactive"
-					:key="activeTripReactive.tripId"
-					:trip="activeTripReactive"
-					@save-data="updateTripLocal"
+	<q-page class="q-pa-md">
+		<trip-form
+			v-if="activeTripReactive"
+			:key="activeTripReactive.tripId"
+			:trip="activeTripReactive"
+			@save-data="updateTripLocal"
+		/>
+		<div class="row items-center q-mb-md q-gutter-sm">
+			<q-btn
+				color="primary"
+				label="Open movable map"
+				icon="map"
+				no-caps
+				@click="openMapsDialog"
+			/>
+			<q-btn
+				color="negative"
+				label="Delete all lines"
+				icon="delete"
+				no-caps
+				@click="deleteLinesLocal"
+			/>
+			<maps-dialog
+				v-if="dialogVis"
+				:initial-markers="linesStore.mapMarkers"
+				@save-markers="markers2Lines"
+			/>
+		</div>
+		<q-list v-if="activeTripReactive?.lines?.length" separator>
+			<VueDraggable
+				ref="el"
+				v-model="activeTripReactive.lines"
+				item-key="lineId"
+				:disabled="!draggableEnabled"
+				:animation="150"
+				ghost-class="ghost"
+				@start="onStart"
+				@end="onEnd"
+			>
+				<line-actions
+					v-for="line in activeTripReactive.lines"
+					:key="line.lineId"
+					:line="line"
+					@line-is-edited="lineIsEdited"
 				/>
-			</q-card-section>
-			<q-separator />
-			<q-card-section>
-				<q-btn
-					label="Open movable map"
-					color="primary"
-					@click="openMapsDialog"
-				/>
-				<q-btn
-					label="Delete all lines"
-					color="primary"
-					@click="deleteLinesLocal"
-				/>
-				<maps-dialog
-					v-if="dialogVis"
-					:initial-markers="linesStore.mapMarkers"
-					@save-markers="markers2Lines"
-				/>
-			</q-card-section>
-			<q-separator />
-			<q-card-section>
-				<VueDraggable
-					v-if="activeTripReactive?.lines?.length"
-					ref="el"
-					v-model="activeTripReactive.lines"
-					item-key="lineId"
-					:disabled="!draggableEnabled"
-					:animation="150"
-					ghost-class="ghost"
-					@start="onStart"
-					@end="onEnd"
-				>
-					<line-actions
-						v-for="line in activeTripReactive.lines"
-						:key="line.lineId"
-						:line="line"
-						@line-is-edited="lineIsEdited"
-					/>
-				</VueDraggable>
-			</q-card-section>
-			<q-separator />
-			<q-card-section>
-				<line-form v-if="activeTripReactive" @save-line="createLineLocal" />
-			</q-card-section>
-		</q-card>
+			</VueDraggable>
+		</q-list>
+		<div v-else class="text-grey q-mb-md">No lines found</div>
+		<line-form v-if="activeTripReactive" @save-line="createLineLocal" />
 	</q-page>
 </template>
 
