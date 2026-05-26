@@ -2,16 +2,21 @@
 	<q-page class="q-pa-md bg-grey-2">
 		<Container>
 			<user-form
-				v-if="user"
+				v-if="isCreateMode"
+				@save-data="saveUserLocal"
+			></user-form>
+			<user-form
+				v-else-if="user"
+				:key="user.userId"
 				:user="user"
-				@save-data="updateUserLocal"
+				@save-data="saveUserLocal"
 			></user-form>
 		</Container>
 	</q-page>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useUsersStore } from '@/stores/users';
 import { useRoute, useRouter } from 'vue-router';
 import { useQuasar } from 'quasar';
@@ -24,11 +29,44 @@ const $q = useQuasar();
 
 const user = ref(null);
 
+const isCreateMode = computed(() => !route.params.userId);
+
 onMounted(async () => {
+	if (isCreateMode.value) {
+		user.value = null;
+		return;
+	}
 	user.value = await usersStore.userById(route.params.userId);
 });
 
-const updateUserLocal = async (userData) => {
+const saveUserLocal = async (userData) => {
+	if (isCreateMode.value) {
+		$q.loading.show();
+		try {
+			const userExists = await usersStore.userByEmail(userData.email);
+			if (userExists) {
+				$q.loading.hide();
+				$q.dialog({
+					title: 'Error',
+					message: `User with email ${userExists.email} already exists!`,
+				});
+				return;
+			}
+			await usersStore.createUser(userData);
+			$q.loading.hide();
+			$q.dialog({
+				title: 'Success',
+				message: 'User created successfully.',
+			}).onOk(() => {
+				router.replace('/users');
+			});
+		} catch (err) {
+			$q.loading.hide();
+			$q.dialog({ title: 'Error', message: err.message || err });
+		}
+		return;
+	}
+
 	$q.loading.show();
 	try {
 		await usersStore.updateUser(userData);

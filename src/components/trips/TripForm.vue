@@ -4,10 +4,7 @@
 	>
 		<q-icon name="directions_car" size="32px" class="q-mr-sm" />
 		<div class="text-h5">{{ formTitle }}</div>
-		<div
-			v-if="ownerLabel"
-			class="text-caption text-italic q-ml-auto"
-		>
+		<div v-if="ownerLabel" class="text-caption text-italic q-ml-auto">
 			Owner: {{ ownerLabel }}
 		</div>
 	</q-card-section>

@@ -53,7 +53,7 @@ const routes = [
 			{
 				name: 'user-add',
 				path: '/user/add',
-				component: () => import('@/pages/users/UserCreate.vue'),
+				component: () => import('@/pages/users/UserEdit.vue'),
 				meta: { requiresAuth: true },
 			},
 			{

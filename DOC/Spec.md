@@ -166,7 +166,7 @@ Role is stored as a **custom claim** on the Firebase Auth token, not in the Fire
 | `/trips/:id`       | TripView      | yes         | all     | View trip detail                            |
 | `/trips/:id/tcr`   | TripViewTCR   | yes         | all     | Alternative trip view (TCR format)          |
 | `/users`           | UserList      | yes         | admin   | List all users                              |
-| `/users/create`    | UserCreate    | yes         | admin   | Create new user                             |
+| `/users/create`    | UserEdit      | yes         | admin   | Create new user                             |
 | `/users/:id/edit`  | UserEdit      | yes         | admin   | Edit user                                   |
 | `/:catchAll(.*)`   | NotFound      | no          | —       | 404 page                                    |
 
