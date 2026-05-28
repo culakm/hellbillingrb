@@ -1,6 +1,10 @@
 <template>
-	<q-layout view="hHh LpR fFf">
-		<TheLeftDrawer v-model="leftDrawerOpen" :auth-store="authStore" />
+	<q-layout view="lHh Lpr lFf" class="bg-grey-1">
+		<TheLeftDrawer
+			v-if="authStore.isAuthenticated"
+			v-model="leftDrawerOpen"
+			:auth-store="authStore"
+		/>
 		<TheHeader
 			:toggle-right-drawer="toggleRightDrawer"
 			:toggle-left-drawer="toggleLeftDrawer"
@@ -15,7 +19,7 @@
 		<q-page-container>
 			<router-view />
 		</q-page-container>
-		<TheFooter />
+		<!-- <TheFooter /> -->
 	</q-layout>
 </template>
 

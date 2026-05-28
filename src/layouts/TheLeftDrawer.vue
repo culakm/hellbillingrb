@@ -2,10 +2,22 @@
 	<q-drawer
 		:model-value="modelValue"
 		show-if-above
-		side="left"
+		bordered
+		:mini="miniState"
 		:width="150"
+		:breakpoint="1024"
+		class="bg-grey-1"
 		@update:model-value="emit('update:modelValue', $event)"
 	>
+		<q-toolbar class="justify-start">
+			<q-btn
+				flat
+				dense
+				round
+				:icon="miniState ? 'chevron_right' : 'chevron_left'"
+				@click="miniState = !miniState"
+			/>
+		</q-toolbar>
 		<q-list v-if="authStore.isAuthenticated">
 			<q-item v-ripple clickable to="/trips">
 				<q-item-section avatar>
@@ -38,6 +50,8 @@
 </template>
 
 <script setup>
+import { ref } from 'vue';
+const miniState = ref(true);
 const emit = defineEmits(['update:modelValue']);
 
 defineProps({
